@@ -127,8 +127,15 @@ const Index = () => {
         </div>
       </section>
 
-      <main id="explorar" className="container flex-1 py-10 space-y-6 scroll-mt-20">
-        {/* Filtros */}
+      <main id="explorar" className="container flex-1 py-10 space-y-8 scroll-mt-20">
+        {/* Búsqueda por departamento */}
+        <DepartmentSearch
+          selectedDepartment={filters.department}
+          selectedCity={filters.city}
+          onSelect={(department, city) => setFilters({ ...filters, department, city })}
+        />
+
+        {/* Filtros adicionales */}
         <ProfileFilters value={filters} onChange={setFilters} />
 
         {/* Toggle vista + contador */}
