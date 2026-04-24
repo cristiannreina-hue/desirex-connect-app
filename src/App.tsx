@@ -16,8 +16,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner theme="dark" richColors position="top-center" />
-      <AgeGate />
       <BrowserRouter>
+        <AgeGate />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/perfil/:id" element={<Profile />} />
