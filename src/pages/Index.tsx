@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ProfileCard } from "@/components/ProfileCard";
@@ -9,6 +9,9 @@ import { DEMO_PROFILES } from "@/data/profiles";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Layers, Sparkles, ShieldCheck, Flame, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { dbRowsToCompleteProfiles } from "@/lib/db-mappers";
+import type { Profile } from "@/types/profile";
 
 type ViewMode = "grid" | "swipe";
 
@@ -20,18 +23,34 @@ const POPULAR_CITIES = [
 const Index = () => {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [view, setView] = useState<ViewMode>("grid");
+  const [realProfiles, setRealProfiles] = useState<Profile[]>([]);
+
+  // Solo perfiles completos visibles públicamente. Demo como fallback si BD vacía.
+  useEffect(() => {
+    supabase
+      .from("profiles")
+      .select("*")
+      .order("updated_at", { ascending: false })
+      .limit(100)
+      .then(({ data }) => setRealProfiles(dbRowsToCompleteProfiles(data ?? [])));
+  }, []);
+
+  const allProfiles = useMemo<Profile[]>(
+    () => (realProfiles.length > 0 ? realProfiles : DEMO_PROFILES),
+    [realProfiles],
+  );
 
   const filtered = useMemo(() => {
-    return DEMO_PROFILES.filter((p) => {
+    return allProfiles.filter((p) => {
       if (filters.department !== "all" && p.department !== filters.department) return false;
       if (filters.city !== "all" && p.city !== filters.city) return false;
       if (filters.category !== "all" && p.category !== filters.category) return false;
       if (filters.serviceType !== "all" && p.serviceType !== filters.serviceType) return false;
       return true;
     });
-  }, [filters]);
+  }, [filters, allProfiles]);
 
-  const totalCities = new Set(DEMO_PROFILES.map((p) => p.city)).size;
+  const totalCities = new Set(allProfiles.map((p) => p.city)).size;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -79,7 +98,7 @@ const Index = () => {
 
           {/* Stats */}
           <div className="mt-8 flex items-center justify-center gap-3 sm:gap-6 flex-wrap">
-            <Stat icon={<Users className="h-4 w-4" />} value={`${DEMO_PROFILES.length}+`} label="perfiles" />
+            <Stat icon={<Users className="h-4 w-4" />} value={`${allProfiles.length}+`} label="perfiles" />
             <Divider />
             <Stat icon={<Sparkles className="h-4 w-4" />} value={`${totalCities}`} label="ciudades" />
             <Divider />
