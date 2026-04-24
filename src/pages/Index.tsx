@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { ProfileCard } from "@/components/ProfileCard";
 import { ProfileSwipe } from "@/components/ProfileSwipe";
 import { ProfileFilters, DEFAULT_FILTERS, type Filters } from "@/components/ProfileFilters";
+import { DepartmentSearch } from "@/components/DepartmentSearch";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Layers, Sparkles, ShieldCheck, Flame, Users } from "lucide-react";
