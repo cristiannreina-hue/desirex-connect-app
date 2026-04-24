@@ -35,6 +35,7 @@ export interface Profile {
   services: string[];
   whatsapp: string;      // E.164 sin '+'
   telegram: string;      // sin '@'
+  verified?: boolean;    // perfil verificado por DeseoX
 }
 
 export const CATEGORY_LABELS: Record<Category, string> = {
