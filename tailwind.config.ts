@@ -43,6 +43,10 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          foreground: "hsl(var(--gold-foreground))",
+        },
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
@@ -50,6 +54,10 @@ export default {
         telegram: {
           DEFAULT: "hsl(var(--telegram))",
           foreground: "hsl(var(--telegram-foreground))",
+        },
+        verified: {
+          DEFAULT: "hsl(var(--verified))",
+          foreground: "hsl(var(--verified-foreground))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -74,13 +82,14 @@ export default {
         "gradient-primary": "var(--gradient-primary)",
         "gradient-accent": "var(--gradient-accent)",
         "gradient-neon": "var(--gradient-neon)",
+        "gradient-sunset": "var(--gradient-sunset)",
         "gradient-overlay": "var(--gradient-overlay)",
         "gradient-mesh": "var(--gradient-mesh)",
       },
       boxShadow: {
         glow: "var(--shadow-glow)",
         "glow-soft": "var(--shadow-glow-soft)",
-        "glow-pink": "var(--shadow-glow-pink)",
+        "glow-gold": "var(--shadow-glow-gold)",
         card: "var(--shadow-card)",
         elevated: "var(--shadow-elevated)",
       },
