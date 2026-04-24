@@ -98,7 +98,7 @@ const Index = () => {
 
           {/* Stats */}
           <div className="mt-8 flex items-center justify-center gap-3 sm:gap-6 flex-wrap">
-            <Stat icon={<Users className="h-4 w-4" />} value={`${DEMO_PROFILES.length}+`} label="perfiles" />
+            <Stat icon={<Users className="h-4 w-4" />} value={`${allProfiles.length}+`} label="perfiles" />
             <Divider />
             <Stat icon={<Sparkles className="h-4 w-4" />} value={`${totalCities}`} label="ciudades" />
             <Divider />
