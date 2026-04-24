@@ -14,7 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          age: number | null
+          birth_date: string | null
+          birth_place: string | null
+          category: string | null
+          city: string | null
+          created_at: string
+          department: string | null
+          description: string | null
+          display_name: string | null
+          height: number | null
+          id: string
+          is_verified: boolean
+          photos: string[] | null
+          rate_full_day: number | null
+          rate_one_hour: number | null
+          rate_short: number | null
+          rate_two_hours: number | null
+          service_type: string | null
+          services: string[] | null
+          telegram: string | null
+          updated_at: string
+          verification_id_url: string | null
+          verification_selfie_url: string | null
+          verification_status: string
+          verification_submitted_at: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          age?: number | null
+          birth_date?: string | null
+          birth_place?: string | null
+          category?: string | null
+          city?: string | null
+          created_at?: string
+          department?: string | null
+          description?: string | null
+          display_name?: string | null
+          height?: number | null
+          id: string
+          is_verified?: boolean
+          photos?: string[] | null
+          rate_full_day?: number | null
+          rate_one_hour?: number | null
+          rate_short?: number | null
+          rate_two_hours?: number | null
+          service_type?: string | null
+          services?: string[] | null
+          telegram?: string | null
+          updated_at?: string
+          verification_id_url?: string | null
+          verification_selfie_url?: string | null
+          verification_status?: string
+          verification_submitted_at?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          age?: number | null
+          birth_date?: string | null
+          birth_place?: string | null
+          category?: string | null
+          city?: string | null
+          created_at?: string
+          department?: string | null
+          description?: string | null
+          display_name?: string | null
+          height?: number | null
+          id?: string
+          is_verified?: boolean
+          photos?: string[] | null
+          rate_full_day?: number | null
+          rate_one_hour?: number | null
+          rate_short?: number | null
+          rate_two_hours?: number | null
+          service_type?: string | null
+          services?: string[] | null
+          telegram?: string | null
+          updated_at?: string
+          verification_id_url?: string | null
+          verification_selfie_url?: string | null
+          verification_status?: string
+          verification_submitted_at?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
