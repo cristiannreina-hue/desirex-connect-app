@@ -60,10 +60,10 @@ export const Header = () => {
             </Button>
           )}
           <Button asChild variant="hero" size="sm" className="gap-2 rounded-full">
-            <Link to="/registro">
+            <Link to={user ? "/registro" : "/auth"}>
               <Sparkles className="h-4 w-4" />
-              <span className="hidden sm:inline">Crear perfil</span>
-              <span className="sm:hidden">Crear</span>
+              <span className="hidden sm:inline">{user ? "Editar perfil" : "Crear cuenta"}</span>
+              <span className="sm:hidden">{user ? "Editar" : "Crear"}</span>
             </Link>
           </Button>
         </div>
