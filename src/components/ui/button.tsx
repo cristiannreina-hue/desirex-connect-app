@@ -11,15 +11,22 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        outline: "border border-border bg-transparent hover:bg-secondary hover:text-foreground",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        ghost: "hover:bg-secondary hover:text-foreground",
+        link: "text-accent underline-offset-4 hover:underline",
+        hero:
+          "bg-gradient-primary text-primary-foreground shadow-glow-soft hover:brightness-110 hover:shadow-glow transition-all",
+        whatsapp:
+          "bg-success text-success-foreground hover:brightness-110 shadow-[0_0_25px_hsl(var(--success)/0.45)]",
+        telegram:
+          "bg-telegram text-telegram-foreground hover:brightness-110 shadow-[0_0_20px_hsl(var(--telegram)/0.4)]",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
+        sm: "h-9 rounded-lg px-3",
+        lg: "h-12 rounded-xl px-8 text-base",
+        xl: "h-14 rounded-2xl px-10 text-base",
         icon: "h-10 w-10",
       },
     },
