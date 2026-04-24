@@ -5,20 +5,53 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import { DEMO_PROFILES } from "@/data/profiles";
-import { CATEGORY_LABELS, SERVICE_LABELS } from "@/types/profile";
+import { CATEGORY_LABELS, SERVICE_LABELS, type Profile as ProfileT } from "@/types/profile";
 import { formatCOP, RATE_LABELS } from "@/lib/format";
 import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Calendar, Ruler, MessageCircle, Send } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { dbToProfile } from "@/lib/db-mappers";
+import { isProfileComplete } from "@/lib/profile-completion";
 
 const Profile = () => {
   const { id } = useParams();
-  const profile = useMemo(() => DEMO_PROFILES.find((p) => p.id === id), [id]);
+  const demoProfile = useMemo(() => DEMO_PROFILES.find((p) => p.id === id), [id]);
+  const [dbProfile, setDbProfile] = useState<ProfileT | null>(null);
+  const [loading, setLoading] = useState(!demoProfile);
   const [photoIdx, setPhotoIdx] = useState(0);
+
+  useEffect(() => {
+    if (demoProfile || !id) {
+      setLoading(false);
+      return;
+    }
+    supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data && isProfileComplete(data)) setDbProfile(dbToProfile(data));
+        setLoading(false);
+      });
+  }, [id, demoProfile]);
+
+  const profile = demoProfile ?? dbProfile;
 
   useEffect(() => {
     if (profile) {
       document.title = `${profile.name}, ${profile.age} · ${profile.city} · DeseoX`;
     }
   }, [profile]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="container flex-1 py-20 text-center text-muted-foreground">Cargando…</main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!profile) {
     return (
