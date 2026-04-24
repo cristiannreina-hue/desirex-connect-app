@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { VerifiedBadge } from "@/components/VerifiedBadge";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { CATEGORY_LABELS, SERVICE_LABELS } from "@/types/profile";
 import { formatCOP, RATE_LABELS } from "@/lib/format";
@@ -126,9 +127,12 @@ const Profile = () => {
                   {SERVICE_LABELS[profile.serviceType]}
                 </span>
               </div>
-              <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight">
-                {profile.name}
-                <span className="ml-2 text-foreground/70 font-semibold">{profile.age}</span>
+              <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight inline-flex items-center gap-3 flex-wrap">
+                <span>
+                  {profile.name}
+                  <span className="ml-2 text-foreground/70 font-semibold">{profile.age}</span>
+                </span>
+                {profile.verified && <VerifiedBadge size="lg" showLabel />}
               </h1>
               <p className="mt-2 flex items-center gap-1.5 text-muted-foreground">
                 <MapPin className="h-4 w-4" /> {profile.city}, {profile.department}

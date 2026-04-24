@@ -28,6 +28,7 @@ export const DEMO_PROFILES: Profile[] = [
     services: ["Cena romántica", "Eventos", "Viajes", "Compañía nocturna", "Masajes"],
     whatsapp: "573001234567",
     telegram: "valentina_x",
+    verified: true,
   },
   {
     id: "2",
@@ -48,6 +49,7 @@ export const DEMO_PROFILES: Profile[] = [
     services: ["Eventos sociales", "Cena", "Viajes", "Compañía privada"],
     whatsapp: "573002345678",
     telegram: "mateo_co",
+    verified: true,
   },
   {
     id: "3",
@@ -108,6 +110,7 @@ export const DEMO_PROFILES: Profile[] = [
     services: ["Compañía privada", "Eventos", "Cena", "Experiencias VIP"],
     whatsapp: "573005678901",
     telegram: "luna_premium",
+    verified: true,
   },
   {
     id: "6",
@@ -148,6 +151,7 @@ export const DEMO_PROFILES: Profile[] = [
     services: ["Acompañante femenino", "Cena", "Eventos", "Viajes"],
     whatsapp: "573007890123",
     telegram: "andres_med",
+    verified: true,
   },
   {
     id: "8",

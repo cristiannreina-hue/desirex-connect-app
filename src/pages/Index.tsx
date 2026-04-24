@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { ProfileCard } from "@/components/ProfileCard";
 import { ProfileSwipe } from "@/components/ProfileSwipe";
 import { ProfileFilters, DEFAULT_FILTERS, type Filters } from "@/components/ProfileFilters";
+import { DepartmentSearch } from "@/components/DepartmentSearch";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Layers, Sparkles, ShieldCheck, Flame, Users } from "lucide-react";
@@ -126,8 +127,15 @@ const Index = () => {
         </div>
       </section>
 
-      <main id="explorar" className="container flex-1 py-10 space-y-6 scroll-mt-20">
-        {/* Filtros */}
+      <main id="explorar" className="container flex-1 py-10 space-y-8 scroll-mt-20">
+        {/* Búsqueda por departamento */}
+        <DepartmentSearch
+          selectedDepartment={filters.department}
+          selectedCity={filters.city}
+          onSelect={(department, city) => setFilters({ ...filters, department, city })}
+        />
+
+        {/* Filtros adicionales */}
         <ProfileFilters value={filters} onChange={setFilters} />
 
         {/* Toggle vista + contador */}

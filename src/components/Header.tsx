@@ -1,13 +1,14 @@
 import { Link, NavLink } from "react-router-dom";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Compass } from "lucide-react";
+import { Sparkles, Compass, ShieldCheck, UserCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Header = () => {
+  const { user } = useAuth();
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl">
-      {/* Línea neón superior */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-neon opacity-70"
@@ -30,15 +31,42 @@ export const Header = () => {
           >
             <Compass className="h-4 w-4" /> Explorar
           </NavLink>
+          <NavLink
+            to="/verificacion"
+            className={({ isActive }) =>
+              cn(
+                "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm transition-all",
+                isActive
+                  ? "bg-gradient-primary text-primary-foreground shadow-glow-soft"
+                  : "text-muted-foreground hover:text-foreground",
+              )
+            }
+          >
+            <ShieldCheck className="h-4 w-4" /> Verificación
+          </NavLink>
         </nav>
 
-        <Button asChild variant="hero" size="sm" className="gap-2 rounded-full">
-          <Link to="/registro">
-            <Sparkles className="h-4 w-4" />
-            <span className="hidden sm:inline">Crear perfil</span>
-            <span className="sm:hidden">Crear</span>
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          {user ? (
+            <Button asChild variant="outline" size="sm" className="rounded-full gap-2">
+              <Link to="/cuenta">
+                <UserCircle2 className="h-4 w-4" />
+                <span className="hidden sm:inline">Mi cuenta</span>
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild variant="ghost" size="sm" className="rounded-full hidden sm:inline-flex">
+              <Link to="/auth">Iniciar sesión</Link>
+            </Button>
+          )}
+          <Button asChild variant="hero" size="sm" className="gap-2 rounded-full">
+            <Link to="/registro">
+              <Sparkles className="h-4 w-4" />
+              <span className="hidden sm:inline">Crear perfil</span>
+              <span className="sm:hidden">Crear</span>
+            </Link>
+          </Button>
+        </div>
       </div>
     </header>
   );

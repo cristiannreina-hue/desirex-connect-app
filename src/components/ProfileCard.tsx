@@ -3,6 +3,7 @@ import { MapPin, Sparkles } from "lucide-react";
 import type { Profile } from "@/types/profile";
 import { CATEGORY_LABELS } from "@/types/profile";
 import { formatCOP, minRate } from "@/lib/format";
+import { VerifiedBadge } from "./VerifiedBadge";
 
 interface Props {
   profile: Profile;
@@ -53,9 +54,12 @@ export const ProfileCard = ({ profile, index = 0 }: Props) => {
 
         {/* Info */}
         <div className="absolute inset-x-0 bottom-0 p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
-          <h3 className="font-display text-lg font-extrabold leading-tight tracking-tight">
-            {profile.name}
-            <span className="ml-1 text-foreground/75 font-semibold">· {profile.age}</span>
+          <h3 className="font-display text-lg font-extrabold leading-tight tracking-tight inline-flex items-center gap-1.5 flex-wrap">
+            <span>
+              {profile.name}
+              <span className="ml-1 text-foreground/75 font-semibold">· {profile.age}</span>
+            </span>
+            {profile.verified && <VerifiedBadge size="sm" />}
           </h3>
           <p className="mt-1 flex items-center gap-1 text-xs text-foreground/85">
             <MapPin className="h-3 w-3 text-accent" /> {profile.city}, {profile.department}
