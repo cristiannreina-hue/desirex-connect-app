@@ -12,9 +12,10 @@ interface Props {
 
 export const ProfileCard = ({ profile, index = 0 }: Props) => {
   const price = minRate(profile.rates);
+  const slug = profile.userNumber ? String(profile.userNumber) : profile.id;
   return (
     <Link
-      to={`/perfil/${profile.id}`}
+      to={`/perfil/${slug}`}
       className="group relative block overflow-hidden rounded-3xl bg-card ring-1 ring-border/70 shadow-card transition-all duration-500 hover:ring-accent/70 hover:shadow-glow-soft hover:-translate-y-1.5 animate-fade-in shimmer"
       style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
     >
@@ -43,6 +44,13 @@ export const ProfileCard = ({ profile, index = 0 }: Props) => {
           <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
           {CATEGORY_LABELS[profile.category]}
         </span>
+
+        {/* ID único */}
+        {profile.userNumber && (
+          <span className="absolute bottom-3 left-3 inline-flex items-center gap-1 rounded-full bg-background/80 backdrop-blur-md px-2 py-0.5 text-[10px] font-mono font-bold tracking-wide text-accent ring-1 ring-accent/40">
+            ID #{profile.userNumber}
+          </span>
+        )}
 
         {/* Precio */}
         {price !== null && (
