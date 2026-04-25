@@ -17,10 +17,13 @@ import { useAuth } from "@/hooks/useAuth";
 
 const Profile = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const demoProfile = useMemo(() => DEMO_PROFILES.find((p) => p.id === id), [id]);
   const [dbProfile, setDbProfile] = useState<ProfileT | null>(null);
   const [loading, setLoading] = useState(!demoProfile);
   const [photoIdx, setPhotoIdx] = useState(0);
+  const [messageOpen, setMessageOpen] = useState(false);
 
   useEffect(() => {
     if (demoProfile || !id) {
