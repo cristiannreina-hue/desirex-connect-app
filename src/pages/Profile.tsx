@@ -161,6 +161,11 @@ const Profile = () => {
                 <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium ring-1 ring-border">
                   {SERVICE_LABELS[profile.serviceType]}
                 </span>
+                {profile.userNumber && (
+                  <span className="rounded-full bg-background/80 px-3 py-1 text-xs font-mono font-bold text-accent ring-1 ring-accent/40">
+                    ID #{profile.userNumber}
+                  </span>
+                )}
               </div>
               <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight inline-flex items-center gap-3 flex-wrap">
                 <span>
