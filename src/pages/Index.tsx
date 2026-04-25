@@ -1,14 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { BottomNav } from "@/components/BottomNav";
 import { ProfileCard } from "@/components/ProfileCard";
 import { ProfileSwipe } from "@/components/ProfileSwipe";
 import { ProfileFilters, DEFAULT_FILTERS, type Filters } from "@/components/ProfileFilters";
 import { DepartmentSearch } from "@/components/DepartmentSearch";
+import { FeaturedProfileCard } from "@/components/FeaturedProfileCard";
+import { ActiveAvatarCard } from "@/components/ActiveAvatarCard";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LayoutGrid, Layers, Sparkles, ShieldCheck, Flame, Users, Search, X } from "lucide-react";
+import {
+  LayoutGrid, Layers, ShieldCheck, Flame, Users,
+  Search, X, MapPin, Sparkles, Crown, ChevronRight,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { dbRowsToCompleteProfiles } from "@/lib/db-mappers";
@@ -16,10 +22,8 @@ import type { Profile } from "@/types/profile";
 
 type ViewMode = "grid" | "swipe";
 
-const POPULAR_CITIES = [
-  "Medellín", "Bogotá", "Cali", "Cartagena", "Barranquilla",
-  "Pereira", "Bucaramanga", "Santa Marta", "Manizales", "Villavicencio",
-];
+/** Selecciona N elementos pseudo-aleatorios pero estables */
+const sample = <T,>(arr: T[], n: number): T[] => arr.slice(0, n);
 
 const Index = () => {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
@@ -27,13 +31,13 @@ const Index = () => {
   const [realProfiles, setRealProfiles] = useState<Profile[]>([]);
   const [query, setQuery] = useState("");
 
-  // Solo perfiles completos visibles públicamente. Demo como fallback si BD vacía.
   useEffect(() => {
+    document.title = "DeseoX · Conecta con personas reales en tu ciudad";
     supabase
       .from("profiles")
       .select("*")
       .order("updated_at", { ascending: false })
-      .limit(100)
+      .limit(120)
       .then(({ data }) => setRealProfiles(dbRowsToCompleteProfiles(data ?? [])));
   }, []);
 
@@ -41,6 +45,25 @@ const Index = () => {
     () => (realProfiles.length > 0 ? realProfiles : DEMO_PROFILES),
     [realProfiles],
   );
+
+  // Secciones derivadas
+  const featured = useMemo(() => sample(allProfiles.filter((p) => p.verified), 8).length
+    ? sample(allProfiles.filter((p) => p.verified), 8)
+    : sample(allProfiles, 8),
+  [allProfiles]);
+
+  const topCity = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const p of allProfiles) counts[p.city] = (counts[p.city] ?? 0) + 1;
+    return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0];
+  }, [allProfiles]);
+
+  const nearby = useMemo(
+    () => allProfiles.filter((p) => p.city === topCity).slice(0, 6),
+    [allProfiles, topCity],
+  );
+
+  const active = useMemo(() => sample(allProfiles, 12), [allProfiles]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase().replace(/^#/, "");
@@ -59,61 +82,38 @@ const Index = () => {
   }, [filters, allProfiles, query]);
 
   const totalCities = new Set(allProfiles.map((p) => p.city)).size;
+  const activeCount = Math.max(12, Math.floor(allProfiles.length * 0.4));
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col pb-bottom-nav">
       <Header />
 
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden border-b border-border/60">
-        {/* Mesh gradient */}
         <div aria-hidden className="absolute inset-0 -z-10 mesh-bg" />
-        {/* Grid sutil */}
-        <div aria-hidden className="absolute inset-0 -z-10 grid-deco opacity-40" />
-        {/* Orbes flotantes */}
+        <div aria-hidden className="absolute inset-0 -z-10 grid-deco opacity-30" />
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl opacity-40 animate-float-slow"
-          style={{ background: "radial-gradient(circle, hsl(var(--accent) / 0.6), transparent 70%)" }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -bottom-24 -right-24 h-80 w-80 rounded-full blur-3xl opacity-40 animate-float-slow"
-          style={{
-            animationDelay: "2s",
-            background: "radial-gradient(circle, hsl(var(--primary) / 0.6), transparent 70%)",
-          }}
+          className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl opacity-30 animate-float-slow"
+          style={{ background: "radial-gradient(circle, hsl(var(--accent) / 0.5), transparent 70%)" }}
         />
 
-        <div className="container py-16 md:py-24 text-center relative">
+        <div className="container py-14 md:py-20 text-center relative">
           <span className="inline-flex items-center gap-2 rounded-full card-glass px-3.5 py-1.5 text-xs text-muted-foreground">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inset-0 rounded-full bg-accent animate-ping opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
-            </span>
-            Plataforma premium · solo +18
+            <span className="dot-online" />
+            <span className="font-medium text-foreground">+{activeCount} usuarios activos ahora</span>
           </span>
 
-          <h1 className="mt-6 font-display text-5xl md:text-7xl font-extrabold tracking-tighter leading-[0.95]">
-            Bienvenido a{" "}
-            <span className="text-gradient text-shadow-glow">DeseoX</span>
+          <h1 className="mt-6 font-display text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-[0.95]">
+            Conecta con personas{" "}
+            <span className="text-gradient text-shadow-glow">reales</span>{" "}
+            en tu ciudad
           </h1>
 
-          <p className="mt-5 text-base md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Descubre experiencias en tu ciudad. Perfiles verificados,
-            filtros precisos y <span className="text-foreground font-medium">contacto directo</span>.
+          <p className="mt-5 text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Explora perfiles, chatea y accede a experiencias o servicios personalizados.
           </p>
 
-          {/* Stats */}
-          <div className="mt-8 flex items-center justify-center gap-3 sm:gap-6 flex-wrap">
-            <Stat icon={<Users className="h-4 w-4" />} value={`${allProfiles.length}+`} label="perfiles" />
-            <Divider />
-            <Stat icon={<Sparkles className="h-4 w-4" />} value={`${totalCities}`} label="ciudades" />
-            <Divider />
-            <Stat icon={<ShieldCheck className="h-4 w-4" />} value="100%" label="verificado" />
-          </div>
-
-          {/* CTAs */}
           <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
             <Button
               variant="hero"
@@ -128,121 +128,185 @@ const Index = () => {
               <a href="/registro">Crear mi perfil</a>
             </Button>
           </div>
-        </div>
 
-        {/* Marquee de ciudades */}
-        <div className="relative border-t border-border/60 bg-background/40 backdrop-blur-md py-4 overflow-hidden">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background to-transparent z-10"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background to-transparent z-10"
-          />
-          <div className="marquee-track">
-            {[...POPULAR_CITIES, ...POPULAR_CITIES].map((city, i) => (
-              <span
-                key={`${city}-${i}`}
-                className="inline-flex items-center gap-2 text-sm font-display font-semibold text-muted-foreground whitespace-nowrap"
-              >
-                <span className="h-1 w-1 rounded-full bg-accent" />
-                {city}
-              </span>
-            ))}
+          <div className="mt-10 flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
+            <Stat icon={<Users className="h-4 w-4" />} value={`${allProfiles.length}+`} label="perfiles" />
+            <Divider />
+            <Stat icon={<MapPin className="h-4 w-4" />} value={`${totalCities}`} label="ciudades" />
+            <Divider />
+            <Stat icon={<ShieldCheck className="h-4 w-4" />} value="100%" label="verificado" />
           </div>
         </div>
       </section>
 
-      <main id="explorar" className="container flex-1 py-10 space-y-8 scroll-mt-20">
-        {/* Buscador por nombre o ID */}
-        <div className="card-glass rounded-3xl p-4 sm:p-5">
-          <label className="block mb-2 font-display text-sm font-bold">
-            Buscar perfil
-            <span className="ml-2 text-xs font-normal text-muted-foreground">
-              por nombre o ID (#1001)
-            </span>
-          </label>
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              inputMode="search"
-              placeholder="Ej: Camila o 1025"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="h-12 rounded-full bg-background/60 pl-11 pr-11 text-base"
-            />
-            {query && (
-              <button
-                type="button"
-                onClick={() => setQuery("")}
-                aria-label="Limpiar búsqueda"
-                className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Búsqueda por departamento */}
-        <DepartmentSearch
-          selectedDepartment={filters.department}
-          selectedCity={filters.city}
-          onSelect={(department, city) => setFilters({ ...filters, department, city })}
-        />
-
-        {/* Filtros adicionales */}
-        <ProfileFilters value={filters} onChange={setFilters} />
-
-        {/* Toggle vista + contador */}
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-sm text-muted-foreground">
-            <span className="font-display font-bold text-foreground text-base">{filtered.length}</span>{" "}
-            {filtered.length === 1 ? "perfil disponible" : "perfiles disponibles"}
-          </p>
-          <div className="inline-flex rounded-full bg-secondary/70 p-1 ring-1 ring-border backdrop-blur">
-            <ToggleBtn active={view === "grid"} onClick={() => setView("grid")}>
-              <LayoutGrid className="h-3.5 w-3.5" /> Grid
-            </ToggleBtn>
-            <ToggleBtn active={view === "swipe"} onClick={() => setView("swipe")}>
-              <Layers className="h-3.5 w-3.5" /> Swipe
-            </ToggleBtn>
-          </div>
-        </div>
-
-        {/* Resultados */}
-        {filtered.length === 0 ? (
-          <div className="card-glass rounded-3xl p-12 text-center">
-            <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-accent ring-1 ring-accent/30">
-              <Sparkles className="h-6 w-6" />
+      <main className="flex-1 space-y-14 py-10">
+        {/* ================= DESTACADOS ================= */}
+        {featured.length > 0 && (
+          <Section
+            title="Perfiles destacados"
+            icon={<Crown className="h-4 w-4" />}
+            subtitle="Lo más buscado esta semana"
+          >
+            <div className="container">
+              <div className="h-scroll no-scrollbar">
+                {featured.map((p) => (
+                  <FeaturedProfileCard key={p.id} profile={p} active={Math.random() > 0.4} />
+                ))}
+              </div>
             </div>
-            <p className="font-display text-xl font-bold">No encontramos perfiles con esos filtros</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Prueba ampliar la búsqueda o limpiar los filtros.
-            </p>
-            <Button className="mt-6 rounded-full" variant="hero" onClick={() => setFilters(DEFAULT_FILTERS)}>
-              Ver todos los perfiles
-            </Button>
-          </div>
-        ) : view === "grid" ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-            {filtered.map((p, i) => (
-              <ProfileCard key={p.id} profile={p} index={i} />
-            ))}
-          </div>
-        ) : (
-          <div className="py-4 animate-fade-in">
-            <ProfileSwipe profiles={filtered} />
-          </div>
+          </Section>
         )}
+
+        {/* ================= CERCA DE TI ================= */}
+        {nearby.length > 0 && (
+          <Section
+            title={`Cerca de ti${topCity ? ` · ${topCity}` : ""}`}
+            icon={<MapPin className="h-4 w-4" />}
+            subtitle="Los más cercanos a tu zona"
+          >
+            <div className="container">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+                {nearby.map((p, i) => (
+                  <ProfileCard key={p.id} profile={p} index={i} />
+                ))}
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {/* ================= ACTIVOS AHORA ================= */}
+        {active.length > 0 && (
+          <Section
+            title="Activos ahora"
+            icon={<span className="dot-online" />}
+            subtitle="Conectados en este momento"
+          >
+            <div className="container">
+              <div className="h-scroll no-scrollbar">
+                {active.map((p) => (
+                  <ActiveAvatarCard key={p.id} profile={p} />
+                ))}
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {/* ================= EXPLORAR (con filtros) ================= */}
+        <section id="explorar" className="container space-y-6 scroll-mt-20">
+          <div>
+            <h2 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight">
+              Explorar perfiles
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Filtra por ubicación, categoría o busca por ID.
+            </p>
+          </div>
+
+          {/* Buscador */}
+          <div className="card-glass rounded-2xl p-3">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                inputMode="search"
+                placeholder="Busca por nombre o ID (ej: Camila o 1025)"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="h-12 rounded-xl bg-background/60 pl-11 pr-11 text-base border-0"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  aria-label="Limpiar búsqueda"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <DepartmentSearch
+            selectedDepartment={filters.department}
+            selectedCity={filters.city}
+            onSelect={(department, city) => setFilters({ ...filters, department, city })}
+          />
+
+          <ProfileFilters value={filters} onChange={setFilters} />
+
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-display font-bold text-foreground text-base">{filtered.length}</span>{" "}
+              {filtered.length === 1 ? "perfil disponible" : "perfiles disponibles"}
+            </p>
+            <div className="inline-flex rounded-full bg-secondary/70 p-1 ring-1 ring-border backdrop-blur">
+              <ToggleBtn active={view === "grid"} onClick={() => setView("grid")}>
+                <LayoutGrid className="h-3.5 w-3.5" /> Grid
+              </ToggleBtn>
+              <ToggleBtn active={view === "swipe"} onClick={() => setView("swipe")}>
+                <Layers className="h-3.5 w-3.5" /> Swipe
+              </ToggleBtn>
+            </div>
+          </div>
+
+          {filtered.length === 0 ? (
+            <div className="card-glass rounded-3xl p-12 text-center">
+              <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-accent ring-1 ring-accent/30">
+                <Sparkles className="h-6 w-6" />
+              </div>
+              <p className="font-display text-xl font-bold">No encontramos perfiles con esos filtros</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Prueba ampliar la búsqueda o limpiar los filtros.
+              </p>
+              <Button className="mt-6 rounded-full" variant="hero" onClick={() => setFilters(DEFAULT_FILTERS)}>
+                Ver todos los perfiles
+              </Button>
+            </div>
+          ) : view === "grid" ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+              {filtered.map((p, i) => (
+                <ProfileCard key={p.id} profile={p} index={i} />
+              ))}
+            </div>
+          ) : (
+            <div className="py-4 animate-fade-in">
+              <ProfileSwipe profiles={filtered} />
+            </div>
+          )}
+        </section>
       </main>
 
       <Footer />
+      <BottomNav />
     </div>
   );
 };
+
+const Section = ({
+  title, subtitle, icon, children,
+}: {
+  title: string;
+  subtitle?: string;
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+}) => (
+  <section className="space-y-4">
+    <div className="container flex items-end justify-between gap-3">
+      <div>
+        <h2 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight inline-flex items-center gap-2">
+          {icon && <span className="text-accent">{icon}</span>}
+          {title}
+        </h2>
+        {subtitle && <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>}
+      </div>
+      <a href="#explorar" className="hidden sm:inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+        Ver todos <ChevronRight className="h-3.5 w-3.5" />
+      </a>
+    </div>
+    {children}
+  </section>
+);
 
 const Stat = ({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) => (
   <div className="inline-flex items-center gap-2.5">
@@ -267,7 +331,7 @@ const ToggleBtn = ({
     className={cn(
       "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all",
       active
-        ? "bg-gradient-primary text-primary-foreground shadow-glow-soft"
+        ? "bg-accent text-accent-foreground"
         : "text-muted-foreground hover:text-foreground",
     )}
   >
