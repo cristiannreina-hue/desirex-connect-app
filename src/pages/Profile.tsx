@@ -256,14 +256,12 @@ const Profile = () => {
               </div>
             </section>
 
-            {/* Contacto */}
+            {/* Contacto directo (visible solo si el usuario tiene Premium o es el dueño - placeholder visual) */}
             <section className="card-glass rounded-2xl p-5 space-y-4">
               <h2 className="font-display text-lg font-bold">Contacto directo</h2>
-              <div className="text-sm text-muted-foreground">
-                WhatsApp: <span className="text-foreground font-medium">+{profile.whatsapp}</span>
-                <br />
-                Telegram: <span className="text-foreground font-medium">@{profile.telegram}</span>
-              </div>
+              <p className="text-sm text-muted-foreground">
+                Habla por chat dentro de DeseoX o contacta directamente.
+              </p>
               <div className="grid sm:grid-cols-2 gap-3">
                 <Button asChild variant="whatsapp" size="xl" className="w-full">
                   <a href={waUrl} target="_blank" rel="noopener noreferrer">
@@ -282,6 +280,14 @@ const Profile = () => {
       </main>
 
       <Footer />
+      <BottomNav />
+
+      <MessageDialog
+        open={messageOpen}
+        onOpenChange={setMessageOpen}
+        recipientId={profile.id}
+        recipientName={profile.name}
+      />
     </div>
   );
 };
