@@ -155,6 +155,37 @@ const Index = () => {
       </section>
 
       <main id="explorar" className="container flex-1 py-10 space-y-8 scroll-mt-20">
+        {/* Buscador por nombre o ID */}
+        <div className="card-glass rounded-3xl p-4 sm:p-5">
+          <label className="block mb-2 font-display text-sm font-bold">
+            Buscar perfil
+            <span className="ml-2 text-xs font-normal text-muted-foreground">
+              por nombre o ID (#1001)
+            </span>
+          </label>
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              inputMode="search"
+              placeholder="Ej: Camila o 1025"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="h-12 rounded-full bg-background/60 pl-11 pr-11 text-base"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                aria-label="Limpiar búsqueda"
+                className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Búsqueda por departamento */}
         <DepartmentSearch
           selectedDepartment={filters.department}
