@@ -37,6 +37,7 @@ export type Database = {
           services: string[] | null
           telegram: string | null
           updated_at: string
+          user_number: number
           verification_id_url: string | null
           verification_selfie_url: string | null
           verification_status: string
@@ -65,6 +66,7 @@ export type Database = {
           services?: string[] | null
           telegram?: string | null
           updated_at?: string
+          user_number?: number
           verification_id_url?: string | null
           verification_selfie_url?: string | null
           verification_status?: string
@@ -93,6 +95,7 @@ export type Database = {
           services?: string[] | null
           telegram?: string | null
           updated_at?: string
+          user_number?: number
           verification_id_url?: string | null
           verification_selfie_url?: string | null
           verification_status?: string
