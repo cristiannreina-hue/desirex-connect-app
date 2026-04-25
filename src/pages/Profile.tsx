@@ -1,16 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
+import { MessageDialog } from "@/components/MessageDialog";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { CATEGORY_LABELS, SERVICE_LABELS, type Profile as ProfileT } from "@/types/profile";
 import { formatCOP, RATE_LABELS } from "@/lib/format";
-import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Calendar, Ruler, MessageCircle, Send } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Calendar, Ruler, MessageCircle, Send, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { dbToProfile } from "@/lib/db-mappers";
 import { isProfileComplete } from "@/lib/profile-completion";
+import { useAuth } from "@/hooks/useAuth";
 
 const Profile = () => {
   const { id } = useParams();
