@@ -24,15 +24,17 @@ const Profile = () => {
       setLoading(false);
       return;
     }
-    supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", id)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (data && isProfileComplete(data)) setDbProfile(dbToProfile(data));
-        setLoading(false);
-      });
+    // Si el id son solo dígitos -> es user_number (#1001). Si no -> es UUID.
+    const isNumeric = /^\d+$/.test(id);
+    const query = supabase.from("profiles").select("*");
+    const filtered = isNumeric
+      ? query.eq("user_number" as never, Number(id) as never)
+      : query.eq("id", id);
+
+    filtered.maybeSingle().then(({ data }) => {
+      if (data && isProfileComplete(data)) setDbProfile(dbToProfile(data));
+      setLoading(false);
+    });
   }, [id, demoProfile]);
 
   const profile = demoProfile ?? dbProfile;
@@ -159,6 +161,11 @@ const Profile = () => {
                 <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium ring-1 ring-border">
                   {SERVICE_LABELS[profile.serviceType]}
                 </span>
+                {profile.userNumber && (
+                  <span className="rounded-full bg-background/80 px-3 py-1 text-xs font-mono font-bold text-accent ring-1 ring-accent/40">
+                    ID #{profile.userNumber}
+                  </span>
+                )}
               </div>
               <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight inline-flex items-center gap-3 flex-wrap">
                 <span>

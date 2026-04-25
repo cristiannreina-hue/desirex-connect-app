@@ -19,6 +19,7 @@ export interface Rates {
 
 export interface Profile {
   id: string;
+  userNumber?: number;   // ID público secuencial (#1001, #1002...)
   name: string;
   age: number;
   birthDate: string;     // ISO

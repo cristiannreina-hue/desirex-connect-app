@@ -7,7 +7,8 @@ import { ProfileFilters, DEFAULT_FILTERS, type Filters } from "@/components/Prof
 import { DepartmentSearch } from "@/components/DepartmentSearch";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Layers, Sparkles, ShieldCheck, Flame, Users } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { LayoutGrid, Layers, Sparkles, ShieldCheck, Flame, Users, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { dbRowsToCompleteProfiles } from "@/lib/db-mappers";
@@ -24,6 +25,7 @@ const Index = () => {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [view, setView] = useState<ViewMode>("grid");
   const [realProfiles, setRealProfiles] = useState<Profile[]>([]);
+  const [query, setQuery] = useState("");
 
   // Solo perfiles completos visibles públicamente. Demo como fallback si BD vacía.
   useEffect(() => {
@@ -41,14 +43,20 @@ const Index = () => {
   );
 
   const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase().replace(/^#/, "");
     return allProfiles.filter((p) => {
       if (filters.department !== "all" && p.department !== filters.department) return false;
       if (filters.city !== "all" && p.city !== filters.city) return false;
       if (filters.category !== "all" && p.category !== filters.category) return false;
       if (filters.serviceType !== "all" && p.serviceType !== filters.serviceType) return false;
+      if (q) {
+        const matchesName = p.name.toLowerCase().includes(q);
+        const matchesId = p.userNumber ? String(p.userNumber).includes(q) : false;
+        if (!matchesName && !matchesId) return false;
+      }
       return true;
     });
-  }, [filters, allProfiles]);
+  }, [filters, allProfiles, query]);
 
   const totalCities = new Set(allProfiles.map((p) => p.city)).size;
 
@@ -147,6 +155,37 @@ const Index = () => {
       </section>
 
       <main id="explorar" className="container flex-1 py-10 space-y-8 scroll-mt-20">
+        {/* Buscador por nombre o ID */}
+        <div className="card-glass rounded-3xl p-4 sm:p-5">
+          <label className="block mb-2 font-display text-sm font-bold">
+            Buscar perfil
+            <span className="ml-2 text-xs font-normal text-muted-foreground">
+              por nombre o ID (#1001)
+            </span>
+          </label>
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              inputMode="search"
+              placeholder="Ej: Camila o 1025"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="h-12 rounded-full bg-background/60 pl-11 pr-11 text-base"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                aria-label="Limpiar búsqueda"
+                className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Búsqueda por departamento */}
         <DepartmentSearch
           selectedDepartment={filters.department}

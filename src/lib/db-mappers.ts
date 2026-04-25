@@ -6,9 +6,10 @@ import { isProfileComplete } from "@/lib/profile-completion";
 
 type Row = Tables<"profiles">;
 
-export function dbToProfile(p: Row): Profile {
+export function dbToProfile(p: Row & { user_number?: number | null }): Profile {
   return {
     id: p.id,
+    userNumber: p.user_number ?? undefined,
     name: p.display_name ?? "Sin nombre",
     age: p.age ?? 18,
     birthDate: p.birth_date ?? "",
