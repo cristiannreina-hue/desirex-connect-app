@@ -183,6 +183,34 @@ const Profile = () => {
               <p className="mt-2 flex items-center gap-1.5 text-muted-foreground">
                 <MapPin className="h-4 w-4" /> {profile.city}, {profile.department}
               </p>
+
+              {/* Indicadores de actividad */}
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[hsl(var(--online))]/10 px-3 py-1 text-xs font-semibold text-[hsl(var(--online))] ring-1 ring-[hsl(var(--online))]/30">
+                  <span className="dot-online" /> Activo ahora
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/70 px-3 py-1 text-xs font-medium ring-1 ring-border">
+                  <Zap className="h-3 w-3 text-accent" /> Responde rápido
+                </span>
+              </div>
+
+              {/* CTA principal */}
+              <Button
+                variant="hero"
+                size="xl"
+                className="w-full mt-5 rounded-full"
+                onClick={() => {
+                  if (!user) {
+                    navigate("/auth");
+                    return;
+                  }
+                  if (user.id === profile.id) return;
+                  setMessageOpen(true);
+                }}
+              >
+                <MessageCircle className="h-5 w-5" />
+                Enviar mensaje
+              </Button>
             </div>
 
             {/* Datos */}
