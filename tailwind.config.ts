@@ -59,6 +59,10 @@ export default {
           DEFAULT: "hsl(var(--verified))",
           foreground: "hsl(var(--verified-foreground))",
         },
+        online: {
+          DEFAULT: "hsl(var(--online))",
+          foreground: "hsl(var(--online-foreground))",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
@@ -116,8 +120,8 @@ export default {
           to: { opacity: "1", transform: "scale(1)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px hsl(295 100% 60% / 0.45)" },
-          "50%": { boxShadow: "0 0 45px hsl(295 100% 60% / 0.85)" },
+          "0%, 100%": { boxShadow: "0 0 16px hsl(32 90% 58% / 0.35)" },
+          "50%": { boxShadow: "0 0 36px hsl(32 90% 58% / 0.65)" },
         },
         "float-slow": {
           "0%, 100%": { transform: "translateY(0) translateX(0)" },
