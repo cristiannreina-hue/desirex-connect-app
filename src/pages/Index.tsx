@@ -7,7 +7,8 @@ import { ProfileFilters, DEFAULT_FILTERS, type Filters } from "@/components/Prof
 import { DepartmentSearch } from "@/components/DepartmentSearch";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Layers, Sparkles, ShieldCheck, Flame, Users } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { LayoutGrid, Layers, Sparkles, ShieldCheck, Flame, Users, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { dbRowsToCompleteProfiles } from "@/lib/db-mappers";
@@ -24,6 +25,7 @@ const Index = () => {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [view, setView] = useState<ViewMode>("grid");
   const [realProfiles, setRealProfiles] = useState<Profile[]>([]);
+  const [query, setQuery] = useState("");
 
   // Solo perfiles completos visibles públicamente. Demo como fallback si BD vacía.
   useEffect(() => {
@@ -41,14 +43,20 @@ const Index = () => {
   );
 
   const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase().replace(/^#/, "");
     return allProfiles.filter((p) => {
       if (filters.department !== "all" && p.department !== filters.department) return false;
       if (filters.city !== "all" && p.city !== filters.city) return false;
       if (filters.category !== "all" && p.category !== filters.category) return false;
       if (filters.serviceType !== "all" && p.serviceType !== filters.serviceType) return false;
+      if (q) {
+        const matchesName = p.name.toLowerCase().includes(q);
+        const matchesId = p.userNumber ? String(p.userNumber).includes(q) : false;
+        if (!matchesName && !matchesId) return false;
+      }
       return true;
     });
-  }, [filters, allProfiles]);
+  }, [filters, allProfiles, query]);
 
   const totalCities = new Set(allProfiles.map((p) => p.city)).size;
 
