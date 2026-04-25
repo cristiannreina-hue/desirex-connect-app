@@ -1,23 +1,29 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
+import { MessageDialog } from "@/components/MessageDialog";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { CATEGORY_LABELS, SERVICE_LABELS, type Profile as ProfileT } from "@/types/profile";
 import { formatCOP, RATE_LABELS } from "@/lib/format";
-import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Calendar, Ruler, MessageCircle, Send } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Calendar, Ruler, MessageCircle, Send, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { dbToProfile } from "@/lib/db-mappers";
 import { isProfileComplete } from "@/lib/profile-completion";
+import { useAuth } from "@/hooks/useAuth";
 
 const Profile = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const demoProfile = useMemo(() => DEMO_PROFILES.find((p) => p.id === id), [id]);
   const [dbProfile, setDbProfile] = useState<ProfileT | null>(null);
   const [loading, setLoading] = useState(!demoProfile);
   const [photoIdx, setPhotoIdx] = useState(0);
+  const [messageOpen, setMessageOpen] = useState(false);
 
   useEffect(() => {
     if (demoProfile || !id) {
@@ -177,6 +183,34 @@ const Profile = () => {
               <p className="mt-2 flex items-center gap-1.5 text-muted-foreground">
                 <MapPin className="h-4 w-4" /> {profile.city}, {profile.department}
               </p>
+
+              {/* Indicadores de actividad */}
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[hsl(var(--online))]/10 px-3 py-1 text-xs font-semibold text-[hsl(var(--online))] ring-1 ring-[hsl(var(--online))]/30">
+                  <span className="dot-online" /> Activo ahora
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/70 px-3 py-1 text-xs font-medium ring-1 ring-border">
+                  <Zap className="h-3 w-3 text-accent" /> Responde rápido
+                </span>
+              </div>
+
+              {/* CTA principal */}
+              <Button
+                variant="hero"
+                size="xl"
+                className="w-full mt-5 rounded-full"
+                onClick={() => {
+                  if (!user) {
+                    navigate("/auth");
+                    return;
+                  }
+                  if (user.id === profile.id) return;
+                  setMessageOpen(true);
+                }}
+              >
+                <MessageCircle className="h-5 w-5" />
+                Enviar mensaje
+              </Button>
             </div>
 
             {/* Datos */}
@@ -222,14 +256,12 @@ const Profile = () => {
               </div>
             </section>
 
-            {/* Contacto */}
+            {/* Contacto directo (visible solo si el usuario tiene Premium o es el dueño - placeholder visual) */}
             <section className="card-glass rounded-2xl p-5 space-y-4">
               <h2 className="font-display text-lg font-bold">Contacto directo</h2>
-              <div className="text-sm text-muted-foreground">
-                WhatsApp: <span className="text-foreground font-medium">+{profile.whatsapp}</span>
-                <br />
-                Telegram: <span className="text-foreground font-medium">@{profile.telegram}</span>
-              </div>
+              <p className="text-sm text-muted-foreground">
+                Habla por chat dentro de DeseoX o contacta directamente.
+              </p>
               <div className="grid sm:grid-cols-2 gap-3">
                 <Button asChild variant="whatsapp" size="xl" className="w-full">
                   <a href={waUrl} target="_blank" rel="noopener noreferrer">
@@ -248,6 +280,14 @@ const Profile = () => {
       </main>
 
       <Footer />
+      <BottomNav />
+
+      <MessageDialog
+        open={messageOpen}
+        onOpenChange={setMessageOpen}
+        recipientId={profile.id}
+        recipientName={profile.name}
+      />
     </div>
   );
 };

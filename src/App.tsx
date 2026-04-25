@@ -11,6 +11,7 @@ import Auth from "./pages/Auth.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import Verificacion from "./pages/Verificacion.tsx";
 import Cuenta from "./pages/Cuenta.tsx";
+import Mensajes from "./pages/Mensajes.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -24,12 +25,14 @@ const App = () => (
         <AgeGate />
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/explorar" element={<Index />} />
           <Route path="/perfil/:id" element={<Profile />} />
           <Route path="/registro" element={<Register />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/verificacion" element={<Verificacion />} />
           <Route path="/cuenta" element={<Cuenta />} />
+          <Route path="/mensajes" element={<Mensajes />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
