@@ -3,83 +3,159 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
 import { ProfileCard } from "@/components/ProfileCard";
-import { ProfileSwipe } from "@/components/ProfileSwipe";
-import { ProfileFilters, DEFAULT_FILTERS, type Filters } from "@/components/ProfileFilters";
-import { DepartmentSearch } from "@/components/DepartmentSearch";
 import { FeaturedProfileCard } from "@/components/FeaturedProfileCard";
 import { ActiveAvatarCard } from "@/components/ActiveAvatarCard";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  LayoutGrid, Layers, ShieldCheck, Flame, Users,
-  Search, X, MapPin, Sparkles, Crown, ChevronRight,
+  Flame, Search, X, MapPin, Sparkles, Crown, ChevronRight, Star, TrendingUp, ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
-import { dbRowsToCompleteProfiles } from "@/lib/db-mappers";
-import type { Profile } from "@/types/profile";
+import { dbToProfile } from "@/lib/db-mappers";
+import type { Profile, Gender, Subscription } from "@/types/profile";
+import { GENDER_LABELS, TIER_RANK } from "@/types/profile";
+import { isVisible } from "@/lib/tier";
+import { isProfileComplete } from "@/lib/profile-completion";
 
-type ViewMode = "grid" | "swipe";
+/* ============== Hero rotativo ============== */
+const HERO_SLIDES = [
+  {
+    title: "Explora perfiles disponibles en tu ciudad",
+    subtitle: "Cientos de personas verificadas a un clic",
+  },
+  {
+    title: "Accede a contacto directo",
+    subtitle: "Sin intermediarios. WhatsApp del perfil al instante",
+  },
+  {
+    title: "Conecta de forma rápida y segura",
+    subtitle: "Perfiles verificados y reseñas reales",
+  },
+];
 
-/** Selecciona N elementos pseudo-aleatorios pero estables */
-const sample = <T,>(arr: T[], n: number): T[] => arr.slice(0, n);
+const ACTIVITY_PINGS = [
+  "Alguien vio este perfil hace 2 min",
+  "Nuevo usuario registrado",
+  "Perfil destacado actualizado",
+  "+3 reseñas nuevas en los últimos 10 min",
+];
+
+/* ============== Helpers ============== */
+const tierWeight = (p: Profile) =>
+  p.subscription ? TIER_RANK[p.subscription.tier] ?? 0 : 0;
+
+const sortByTier = (a: Profile, b: Profile) => {
+  const t = tierWeight(b) - tierWeight(a);
+  if (t !== 0) return t;
+  return (b.ratingAvg ?? 0) - (a.ratingAvg ?? 0);
+};
 
 const Index = () => {
-  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
-  const [view, setView] = useState<ViewMode>("grid");
+  const [gender, setGender] = useState<Gender>("mujeres");
   const [realProfiles, setRealProfiles] = useState<Profile[]>([]);
   const [query, setQuery] = useState("");
+  const [slideIdx, setSlideIdx] = useState(0);
+  const [pingIdx, setPingIdx] = useState(0);
 
+  /* Carga */
   useEffect(() => {
     document.title = "DeseoX · Conecta con personas reales en tu ciudad";
-    supabase
-      .from("profiles")
-      .select("*")
-      .order("updated_at", { ascending: false })
-      .limit(120)
-      .then(({ data }) => setRealProfiles(dbRowsToCompleteProfiles(data ?? [])));
+
+    const fetchAll = async () => {
+      const [{ data: profileRows }, { data: subRows }] = await Promise.all([
+        supabase.from("profiles").select("*").order("updated_at", { ascending: false }).limit(200),
+        supabase.from("subscriptions").select("user_id, tier, status, expires_at"),
+      ]);
+
+      const subsByUser = new Map<string, Subscription>();
+      for (const s of subRows ?? []) {
+        const cur = subsByUser.get(s.user_id);
+        if (!cur || new Date(s.expires_at) > new Date(cur.expiresAt)) {
+          subsByUser.set(s.user_id, {
+            tier: s.tier as Subscription["tier"],
+            status: s.status as Subscription["status"],
+            expiresAt: s.expires_at,
+          });
+        }
+      }
+
+      const mapped = (profileRows ?? [])
+        .filter(isProfileComplete)
+        .map((row) => dbToProfile(row, subsByUser.get(row.id)))
+        .filter((p) => isVisible(p.subscription?.status, p.subscription?.expiresAt));
+
+      setRealProfiles(mapped);
+    };
+
+    fetchAll();
   }, []);
 
+  /* Hero rotativo */
+  useEffect(() => {
+    const id = setInterval(() => setSlideIdx((i) => (i + 1) % HERO_SLIDES.length), 5000);
+    return () => clearInterval(id);
+  }, []);
+
+  /* Activity ping rotativo */
+  useEffect(() => {
+    const id = setInterval(() => setPingIdx((i) => (i + 1) % ACTIVITY_PINGS.length), 4000);
+    return () => clearInterval(id);
+  }, []);
+
+  /* Fuente de datos */
   const allProfiles = useMemo<Profile[]>(
     () => (realProfiles.length > 0 ? realProfiles : DEMO_PROFILES),
     [realProfiles],
   );
 
-  // Secciones derivadas
-  const featured = useMemo(() => sample(allProfiles.filter((p) => p.verified), 8).length
-    ? sample(allProfiles.filter((p) => p.verified), 8)
-    : sample(allProfiles, 8),
-  [allProfiles]);
+  /* Filtro por género (tab) + búsqueda */
+  const visible = useMemo(() => {
+    const q = query.trim().toLowerCase().replace(/^#/, "");
+    return allProfiles
+      .filter((p) => p.gender === gender)
+      .filter((p) => {
+        if (!q) return true;
+        const matchName = p.name.toLowerCase().includes(q);
+        const matchId = p.userNumber ? String(p.userNumber).includes(q) : false;
+        const matchCity = p.city.toLowerCase().includes(q);
+        return matchName || matchId || matchCity;
+      })
+      .sort(sortByTier);
+  }, [allProfiles, gender, query]);
 
+  /* Secciones */
+  const topWeek = useMemo(
+    () => [...visible].sort((a, b) => (b.viewCount ?? 0) - (a.viewCount ?? 0)).slice(0, 8),
+    [visible],
+  );
+  const bestRated = useMemo(
+    () =>
+      [...visible]
+        .filter((p) => (p.ratingCount ?? 0) > 0)
+        .sort((a, b) => (b.ratingAvg ?? 0) - (a.ratingAvg ?? 0))
+        .slice(0, 8),
+    [visible],
+  );
+  const trending = useMemo(
+    () => [...visible].filter((p) => p.subscription?.tier === "elite" || p.subscription?.tier === "vip").slice(0, 8),
+    [visible],
+  );
+  const featured = useMemo(
+    () => [...visible].filter((p) => p.verified || p.subscription?.tier === "vip").slice(0, 8),
+    [visible],
+  );
   const topCity = useMemo(() => {
     const counts: Record<string, number> = {};
-    for (const p of allProfiles) counts[p.city] = (counts[p.city] ?? 0) + 1;
+    for (const p of visible) counts[p.city] = (counts[p.city] ?? 0) + 1;
     return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0];
-  }, [allProfiles]);
-
+  }, [visible]);
   const nearby = useMemo(
-    () => allProfiles.filter((p) => p.city === topCity).slice(0, 6),
-    [allProfiles, topCity],
+    () => visible.filter((p) => p.city === topCity).slice(0, 6),
+    [visible, topCity],
   );
-
-  const active = useMemo(() => sample(allProfiles, 12), [allProfiles]);
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase().replace(/^#/, "");
-    return allProfiles.filter((p) => {
-      if (filters.department !== "all" && p.department !== filters.department) return false;
-      if (filters.city !== "all" && p.city !== filters.city) return false;
-      if (filters.category !== "all" && p.category !== filters.category) return false;
-      if (filters.serviceType !== "all" && p.serviceType !== filters.serviceType) return false;
-      if (q) {
-        const matchesName = p.name.toLowerCase().includes(q);
-        const matchesId = p.userNumber ? String(p.userNumber).includes(q) : false;
-        if (!matchesName && !matchesId) return false;
-      }
-      return true;
-    });
-  }, [filters, allProfiles, query]);
+  const activeNow = useMemo(() => visible.slice(0, 12), [visible]);
 
   const totalCities = new Set(allProfiles.map((p) => p.city)).size;
   const activeCount = Math.max(12, Math.floor(allProfiles.length * 0.4));
@@ -98,20 +174,44 @@ const Index = () => {
           style={{ background: "radial-gradient(circle, hsl(var(--accent) / 0.5), transparent 70%)" }}
         />
 
+        {/* Carrusel de fondo (avatares premium) */}
+        {visible.length > 0 && (
+          <div aria-hidden className="absolute inset-0 -z-10 flex opacity-[0.07]">
+            {visible.slice(0, 6).map((p, i) => (
+              <img
+                key={p.id + i}
+                src={p.photos[0]}
+                alt=""
+                className="h-full w-1/6 object-cover"
+              />
+            ))}
+          </div>
+        )}
+
         <div className="container py-14 md:py-20 text-center relative">
-          <span className="inline-flex items-center gap-2 rounded-full card-glass px-3.5 py-1.5 text-xs text-muted-foreground">
+          {/* Activity ping */}
+          <span
+            key={pingIdx}
+            className="inline-flex items-center gap-2 rounded-full card-glass px-3.5 py-1.5 text-xs animate-fade-in"
+          >
             <span className="dot-online" />
-            <span className="font-medium text-foreground">+{activeCount} usuarios activos ahora</span>
+            <span className="font-medium">{ACTIVITY_PINGS[pingIdx]}</span>
           </span>
 
-          <h1 className="mt-6 font-display text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-[0.95]">
-            Conecta con personas{" "}
-            <span className="text-gradient text-shadow-glow">reales</span>{" "}
-            en tu ciudad
+          <h1 className="mt-6 font-display text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-[0.95] min-h-[3em] flex items-center justify-center">
+            <span key={slideIdx} className="animate-fade-in">
+              {HERO_SLIDES[slideIdx].title.split(" ").map((w, i, arr) =>
+                i === arr.length - 2 ? (
+                  <span key={i} className="text-gradient text-shadow-glow"> {w} </span>
+                ) : (
+                  <span key={i}> {w} </span>
+                ),
+              )}
+            </span>
           </h1>
 
-          <p className="mt-5 text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Explora perfiles, chatea y accede a experiencias o servicios personalizados.
+          <p key={`s-${slideIdx}`} className="mt-5 text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-fade-in">
+            {HERO_SLIDES[slideIdx].subtitle}
           </p>
 
           <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
@@ -130,26 +230,60 @@ const Index = () => {
           </div>
 
           <div className="mt-10 flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
-            <Stat icon={<Users className="h-4 w-4" />} value={`${allProfiles.length}+`} label="perfiles" />
+            <Stat icon={<Flame className="h-4 w-4" />} value={`+${activeCount}`} label="activos ahora" />
+            <Divider />
+            <Stat icon={<Sparkles className="h-4 w-4" />} value={`${allProfiles.length}+`} label="perfiles" />
             <Divider />
             <Stat icon={<MapPin className="h-4 w-4" />} value={`${totalCities}`} label="ciudades" />
             <Divider />
             <Stat icon={<ShieldCheck className="h-4 w-4" />} value="100%" label="verificado" />
           </div>
+
+          {/* Indicador slides */}
+          <div className="mt-8 flex items-center justify-center gap-1.5">
+            {HERO_SLIDES.map((_, i) => (
+              <span
+                key={i}
+                className={cn(
+                  "h-1 rounded-full transition-all",
+                  i === slideIdx ? "w-8 bg-accent" : "w-1.5 bg-border",
+                )}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= TABS GÉNERO ================= */}
+      <section className="border-b border-border/60 sticky top-16 z-30 bg-background/85 backdrop-blur-xl">
+        <div className="container py-3 flex items-center justify-center">
+          <div className="inline-flex rounded-full bg-secondary/40 p-1 ring-1 ring-border/60">
+            {(Object.keys(GENDER_LABELS) as Gender[]).map((g) => (
+              <button
+                key={g}
+                onClick={() => setGender(g)}
+                aria-pressed={gender === g}
+                className={cn(
+                  "rounded-full px-5 py-1.5 text-sm font-semibold transition-all",
+                  gender === g
+                    ? "bg-accent text-accent-foreground shadow-glow-soft"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {GENDER_LABELS[g]}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
       <main className="flex-1 space-y-14 py-10">
-        {/* ================= DESTACADOS ================= */}
-        {featured.length > 0 && (
-          <Section
-            title="Perfiles destacados"
-            icon={<Crown className="h-4 w-4" />}
-            subtitle="Lo más buscado esta semana"
-          >
+        {/* TOP SEMANA */}
+        {topWeek.length > 0 && (
+          <Section title="Top de la semana" icon={<Flame className="h-4 w-4" />} subtitle="Los más buscados">
             <div className="container">
               <div className="h-scroll no-scrollbar">
-                {featured.map((p) => (
+                {topWeek.map((p) => (
                   <FeaturedProfileCard key={p.id} profile={p} active={Math.random() > 0.4} />
                 ))}
               </div>
@@ -157,7 +291,46 @@ const Index = () => {
           </Section>
         )}
 
-        {/* ================= CERCA DE TI ================= */}
+        {/* MEJOR VALORADAS */}
+        {bestRated.length > 0 && (
+          <Section title="Mejor valoradas" icon={<Star className="h-4 w-4" />} subtitle="Las que más reseñas positivas tienen">
+            <div className="container">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+                {bestRated.slice(0, 8).map((p, i) => (
+                  <ProfileCard key={p.id} profile={p} index={i} popular />
+                ))}
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {/* EN TENDENCIA */}
+        {trending.length > 0 && (
+          <Section title="En tendencia" icon={<TrendingUp className="h-4 w-4" />} subtitle="Lo que sube esta semana">
+            <div className="container">
+              <div className="h-scroll no-scrollbar">
+                {trending.map((p) => (
+                  <FeaturedProfileCard key={p.id} profile={p} />
+                ))}
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {/* DESTACADOS */}
+        {featured.length > 0 && (
+          <Section title="Perfiles destacados" icon={<Crown className="h-4 w-4" />} subtitle="Plan VIP y verificados">
+            <div className="container">
+              <div className="h-scroll no-scrollbar">
+                {featured.map((p) => (
+                  <FeaturedProfileCard key={p.id} profile={p} active={Math.random() > 0.5} />
+                ))}
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {/* CERCA DE TI */}
         {nearby.length > 0 && (
           <Section
             title={`Cerca de ti${topCity ? ` · ${topCity}` : ""}`}
@@ -174,16 +347,12 @@ const Index = () => {
           </Section>
         )}
 
-        {/* ================= ACTIVOS AHORA ================= */}
-        {active.length > 0 && (
-          <Section
-            title="Activos ahora"
-            icon={<span className="dot-online" />}
-            subtitle="Conectados en este momento"
-          >
+        {/* ACTIVOS HOY */}
+        {activeNow.length > 0 && (
+          <Section title="Activos hoy" icon={<span className="dot-online" />} subtitle="Conectados en este momento">
             <div className="container">
               <div className="h-scroll no-scrollbar">
-                {active.map((p) => (
+                {activeNow.map((p) => (
                   <ActiveAvatarCard key={p.id} profile={p} />
                 ))}
               </div>
@@ -191,14 +360,14 @@ const Index = () => {
           </Section>
         )}
 
-        {/* ================= EXPLORAR (con filtros) ================= */}
-        <section id="explorar" className="container space-y-6 scroll-mt-20">
+        {/* EXPLORAR */}
+        <section id="explorar" className="container space-y-6 scroll-mt-32">
           <div>
             <h2 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight">
-              Explorar perfiles
+              Todos los perfiles
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Filtra por ubicación, categoría o busca por ID.
+              Mostrando {visible.length} {GENDER_LABELS[gender].toLowerCase()} disponibles.
             </p>
           </div>
 
@@ -209,7 +378,7 @@ const Index = () => {
               <Input
                 type="search"
                 inputMode="search"
-                placeholder="Busca por nombre o ID (ej: Camila o 1025)"
+                placeholder="Busca por nombre, ciudad o ID (ej: Camila, Bogotá o 1025)"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="h-12 rounded-xl bg-background/60 pl-11 pr-11 text-base border-0"
@@ -227,51 +396,22 @@ const Index = () => {
             </div>
           </div>
 
-          <DepartmentSearch
-            selectedDepartment={filters.department}
-            selectedCity={filters.city}
-            onSelect={(department, city) => setFilters({ ...filters, department, city })}
-          />
-
-          <ProfileFilters value={filters} onChange={setFilters} />
-
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm text-muted-foreground">
-              <span className="font-display font-bold text-foreground text-base">{filtered.length}</span>{" "}
-              {filtered.length === 1 ? "perfil disponible" : "perfiles disponibles"}
-            </p>
-            <div className="inline-flex rounded-full bg-secondary/70 p-1 ring-1 ring-border backdrop-blur">
-              <ToggleBtn active={view === "grid"} onClick={() => setView("grid")}>
-                <LayoutGrid className="h-3.5 w-3.5" /> Grid
-              </ToggleBtn>
-              <ToggleBtn active={view === "swipe"} onClick={() => setView("swipe")}>
-                <Layers className="h-3.5 w-3.5" /> Swipe
-              </ToggleBtn>
-            </div>
-          </div>
-
-          {filtered.length === 0 ? (
+          {visible.length === 0 ? (
             <div className="card-glass rounded-3xl p-12 text-center">
               <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-accent ring-1 ring-accent/30">
                 <Sparkles className="h-6 w-6" />
               </div>
-              <p className="font-display text-xl font-bold">No encontramos perfiles con esos filtros</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Prueba ampliar la búsqueda o limpiar los filtros.
-              </p>
-              <Button className="mt-6 rounded-full" variant="hero" onClick={() => setFilters(DEFAULT_FILTERS)}>
-                Ver todos los perfiles
+              <p className="font-display text-xl font-bold">No encontramos perfiles</p>
+              <p className="mt-1 text-sm text-muted-foreground">Prueba cambiar la categoría o limpiar la búsqueda.</p>
+              <Button className="mt-6 rounded-full" variant="hero" onClick={() => setQuery("")}>
+                Limpiar búsqueda
               </Button>
             </div>
-          ) : view === "grid" ? (
+          ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-              {filtered.map((p, i) => (
+              {visible.map((p, i) => (
                 <ProfileCard key={p.id} profile={p} index={i} />
               ))}
-            </div>
-          ) : (
-            <div className="py-4 animate-fade-in">
-              <ProfileSwipe profiles={filtered} />
             </div>
           )}
         </section>
@@ -321,22 +461,5 @@ const Stat = ({ icon, value, label }: { icon: React.ReactNode; value: string; la
 );
 
 const Divider = () => <span aria-hidden className="hidden sm:inline-block h-8 w-px bg-border" />;
-
-const ToggleBtn = ({
-  active, onClick, children,
-}: { active: boolean; onClick: () => void; children: React.ReactNode }) => (
-  <button
-    onClick={onClick}
-    aria-pressed={active}
-    className={cn(
-      "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all",
-      active
-        ? "bg-accent text-accent-foreground"
-        : "text-muted-foreground hover:text-foreground",
-    )}
-  >
-    {children}
-  </button>
-);
 
 export default Index;
