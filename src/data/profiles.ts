@@ -8,9 +8,12 @@ import p6 from "@/assets/profile-6.jpg";
 import p7 from "@/assets/profile-7.jpg";
 import p8 from "@/assets/profile-8.jpg";
 
+const future = (days: number) => new Date(Date.now() + days * 86400000).toISOString();
+
 export const DEMO_PROFILES: Profile[] = [
   {
     id: "1",
+    userNumber: 1001,
     name: "Valentina",
     age: 24,
     birthDate: "2001-03-12",
@@ -21,6 +24,7 @@ export const DEMO_PROFILES: Profile[] = [
     city: "Medellín",
     category: "femenino",
     serviceType: "hetero",
+    gender: "mujeres",
     photos: [p1, p3, p8],
     rates: { short: 150000, oneHour: 250000, twoHours: 450000, fullDay: 1500000 },
     description:
@@ -29,9 +33,14 @@ export const DEMO_PROFILES: Profile[] = [
     whatsapp: "573001234567",
     telegram: "valentina_x",
     verified: true,
+    ratingAvg: 4.9,
+    ratingCount: 38,
+    viewCount: 1240,
+    subscription: { tier: "vip", status: "active", expiresAt: future(45) },
   },
   {
     id: "2",
+    userNumber: 1002,
     name: "Mateo",
     age: 27,
     birthDate: "1998-07-04",
@@ -42,6 +51,7 @@ export const DEMO_PROFILES: Profile[] = [
     city: "Bogotá",
     category: "acompanante-masculino",
     serviceType: "bisexual",
+    gender: "hombres",
     photos: [p2, p4, p7],
     rates: { short: 180000, oneHour: 300000, twoHours: 500000, fullDay: 1800000 },
     description:
@@ -50,9 +60,14 @@ export const DEMO_PROFILES: Profile[] = [
     whatsapp: "573002345678",
     telegram: "mateo_co",
     verified: true,
+    ratingAvg: 4.7,
+    ratingCount: 22,
+    viewCount: 860,
+    subscription: { tier: "elite", status: "active", expiresAt: future(30) },
   },
   {
     id: "3",
+    userNumber: 1003,
     name: "Sofía",
     age: 22,
     birthDate: "2003-11-21",
@@ -63,6 +78,7 @@ export const DEMO_PROFILES: Profile[] = [
     city: "Cali",
     category: "femenino",
     serviceType: "bisexual",
+    gender: "mujeres",
     photos: [p3, p1, p6],
     rates: { short: 130000, oneHour: 220000, twoHours: 400000, fullDay: 1300000 },
     description:
@@ -70,9 +86,14 @@ export const DEMO_PROFILES: Profile[] = [
     services: ["Cena", "Compañía", "Masajes", "Fiestas privadas"],
     whatsapp: "573003456789",
     telegram: "sofia_v",
+    ratingAvg: 4.6,
+    ratingCount: 14,
+    viewCount: 540,
+    subscription: { tier: "boost", status: "active", expiresAt: future(20) },
   },
   {
     id: "4",
+    userNumber: 1004,
     name: "Diego",
     age: 29,
     birthDate: "1996-02-18",
@@ -83,6 +104,7 @@ export const DEMO_PROFILES: Profile[] = [
     city: "Cartagena",
     category: "masculino",
     serviceType: "gay",
+    gender: "hombres",
     photos: [p4, p2, p7],
     rates: { short: 160000, oneHour: 280000, twoHours: 480000, fullDay: 1600000 },
     description:
@@ -90,9 +112,14 @@ export const DEMO_PROFILES: Profile[] = [
     services: ["Compañía", "Viajes", "Eventos", "Encuentros privados"],
     whatsapp: "573004567890",
     telegram: "diego_ctg",
+    ratingAvg: 4.4,
+    ratingCount: 9,
+    viewCount: 320,
+    subscription: { tier: "boost", status: "trial", expiresAt: future(60) },
   },
   {
     id: "5",
+    userNumber: 1005,
     name: "Luna",
     age: 25,
     birthDate: "2000-05-30",
@@ -103,6 +130,7 @@ export const DEMO_PROFILES: Profile[] = [
     city: "Bogotá",
     category: "trans",
     serviceType: "bisexual",
+    gender: "trans",
     photos: [p5, p8, p3],
     rates: { short: 200000, oneHour: 350000, twoHours: 600000, fullDay: 2000000 },
     description:
@@ -111,9 +139,14 @@ export const DEMO_PROFILES: Profile[] = [
     whatsapp: "573005678901",
     telegram: "luna_premium",
     verified: true,
+    ratingAvg: 4.8,
+    ratingCount: 27,
+    viewCount: 980,
+    subscription: { tier: "vip", status: "active", expiresAt: future(50) },
   },
   {
     id: "6",
+    userNumber: 1006,
     name: "Camila",
     age: 26,
     birthDate: "1999-09-08",
@@ -124,6 +157,7 @@ export const DEMO_PROFILES: Profile[] = [
     city: "Barranquilla",
     category: "acompanante-femenino",
     serviceType: "hetero",
+    gender: "mujeres",
     photos: [p6, p1, p3],
     rates: { short: 170000, oneHour: 280000, twoHours: 500000, fullDay: 1700000 },
     description:
@@ -131,9 +165,14 @@ export const DEMO_PROFILES: Profile[] = [
     services: ["Cena", "Eventos", "Viajes", "Compañía"],
     whatsapp: "573006789012",
     telegram: "cami_baq",
+    ratingAvg: 4.5,
+    ratingCount: 11,
+    viewCount: 410,
+    subscription: { tier: "elite", status: "active", expiresAt: future(25) },
   },
   {
     id: "7",
+    userNumber: 1007,
     name: "Andrés",
     age: 28,
     birthDate: "1997-12-15",
@@ -144,6 +183,7 @@ export const DEMO_PROFILES: Profile[] = [
     city: "Medellín",
     category: "acompanante-masculino",
     serviceType: "hetero",
+    gender: "hombres",
     photos: [p7, p4, p2],
     rates: { short: 170000, oneHour: 290000, twoHours: 490000, fullDay: 1700000 },
     description:
@@ -152,9 +192,14 @@ export const DEMO_PROFILES: Profile[] = [
     whatsapp: "573007890123",
     telegram: "andres_med",
     verified: true,
+    ratingAvg: 4.7,
+    ratingCount: 19,
+    viewCount: 720,
+    subscription: { tier: "elite", status: "active", expiresAt: future(40) },
   },
   {
     id: "8",
+    userNumber: 1008,
     name: "Isabella",
     age: 23,
     birthDate: "2002-06-22",
@@ -165,6 +210,7 @@ export const DEMO_PROFILES: Profile[] = [
     city: "Pereira",
     category: "femenino",
     serviceType: "hetero",
+    gender: "mujeres",
     photos: [p8, p1, p6],
     rates: { short: 140000, oneHour: 230000, twoHours: 420000, fullDay: 1400000 },
     description:
@@ -172,5 +218,9 @@ export const DEMO_PROFILES: Profile[] = [
     services: ["Compañía", "Cena", "Masajes", "Encuentros privados"],
     whatsapp: "573008901234",
     telegram: "isa_pei",
+    ratingAvg: 4.3,
+    ratingCount: 7,
+    viewCount: 260,
+    subscription: { tier: "starter", status: "trial", expiresAt: future(80) },
   },
 ];

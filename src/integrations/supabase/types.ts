@@ -14,33 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      messages: {
-        Row: {
-          content: string
-          created_at: string
-          id: string
-          read_at: string | null
-          recipient_id: string
-          sender_id: string
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          id?: string
-          read_at?: string | null
-          recipient_id: string
-          sender_id: string
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          id?: string
-          read_at?: string | null
-          recipient_id?: string
-          sender_id?: string
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           age: number | null
@@ -52,14 +25,18 @@ export type Database = {
           department: string | null
           description: string | null
           display_name: string | null
+          gender: Database["public"]["Enums"]["gender_category"]
           height: number | null
           id: string
           is_verified: boolean
+          last_active_at: string
           photos: string[] | null
           rate_full_day: number | null
           rate_one_hour: number | null
           rate_short: number | null
           rate_two_hours: number | null
+          rating_avg: number
+          rating_count: number
           service_type: string | null
           services: string[] | null
           telegram: string | null
@@ -69,6 +46,7 @@ export type Database = {
           verification_selfie_url: string | null
           verification_status: string
           verification_submitted_at: string | null
+          view_count: number
           whatsapp: string | null
         }
         Insert: {
@@ -81,14 +59,18 @@ export type Database = {
           department?: string | null
           description?: string | null
           display_name?: string | null
+          gender?: Database["public"]["Enums"]["gender_category"]
           height?: number | null
           id: string
           is_verified?: boolean
+          last_active_at?: string
           photos?: string[] | null
           rate_full_day?: number | null
           rate_one_hour?: number | null
           rate_short?: number | null
           rate_two_hours?: number | null
+          rating_avg?: number
+          rating_count?: number
           service_type?: string | null
           services?: string[] | null
           telegram?: string | null
@@ -98,6 +80,7 @@ export type Database = {
           verification_selfie_url?: string | null
           verification_status?: string
           verification_submitted_at?: string | null
+          view_count?: number
           whatsapp?: string | null
         }
         Update: {
@@ -110,14 +93,18 @@ export type Database = {
           department?: string | null
           description?: string | null
           display_name?: string | null
+          gender?: Database["public"]["Enums"]["gender_category"]
           height?: number | null
           id?: string
           is_verified?: boolean
+          last_active_at?: string
           photos?: string[] | null
           rate_full_day?: number | null
           rate_one_hour?: number | null
           rate_short?: number | null
           rate_two_hours?: number | null
+          rating_avg?: number
+          rating_count?: number
           service_type?: string | null
           services?: string[] | null
           telegram?: string | null
@@ -127,7 +114,92 @@ export type Database = {
           verification_selfie_url?: string | null
           verification_status?: string
           verification_submitted_at?: string | null
+          view_count?: number
           whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          author_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          profile_id: string
+          stars: number
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          profile_id: string
+          stars: number
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          profile_id?: string
+          stars?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          started_at: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -136,13 +208,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      count_messages_sent: {
-        Args: { _recipient: string; _sender: string }
-        Returns: number
+      get_active_subscription: {
+        Args: { _user_id: string }
+        Returns: {
+          expires_at: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          tier: Database["public"]["Enums"]["subscription_tier"]
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      gender_category: "mujeres" | "hombres" | "trans"
+      subscription_status: "trial" | "active" | "expired" | "cancelled"
+      subscription_tier: "starter" | "boost" | "elite" | "vip"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -269,6 +355,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      gender_category: ["mujeres", "hombres", "trans"],
+      subscription_status: ["trial", "active", "expired", "cancelled"],
+      subscription_tier: ["starter", "boost", "elite", "vip"],
+    },
   },
 } as const

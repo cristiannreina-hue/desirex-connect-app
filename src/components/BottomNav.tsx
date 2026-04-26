@@ -1,12 +1,12 @@
 import { NavLink } from "react-router-dom";
-import { Home, Compass, MessageCircle, User } from "lucide-react";
+import { Home, Compass, Crown, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 
 const items = [
   { to: "/", label: "Inicio", icon: Home, end: true },
   { to: "/explorar", label: "Explorar", icon: Compass, end: false },
-  { to: "/mensajes", label: "Mensajes", icon: MessageCircle, end: false, requiresAuth: true },
+  { to: "/planes", label: "Planes", icon: Crown, end: false },
   { to: "/cuenta", label: "Perfil", icon: User, end: false, requiresAuth: true },
 ];
 
@@ -29,9 +29,7 @@ export const BottomNav = () => {
                 className={({ isActive }) =>
                   cn(
                     "flex flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-medium transition-colors",
-                    isActive
-                      ? "text-accent"
-                      : "text-muted-foreground hover:text-foreground",
+                    isActive ? "text-accent" : "text-muted-foreground hover:text-foreground",
                   )
                 }
               >
