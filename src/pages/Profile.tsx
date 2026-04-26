@@ -5,40 +5,57 @@ import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
-import { MessageDialog } from "@/components/MessageDialog";
+import { Stars } from "@/components/Stars";
+import { ProfileReviews } from "@/components/ProfileReviews";
 import { DEMO_PROFILES } from "@/data/profiles";
-import { CATEGORY_LABELS, SERVICE_LABELS, type Profile as ProfileT } from "@/types/profile";
+import { CATEGORY_LABELS, SERVICE_LABELS, TIER_LABELS, type Profile as ProfileT, type Subscription } from "@/types/profile";
 import { formatCOP, RATE_LABELS } from "@/lib/format";
-import { ArrowLeft, ChevronLeft, ChevronRight, MapPin, Calendar, Ruler, MessageCircle, Send, Zap } from "lucide-react";
+import { TIER_BADGE, daysRemaining, subStateColor } from "@/lib/tier";
+import {
+  ArrowLeft, ChevronLeft, ChevronRight, MapPin, Calendar, Ruler,
+  MessageCircle, Send, Zap, Pencil, RefreshCw, Crown,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { dbToProfile } from "@/lib/db-mappers";
 import { isProfileComplete } from "@/lib/profile-completion";
 import { useAuth } from "@/hooks/useAuth";
+import { cn } from "@/lib/utils";
 
 const Profile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const demoProfile = useMemo(() => DEMO_PROFILES.find((p) => p.id === id), [id]);
+  const demoProfile = useMemo(() => DEMO_PROFILES.find((p) => p.id === id || String(p.userNumber) === id), [id]);
   const [dbProfile, setDbProfile] = useState<ProfileT | null>(null);
   const [loading, setLoading] = useState(!demoProfile);
   const [photoIdx, setPhotoIdx] = useState(0);
-  const [messageOpen, setMessageOpen] = useState(false);
 
   useEffect(() => {
     if (demoProfile || !id) {
       setLoading(false);
       return;
     }
-    // Si el id son solo dígitos -> es user_number (#1001). Si no -> es UUID.
     const isNumeric = /^\d+$/.test(id);
     const query = supabase.from("profiles").select("*");
     const filtered = isNumeric
       ? query.eq("user_number" as never, Number(id) as never)
       : query.eq("id", id);
 
-    filtered.maybeSingle().then(({ data }) => {
-      if (data && isProfileComplete(data)) setDbProfile(dbToProfile(data));
+    filtered.maybeSingle().then(async ({ data }) => {
+      if (data && isProfileComplete(data)) {
+        // Cargar suscripción activa
+        const { data: subData } = await supabase
+          .from("subscriptions")
+          .select("tier, status, expires_at")
+          .eq("user_id", data.id)
+          .order("expires_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        const sub: Subscription | undefined = subData
+          ? { tier: subData.tier as Subscription["tier"], status: subData.status as Subscription["status"], expiresAt: subData.expires_at }
+          : undefined;
+        setDbProfile(dbToProfile(data, sub));
+      }
       setLoading(false);
     });
   }, [id, demoProfile]);
@@ -87,8 +104,20 @@ const Profile = () => {
   const waUrl = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(`Hola ${profile.name}, te contacto desde DeseoX 🔥`)}`;
   const tgUrl = `https://t.me/${profile.telegram}`;
 
+  const isOwner = user?.id === profile.id;
+  const tier = profile.subscription?.tier;
+  const tierMeta = tier ? TIER_BADGE[tier] : null;
+  const days = daysRemaining(profile.subscription?.expiresAt);
+  const subColor = subStateColor(profile.subscription?.status, profile.subscription?.expiresAt);
+  const subColorClass =
+    subColor === "green"
+      ? "bg-[hsl(var(--online))]/10 text-[hsl(var(--online))] ring-[hsl(var(--online))]/30"
+      : subColor === "yellow"
+        ? "bg-[hsl(var(--gold))]/10 text-[hsl(var(--gold))] ring-[hsl(var(--gold))]/40"
+        : "bg-destructive/10 text-destructive ring-destructive/40";
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col pb-bottom-nav">
       <Header />
 
       <main className="container flex-1 py-6 space-y-8">
@@ -161,7 +190,17 @@ const Profile = () => {
           <div className="space-y-6">
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="rounded-full bg-gradient-primary px-3 py-1 text-xs font-semibold shadow-glow-soft">
+                {tierMeta && (
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-extrabold tracking-wider",
+                      tierMeta.className,
+                    )}
+                  >
+                    {tierMeta.emoji} {tierMeta.label}
+                  </span>
+                )}
+                <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium ring-1 ring-border">
                   {CATEGORY_LABELS[profile.category]}
                 </span>
                 <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium ring-1 ring-border">
@@ -184,7 +223,14 @@ const Profile = () => {
                 <MapPin className="h-4 w-4" /> {profile.city}, {profile.department}
               </p>
 
-              {/* Indicadores de actividad */}
+              {/* Rating */}
+              {(profile.ratingCount ?? 0) > 0 && (
+                <div className="mt-3">
+                  <Stars value={profile.ratingAvg ?? 0} count={profile.ratingCount} size="md" />
+                </div>
+              )}
+
+              {/* Indicadores */}
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-2 rounded-full bg-[hsl(var(--online))]/10 px-3 py-1 text-xs font-semibold text-[hsl(var(--online))] ring-1 ring-[hsl(var(--online))]/30">
                   <span className="dot-online" /> Activo ahora
@@ -194,24 +240,69 @@ const Profile = () => {
                 </span>
               </div>
 
-              {/* CTA principal */}
-              <Button
-                variant="hero"
-                size="xl"
-                className="w-full mt-5 rounded-full"
-                onClick={() => {
-                  if (!user) {
-                    navigate("/auth");
-                    return;
-                  }
-                  if (user.id === profile.id) return;
-                  setMessageOpen(true);
-                }}
-              >
-                <MessageCircle className="h-5 w-5" />
-                Enviar mensaje
-              </Button>
+              {/* CTA principal: WhatsApp */}
+              <div className="mt-5 grid sm:grid-cols-2 gap-3">
+                <Button
+                  asChild
+                  variant="whatsapp"
+                  size="xl"
+                  className="w-full rounded-full"
+                >
+                  <a href={waUrl} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="h-5 w-5" />
+                    Contactar por WhatsApp
+                  </a>
+                </Button>
+                {profile.telegram && (
+                  <Button asChild variant="telegram" size="xl" className="w-full rounded-full">
+                    <a href={tgUrl} target="_blank" rel="noopener noreferrer">
+                      <Send className="h-5 w-5" /> Telegram
+                    </a>
+                  </Button>
+                )}
+              </div>
+
+              {isOwner && (
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <Button asChild variant="outline" size="sm" className="rounded-full gap-2">
+                    <Link to="/registro">
+                      <Pencil className="h-3.5 w-3.5" /> Editar perfil
+                    </Link>
+                  </Button>
+                  <Button asChild variant="ghost" size="sm" className="rounded-full gap-2">
+                    <Link to="/planes">
+                      <Crown className="h-3.5 w-3.5" /> Cambiar plan
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </div>
+
+            {/* Suscripción (solo dueño) */}
+            {isOwner && profile.subscription && (
+              <div className="card-glass rounded-2xl p-4 flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">Plan actual</p>
+                  <p className="font-display text-lg font-extrabold mt-0.5">
+                    {TIER_LABELS[profile.subscription.tier]}
+                  </p>
+                </div>
+                <div className={cn("inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold ring-1", subColorClass)}>
+                  {subColor === "red" ? (
+                    <>
+                      <RefreshCw className="h-3.5 w-3.5" /> Expirado
+                    </>
+                  ) : (
+                    <>📅 {days} {days === 1 ? "día restante" : "días restantes"}</>
+                  )}
+                </div>
+                {subColor === "red" && (
+                  <Button asChild size="sm" variant="hero" className="rounded-full">
+                    <Link to="/planes">Renovar</Link>
+                  </Button>
+                )}
+              </div>
+            )}
 
             {/* Datos */}
             <div className="grid grid-cols-3 gap-3">
@@ -231,10 +322,7 @@ const Profile = () => {
               <h2 className="font-display text-lg font-bold mb-2">Servicios</h2>
               <div className="flex flex-wrap gap-2">
                 {profile.services.map((s) => (
-                  <span
-                    key={s}
-                    className="rounded-full bg-secondary px-3 py-1.5 text-sm ring-1 ring-border"
-                  >
+                  <span key={s} className="rounded-full bg-secondary px-3 py-1.5 text-sm ring-1 ring-border">
                     {s}
                   </span>
                 ))}
@@ -248,46 +336,24 @@ const Profile = () => {
                 {rateEntries.map(([key, value]) => (
                   <div key={key} className="flex items-center justify-between p-4">
                     <span className="text-sm text-muted-foreground">{RATE_LABELS[key]}</span>
-                    <span className="font-display font-bold text-lg text-gradient">
-                      {formatCOP(value)}
-                    </span>
+                    <span className="font-display font-bold text-lg text-gradient">{formatCOP(value)}</span>
                   </div>
                 ))}
               </div>
             </section>
 
-            {/* Contacto directo (visible solo si el usuario tiene Premium o es el dueño - placeholder visual) */}
-            <section className="card-glass rounded-2xl p-5 space-y-4">
-              <h2 className="font-display text-lg font-bold">Contacto directo</h2>
-              <p className="text-sm text-muted-foreground">
-                Habla por chat dentro de DeseoX o contacta directamente.
-              </p>
-              <div className="grid sm:grid-cols-2 gap-3">
-                <Button asChild variant="whatsapp" size="xl" className="w-full">
-                  <a href={waUrl} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="h-5 w-5" /> WhatsApp
-                  </a>
-                </Button>
-                <Button asChild variant="telegram" size="xl" className="w-full">
-                  <a href={tgUrl} target="_blank" rel="noopener noreferrer">
-                    <Send className="h-5 w-5" /> Telegram
-                  </a>
-                </Button>
-              </div>
-            </section>
+            {/* Reseñas */}
+            <ProfileReviews
+              profileId={profile.id}
+              ratingAvg={profile.ratingAvg ?? 0}
+              ratingCount={profile.ratingCount ?? 0}
+            />
           </div>
         </div>
       </main>
 
       <Footer />
       <BottomNav />
-
-      <MessageDialog
-        open={messageOpen}
-        onOpenChange={setMessageOpen}
-        recipientId={profile.id}
-        recipientName={profile.name}
-      />
     </div>
   );
 };
