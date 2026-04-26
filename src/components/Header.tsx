@@ -1,7 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Compass, MessageCircle, UserCircle2 } from "lucide-react";
+import { Sparkles, Compass, Crown, UserCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -19,29 +19,23 @@ export const Header = () => {
             className={({ isActive }) =>
               cn(
                 "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm transition-all",
-                isActive
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:text-foreground",
+                isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground",
               )
             }
           >
             <Compass className="h-4 w-4" /> Explorar
           </NavLink>
-          {user && (
-            <NavLink
-              to="/mensajes"
-              className={({ isActive }) =>
-                cn(
-                  "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm transition-all",
-                  isActive
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground hover:text-foreground",
-                )
-              }
-            >
-              <MessageCircle className="h-4 w-4" /> Mensajes
-            </NavLink>
-          )}
+          <NavLink
+            to="/planes"
+            className={({ isActive }) =>
+              cn(
+                "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm transition-all",
+                isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground",
+              )
+            }
+          >
+            <Crown className="h-4 w-4" /> Planes
+          </NavLink>
         </nav>
 
         <div className="flex items-center gap-2">

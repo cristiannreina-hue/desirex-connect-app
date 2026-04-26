@@ -1,12 +1,18 @@
 // Mapea filas de la tabla `profiles` (DB) al tipo `Profile` usado por la UI.
 
-import type { Profile, Category, ServiceType } from "@/types/profile";
+import type { Profile, Category, ServiceType, Gender, Subscription } from "@/types/profile";
 import type { Tables } from "@/integrations/supabase/types";
 import { isProfileComplete } from "@/lib/profile-completion";
 
-type Row = Tables<"profiles">;
+type Row = Tables<"profiles"> & {
+  gender?: string | null;
+  rating_avg?: number | null;
+  rating_count?: number | null;
+  view_count?: number | null;
+  last_active_at?: string | null;
+};
 
-export function dbToProfile(p: Row & { user_number?: number | null }): Profile {
+export function dbToProfile(p: Row, sub?: Subscription): Profile {
   return {
     id: p.id,
     userNumber: p.user_number ?? undefined,
@@ -20,6 +26,7 @@ export function dbToProfile(p: Row & { user_number?: number | null }): Profile {
     city: p.city ?? "",
     category: (p.category as Category) ?? "femenino",
     serviceType: (p.service_type as ServiceType) ?? "hetero",
+    gender: (p.gender as Gender) ?? "mujeres",
     photos: p.photos ?? [],
     rates: {
       short: p.rate_short ?? undefined,
@@ -32,9 +39,14 @@ export function dbToProfile(p: Row & { user_number?: number | null }): Profile {
     whatsapp: p.whatsapp ?? "",
     telegram: p.telegram ?? "",
     verified: p.is_verified ?? false,
+    ratingAvg: p.rating_avg ?? 0,
+    ratingCount: p.rating_count ?? 0,
+    viewCount: p.view_count ?? 0,
+    lastActiveAt: p.last_active_at ?? undefined,
+    subscription: sub,
   };
 }
 
 export function dbRowsToCompleteProfiles(rows: Row[]): Profile[] {
-  return rows.filter(isProfileComplete).map(dbToProfile);
+  return rows.filter(isProfileComplete).map((r) => dbToProfile(r));
 }
