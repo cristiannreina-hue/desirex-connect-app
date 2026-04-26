@@ -36,7 +36,7 @@ export const ProfileReviews = ({ profileId, ratingAvg, ratingCount, onChanged }:
 
   const load = async () => {
     setLoading(true);
-    // @ts-expect-error reviews table not in generated types yet
+    
     const { data: rev } = await supabase
       .from("reviews")
       .select("id, author_id, stars, comment, created_at")
@@ -80,7 +80,7 @@ export const ProfileReviews = ({ profileId, ratingAvg, ratingCount, onChanged }:
       return;
     }
     setSubmitting(true);
-    // @ts-expect-error reviews table not in generated types yet
+    
     const { error } = await supabase.from("reviews").upsert(
       { profile_id: profileId, author_id: user.id, stars, comment: comment.trim() || null },
       { onConflict: "profile_id,author_id" },
@@ -98,7 +98,7 @@ export const ProfileReviews = ({ profileId, ratingAvg, ratingCount, onChanged }:
   const remove = async () => {
     if (!myReview) return;
     setSubmitting(true);
-    // @ts-expect-error reviews table not in generated types yet
+    
     const { error } = await supabase.from("reviews").delete().eq("id", myReview.id);
     setSubmitting(false);
     if (error) {
