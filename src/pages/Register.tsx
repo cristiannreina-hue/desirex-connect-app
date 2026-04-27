@@ -34,10 +34,6 @@ interface FormState {
   service_type: ServiceType | "";
   description: string;
   photos: string[];
-  rate_short: string;
-  rate_one_hour: string;
-  rate_two_hours: string;
-  rate_full_day: string;
   whatsapp: string;
   telegram: string;
 }
