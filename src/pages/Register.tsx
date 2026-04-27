@@ -95,10 +95,6 @@ const Register = () => {
             service_type: (p.service_type as ServiceType) ?? "",
             description: p.description ?? "",
             photos: p.photos ?? [],
-            rate_short: p.rate_short?.toString() ?? "",
-            rate_one_hour: p.rate_one_hour?.toString() ?? "",
-            rate_two_hours: p.rate_two_hours?.toString() ?? "",
-            rate_full_day: p.rate_full_day?.toString() ?? "",
             whatsapp: p.whatsapp ?? "",
             telegram: p.telegram ?? "",
           });
