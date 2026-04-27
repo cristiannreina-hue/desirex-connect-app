@@ -16,6 +16,7 @@ import { Shield } from "lucide-react";
 
 const Cuenta = () => {
   const { user, loading, signOut } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -198,6 +199,26 @@ const Cuenta = () => {
               </div>
               <Button asChild variant="outline" size="sm" className="rounded-full">
                 <Link to={`/perfil/${profile.id}`}>Ver</Link>
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Acceso panel admin */}
+        {isAdmin && (
+          <div className="card-glass rounded-3xl p-6 ring-1 ring-accent/30">
+            <div className="flex items-start gap-3">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow-soft shrink-0">
+                <Shield className="h-5 w-5" />
+              </span>
+              <div className="flex-1">
+                <p className="font-display font-bold">Panel de administración</p>
+                <p className="text-sm text-muted-foreground">Modera perfiles, verificaciones, planes y pagos.</p>
+              </div>
+              <Button asChild variant="hero" size="sm" className="rounded-full gap-1.5">
+                <Link to="/admin">
+                  Entrar <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
               </Button>
             </div>
           </div>
