@@ -109,9 +109,6 @@ const Profile = () => {
   const prevPhoto = () => setPhotoIdx((i) => (i - 1 + photos.length) % photos.length);
   const nextPhoto = () => setPhotoIdx((i) => (i + 1) % photos.length);
 
-  const rateEntries = (Object.entries(profile.rates) as [keyof typeof profile.rates, number | undefined][])
-    .filter(([, v]) => typeof v === "number") as [keyof typeof RATE_LABELS, number][];
-
   const waUrl = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(`Hola ${profile.name}, te contacto desde DeseoX 🔥`)}`;
   const tgUrl = `https://t.me/${profile.telegram}`;
 
