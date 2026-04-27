@@ -25,21 +25,25 @@ const Profile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const demoProfile = useMemo(() => DEMO_PROFILES.find((p) => p.id === id || String(p.userNumber) === id), [id]);
   const [dbProfile, setDbProfile] = useState<ProfileT | null>(null);
-  const [loading, setLoading] = useState(!demoProfile);
+  const [loading, setLoading] = useState(true);
   const [photoIdx, setPhotoIdx] = useState(0);
 
   useEffect(() => {
-    if (demoProfile || !id) {
+    if (!id) {
       setLoading(false);
       return;
     }
+    setLoading(true);
     const isNumeric = /^\d+$/.test(id);
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
     const query = supabase.from("profiles").select("*");
-    const filtered = isNumeric
-      ? query.eq("user_number" as never, Number(id) as never)
-      : query.eq("id", id);
+    const filtered = isUuid
+      ? query.eq("id", id)
+      : isNumeric
+        ? query.eq("user_number" as never, Number(id) as never)
+        : query.eq("id", id);
 
     filtered.maybeSingle().then(async ({ data }) => {
       if (data && isProfileComplete(data)) {
@@ -58,9 +62,16 @@ const Profile = () => {
       }
       setLoading(false);
     });
-  }, [id, demoProfile]);
+  }, [id]);
 
-  const profile = demoProfile ?? dbProfile;
+  // Fallback a demo SOLO si no se encontró en BD (para tarjetas demo del home)
+  const demoProfile = useMemo(
+    () => (!dbProfile && !loading ? DEMO_PROFILES.find((p) => p.id === id) : undefined),
+    [id, dbProfile, loading],
+  );
+
+  const profile = dbProfile ?? demoProfile;
+
 
   useEffect(() => {
     if (profile) {
