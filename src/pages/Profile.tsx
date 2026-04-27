@@ -9,7 +9,7 @@ import { Stars } from "@/components/Stars";
 import { ProfileReviews } from "@/components/ProfileReviews";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { CATEGORY_LABELS, SERVICE_LABELS, TIER_LABELS, type Profile as ProfileT, type Subscription } from "@/types/profile";
-import { formatCOP, RATE_LABELS } from "@/lib/format";
+import { TIER_LABELS as _unusedTierLabels } from "@/types/profile";
 import { TIER_BADGE, daysRemaining, subStateColor } from "@/lib/tier";
 import {
   ArrowLeft, ChevronLeft, ChevronRight, MapPin, Calendar, Ruler,
