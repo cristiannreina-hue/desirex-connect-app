@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      payments: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          currency: string
+          id: string
+          paid_at: string | null
+          reference: string
+          status: Database["public"]["Enums"]["payment_status"]
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at: string
+          user_id: string
+          wompi_payment_method: string | null
+          wompi_transaction_id: string | null
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          currency?: string
+          id?: string
+          paid_at?: string | null
+          reference: string
+          status?: Database["public"]["Enums"]["payment_status"]
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id: string
+          wompi_payment_method?: string | null
+          wompi_transaction_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          paid_at?: string | null
+          reference?: string
+          status?: Database["public"]["Enums"]["payment_status"]
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id?: string
+          wompi_payment_method?: string | null
+          wompi_transaction_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age: number | null
@@ -203,11 +248,83 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_rewards: {
+        Row: {
+          bonus_month: boolean
+          created_at: string
+          days_awarded: number
+          id: string
+          position: number
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          bonus_month?: boolean
+          created_at?: string
+          days_awarded: number
+          id?: string
+          position: number
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          bonus_month?: boolean
+          created_at?: string
+          days_awarded?: number
+          id?: string
+          position?: number
+          user_id?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
+      wompi_events: {
+        Row: {
+          created_at: string
+          error: string | null
+          event_id: string | null
+          event_type: string | null
+          id: string
+          processed: boolean
+          raw: Json
+          reference: string | null
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          event_id?: string | null
+          event_type?: string | null
+          id?: string
+          processed?: boolean
+          raw: Json
+          reference?: string | null
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          event_id?: string | null
+          event_type?: string | null
+          id?: string
+          processed?: boolean
+          raw?: Json
+          reference?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      award_weekly_top: { Args: never; Returns: undefined }
+      extend_subscription: {
+        Args: {
+          _days: number
+          _tier: Database["public"]["Enums"]["subscription_tier"]
+          _user_id: string
+        }
+        Returns: undefined
+      }
       get_active_subscription: {
         Args: { _user_id: string }
         Returns: {
@@ -227,6 +344,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "moderator" | "user"
       gender_category: "mujeres" | "hombres" | "trans"
+      payment_status: "PENDING" | "APPROVED" | "DECLINED" | "VOIDED" | "ERROR"
       subscription_status: "trial" | "active" | "expired" | "cancelled"
       subscription_tier: "starter" | "boost" | "elite" | "vip"
     }
@@ -358,6 +476,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "moderator", "user"],
       gender_category: ["mujeres", "hombres", "trans"],
+      payment_status: ["PENDING", "APPROVED", "DECLINED", "VOIDED", "ERROR"],
       subscription_status: ["trial", "active", "expired", "cancelled"],
       subscription_tier: ["starter", "boost", "elite", "vip"],
     },
