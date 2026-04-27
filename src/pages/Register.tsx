@@ -425,26 +425,6 @@ const Register = () => {
             )}
           </Section>
 
-          <Section title="Tarifas (COP)">
-            <p className="text-sm text-muted-foreground">
-              Solo se mostrarán las tarifas que llenes. Mínimo una.
-            </p>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <Field label="Sesión corta">
-                <Input type="number" min={0} value={data.rate_short} onChange={(e) => update("rate_short", e.target.value)} placeholder="150000" />
-              </Field>
-              <Field label="1 hora">
-                <Input type="number" min={0} value={data.rate_one_hour} onChange={(e) => update("rate_one_hour", e.target.value)} placeholder="250000" />
-              </Field>
-              <Field label="2 horas">
-                <Input type="number" min={0} value={data.rate_two_hours} onChange={(e) => update("rate_two_hours", e.target.value)} placeholder="450000" />
-              </Field>
-              <Field label="Jornada completa">
-                <Input type="number" min={0} value={data.rate_full_day} onChange={(e) => update("rate_full_day", e.target.value)} placeholder="1500000" />
-              </Field>
-            </div>
-          </Section>
-
           <Section title="Contacto">
             <p className="text-sm text-muted-foreground">
               Estos contactos serán visibles en tu perfil público.
