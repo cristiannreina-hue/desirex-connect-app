@@ -50,10 +50,6 @@ const empty: FormState = {
   service_type: "",
   description: "",
   photos: [],
-  rate_short: "",
-  rate_one_hour: "",
-  rate_two_hours: "",
-  rate_full_day: "",
   whatsapp: "",
   telegram: "",
 };
