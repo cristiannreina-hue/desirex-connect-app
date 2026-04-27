@@ -337,19 +337,6 @@ const Profile = () => {
               </div>
             </section>
 
-            {/* Tarifas */}
-            <section>
-              <h2 className="font-display text-lg font-bold mb-3">Tarifas</h2>
-              <div className="card-glass rounded-2xl divide-y divide-border/60 overflow-hidden">
-                {rateEntries.map(([key, value]) => (
-                  <div key={key} className="flex items-center justify-between p-4">
-                    <span className="text-sm text-muted-foreground">{RATE_LABELS[key]}</span>
-                    <span className="font-display font-bold text-lg text-gradient">{formatCOP(value)}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
-
             {/* Reseñas */}
             <ProfileReviews
               profileId={profile.id}
