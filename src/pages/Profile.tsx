@@ -9,7 +9,7 @@ import { Stars } from "@/components/Stars";
 import { ProfileReviews } from "@/components/ProfileReviews";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { CATEGORY_LABELS, SERVICE_LABELS, TIER_LABELS, type Profile as ProfileT, type Subscription } from "@/types/profile";
-import { formatCOP, RATE_LABELS } from "@/lib/format";
+
 import { TIER_BADGE, daysRemaining, subStateColor } from "@/lib/tier";
 import {
   ArrowLeft, ChevronLeft, ChevronRight, MapPin, Calendar, Ruler,
@@ -108,9 +108,6 @@ const Profile = () => {
   const photos = profile.photos;
   const prevPhoto = () => setPhotoIdx((i) => (i - 1 + photos.length) % photos.length);
   const nextPhoto = () => setPhotoIdx((i) => (i + 1) % photos.length);
-
-  const rateEntries = (Object.entries(profile.rates) as [keyof typeof profile.rates, number | undefined][])
-    .filter(([, v]) => typeof v === "number") as [keyof typeof RATE_LABELS, number][];
 
   const waUrl = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(`Hola ${profile.name}, te contacto desde DeseoX 🔥`)}`;
   const tgUrl = `https://t.me/${profile.telegram}`;
@@ -336,19 +333,6 @@ const Profile = () => {
                   <span key={s} className="rounded-full bg-secondary px-3 py-1.5 text-sm ring-1 ring-border">
                     {s}
                   </span>
-                ))}
-              </div>
-            </section>
-
-            {/* Tarifas */}
-            <section>
-              <h2 className="font-display text-lg font-bold mb-3">Tarifas</h2>
-              <div className="card-glass rounded-2xl divide-y divide-border/60 overflow-hidden">
-                {rateEntries.map(([key, value]) => (
-                  <div key={key} className="flex items-center justify-between p-4">
-                    <span className="text-sm text-muted-foreground">{RATE_LABELS[key]}</span>
-                    <span className="font-display font-bold text-lg text-gradient">{formatCOP(value)}</span>
-                  </div>
                 ))}
               </div>
             </section>

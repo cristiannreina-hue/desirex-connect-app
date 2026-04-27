@@ -34,10 +34,6 @@ interface FormState {
   service_type: ServiceType | "";
   description: string;
   photos: string[];
-  rate_short: string;
-  rate_one_hour: string;
-  rate_two_hours: string;
-  rate_full_day: string;
   whatsapp: string;
   telegram: string;
 }
@@ -54,10 +50,6 @@ const empty: FormState = {
   service_type: "",
   description: "",
   photos: [],
-  rate_short: "",
-  rate_one_hour: "",
-  rate_two_hours: "",
-  rate_full_day: "",
   whatsapp: "",
   telegram: "",
 };
@@ -103,10 +95,6 @@ const Register = () => {
             service_type: (p.service_type as ServiceType) ?? "",
             description: p.description ?? "",
             photos: p.photos ?? [],
-            rate_short: p.rate_short?.toString() ?? "",
-            rate_one_hour: p.rate_one_hour?.toString() ?? "",
-            rate_two_hours: p.rate_two_hours?.toString() ?? "",
-            rate_full_day: p.rate_full_day?.toString() ?? "",
             whatsapp: p.whatsapp ?? "",
             telegram: p.telegram ?? "",
           });
@@ -163,10 +151,6 @@ const Register = () => {
       service_type: data.service_type,
       description: data.description,
       photos: data.photos,
-      rate_short: data.rate_short ? parseInt(data.rate_short) : null,
-      rate_one_hour: data.rate_one_hour ? parseInt(data.rate_one_hour) : null,
-      rate_two_hours: data.rate_two_hours ? parseInt(data.rate_two_hours) : null,
-      rate_full_day: data.rate_full_day ? parseInt(data.rate_full_day) : null,
       whatsapp: data.whatsapp,
       telegram: data.telegram,
     };
@@ -193,10 +177,6 @@ const Register = () => {
       service_type: data.service_type || null,
       description: data.description || null,
       photos: data.photos,
-      rate_short: data.rate_short ? parseInt(data.rate_short) : null,
-      rate_one_hour: data.rate_one_hour ? parseInt(data.rate_one_hour) : null,
-      rate_two_hours: data.rate_two_hours ? parseInt(data.rate_two_hours) : null,
-      rate_full_day: data.rate_full_day ? parseInt(data.rate_full_day) : null,
       whatsapp: data.whatsapp || null,
       telegram: data.telegram || null,
     };
@@ -423,26 +403,6 @@ const Register = () => {
                 ))}
               </div>
             )}
-          </Section>
-
-          <Section title="Tarifas (COP)">
-            <p className="text-sm text-muted-foreground">
-              Solo se mostrarán las tarifas que llenes. Mínimo una.
-            </p>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <Field label="Sesión corta">
-                <Input type="number" min={0} value={data.rate_short} onChange={(e) => update("rate_short", e.target.value)} placeholder="150000" />
-              </Field>
-              <Field label="1 hora">
-                <Input type="number" min={0} value={data.rate_one_hour} onChange={(e) => update("rate_one_hour", e.target.value)} placeholder="250000" />
-              </Field>
-              <Field label="2 horas">
-                <Input type="number" min={0} value={data.rate_two_hours} onChange={(e) => update("rate_two_hours", e.target.value)} placeholder="450000" />
-              </Field>
-              <Field label="Jornada completa">
-                <Input type="number" min={0} value={data.rate_full_day} onChange={(e) => update("rate_full_day", e.target.value)} placeholder="1500000" />
-              </Field>
-            </div>
           </Section>
 
           <Section title="Contacto">
