@@ -151,10 +151,6 @@ const Register = () => {
       service_type: data.service_type,
       description: data.description,
       photos: data.photos,
-      rate_short: data.rate_short ? parseInt(data.rate_short) : null,
-      rate_one_hour: data.rate_one_hour ? parseInt(data.rate_one_hour) : null,
-      rate_two_hours: data.rate_two_hours ? parseInt(data.rate_two_hours) : null,
-      rate_full_day: data.rate_full_day ? parseInt(data.rate_full_day) : null,
       whatsapp: data.whatsapp,
       telegram: data.telegram,
     };
