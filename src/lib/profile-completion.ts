@@ -15,7 +15,6 @@ const MIN_PHOTOS = 3;
 
 export function getCompletionChecks(p: Partial<DBProfile> | null | undefined): CompletionCheck[] {
   const photos = (p?.photos ?? []) as string[];
-  const hasAnyRate = !!(p?.rate_short || p?.rate_one_hour || p?.rate_two_hours || p?.rate_full_day);
   const hasContact = !!((p?.whatsapp && p.whatsapp.length >= 8) || (p?.telegram && p.telegram.length >= 3));
 
   return [
@@ -29,7 +28,6 @@ export function getCompletionChecks(p: Partial<DBProfile> | null | undefined): C
       done: (p?.description ?? "").trim().length >= MIN_DESCRIPTION,
     },
     { key: "photos", label: `Mínimo ${MIN_PHOTOS} fotos`, done: photos.length >= MIN_PHOTOS },
-    { key: "rate", label: "Al menos una tarifa", done: hasAnyRate },
     { key: "contact", label: "WhatsApp o Telegram", done: hasContact },
   ];
 }
