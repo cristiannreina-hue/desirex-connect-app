@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { getCompletion } from "@/lib/profile-completion";
 import { cn } from "@/lib/utils";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { Shield } from "lucide-react";
 
 const Cuenta = () => {
   const { user, loading, signOut } = useAuth();
