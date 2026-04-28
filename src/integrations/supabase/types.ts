@@ -290,6 +290,45 @@ export type Database = {
         }
         Relationships: []
       }
+      verification_requests: {
+        Row: {
+          created_at: string
+          id: string
+          photo_url_id: string
+          photo_url_selfie: string
+          reject_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          photo_url_id: string
+          photo_url_selfie: string
+          reject_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          photo_url_id?: string
+          photo_url_selfie?: string
+          reject_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       weekly_rewards: {
         Row: {
           bonus_month: boolean
@@ -362,6 +401,10 @@ export type Database = {
         Args: { _user_id: string }
         Returns: undefined
       }
+      approve_verification_request: {
+        Args: { _request_id: string }
+        Returns: undefined
+      }
       award_weekly_top: { Args: never; Returns: undefined }
       extend_subscription: {
         Args: {
@@ -386,8 +429,25 @@ export type Database = {
         }
         Returns: boolean
       }
+      list_pending_verifications: {
+        Args: never
+        Returns: {
+          created_at: string
+          display_name: string
+          id: string
+          photo_url_id: string
+          photo_url_selfie: string
+          status: string
+          user_id: string
+          user_number: number
+        }[]
+      }
       reject_verification: {
         Args: { _reason?: string; _user_id: string }
+        Returns: undefined
+      }
+      reject_verification_request: {
+        Args: { _reason?: string; _request_id: string }
         Returns: undefined
       }
     }

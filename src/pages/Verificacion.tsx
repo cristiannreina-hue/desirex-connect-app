@@ -51,6 +51,18 @@ const Verificacion = () => {
       if (a.error) throw a.error;
       if (b.error) throw b.error;
 
+      // 1) Crear solicitud en verification_requests (fuente de verdad para el panel admin)
+      const { error: reqError } = await supabase
+        .from("verification_requests" as any)
+        .insert({
+          user_id: user.id,
+          photo_url_id: idPath,
+          photo_url_selfie: facePath,
+          status: "pending",
+        });
+      if (reqError && !reqError.message?.includes("duplicate")) throw reqError;
+
+      // 2) Espejar estado en profiles (para banners y filtros públicos)
       const { error } = await supabase
         .from("profiles")
         .update({
