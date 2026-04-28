@@ -58,7 +58,6 @@ const Verificacion = () => {
           verification_submitted_at: new Date().toISOString(),
           verification_selfie_face_url: facePath,
           verification_selfie_id_url: idPath,
-          account_type: "creator",
         } as any)
         .eq("id", user.id);
       if (error) throw error;
