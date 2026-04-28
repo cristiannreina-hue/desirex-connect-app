@@ -1,32 +1,96 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import { Eye, Camera, ArrowRight, ShieldCheck } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Registro = () => {
   const { t } = useI18n();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const [checkingProfile, setCheckingProfile] = useState(true);
+  const [savingChoice, setSavingChoice] = useState(false);
 
   useEffect(() => {
     document.title = "Únete a DeseoX";
   }, []);
 
-  const choose = (type: "visitor" | "creator") => {
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) {
+      setCheckingProfile(false);
+      return;
+    }
+
+    let cancelled = false;
+    setCheckingProfile(true);
+
+    supabase
+      .from("profiles")
+      .select("account_type")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) {
+          toast.error("No se pudo validar tu perfil actual.");
+          setCheckingProfile(false);
+          return;
+        }
+
+        if ((data as { account_type?: string } | null)?.account_type === "creator") {
+          navigate("/dashboard", { replace: true });
+          return;
+        }
+
+        setCheckingProfile(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authLoading, navigate, user]);
+
+  const choose = async (type: "visitor" | "creator") => {
     try {
       sessionStorage.setItem("deseox.intent", type);
     } catch {}
-    if (user) {
-      // Logueado: visitante va a su cuenta, creador a editar perfil
-      navigate(type === "creator" ? "/dashboard" : "/cuenta");
-    } else {
+
+    if (!user) {
       navigate(`/auth?intent=${type}`);
+      return;
     }
+
+    setSavingChoice(true);
+    const { error } = await supabase.from("profiles").upsert(
+      { id: user.id, account_type: type },
+      { onConflict: "id" },
+    );
+    setSavingChoice(false);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    navigate(type === "creator" ? "/dashboard" : "/cuenta");
   };
+
+  if (authLoading || checkingProfile) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="container flex-1 py-12 max-w-5xl mx-auto w-full text-center text-muted-foreground">
+          Cargando tu perfil…
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -45,6 +109,7 @@ const Registro = () => {
         <div className="grid md:grid-cols-2 gap-5">
           <button
             onClick={() => choose("visitor")}
+            disabled={savingChoice}
             className="group card-premium rounded-3xl p-7 text-left transition-all hover:scale-[1.01] hover:shadow-glow-soft"
           >
             <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary text-foreground ring-1 ring-border mb-4">
@@ -61,6 +126,7 @@ const Registro = () => {
 
           <button
             onClick={() => choose("creator")}
+            disabled={savingChoice}
             className="group card-premium rounded-3xl p-7 text-left transition-all hover:scale-[1.01] hover:shadow-glow-soft ring-2 ring-accent/40"
           >
             <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-primary text-primary-foreground shadow-glow-soft mb-4">
