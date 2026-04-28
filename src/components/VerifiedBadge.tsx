@@ -5,6 +5,8 @@ interface Props {
   className?: string;
   size?: "sm" | "md" | "lg";
   showLabel?: boolean;
+  /** Activa el efecto pulso + sheen para perfiles aprobados */
+  animated?: boolean;
 }
 
 const sizes = {
@@ -15,23 +17,24 @@ const sizes = {
 
 /**
  * Insignia oficial de "Verificado por DeseoX".
- * Azul tipo ✓ verified de redes sociales.
+ * Por defecto animada (pulse + sheen) para reforzar señal de confianza.
  */
-export const VerifiedBadge = ({ className, size = "md", showLabel = false }: Props) => {
+export const VerifiedBadge = ({ className, size = "md", showLabel = false, animated = true }: Props) => {
   const s = sizes[size];
   return (
     <span
       title="Perfil verificado por DeseoX"
       aria-label="Perfil verificado"
       className={cn(
-        "inline-flex items-center gap-1 rounded-full bg-verified/15 ring-1 ring-verified/50 text-verified font-semibold",
+        "inline-flex items-center gap-1 rounded-full bg-verified/15 ring-1 ring-verified/50 text-verified font-semibold overflow-hidden",
+        animated && "verified-pulse",
         s.pad,
         s.text,
         className,
       )}
     >
-      <BadgeCheck className={cn(s.icon, "fill-verified text-background")} />
-      {showLabel && <span>Verificado</span>}
+      <BadgeCheck className={cn(s.icon, "fill-verified text-background relative z-10")} />
+      {showLabel && <span className="relative z-10">Verificado</span>}
     </span>
   );
 };

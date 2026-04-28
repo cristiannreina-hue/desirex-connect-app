@@ -6,11 +6,12 @@ import { ProfileCard } from "@/components/ProfileCard";
 import { FeaturedProfileCard } from "@/components/FeaturedProfileCard";
 import { ActiveAvatarCard } from "@/components/ActiveAvatarCard";
 import { PhilosophySection } from "@/components/PhilosophySection";
+import { ProfileCardSkeleton } from "@/components/ProfileCardSkeleton";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Flame, Search, X, MapPin, Sparkles, Crown, ChevronRight, Star, TrendingUp, ShieldCheck,
+  Flame, Search, X, MapPin, Sparkles, Crown, ChevronRight, Star, TrendingUp, ShieldCheck, BadgeCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,9 +57,11 @@ const sortByTier = (a: Profile, b: Profile) => {
 const Index = () => {
   const [gender, setGender] = useState<Gender>("mujeres");
   const [realProfiles, setRealProfiles] = useState<Profile[]>([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [slideIdx, setSlideIdx] = useState(0);
   const [pingIdx, setPingIdx] = useState(0);
+  const [quickFilter, setQuickFilter] = useState<"all" | "new" | "verified" | "nearby">("all");
 
   /* Carga */
   useEffect(() => {
@@ -88,6 +91,7 @@ const Index = () => {
         .filter((p) => isVisible(p.subscription?.status, p.subscription?.expiresAt));
 
       setRealProfiles(mapped);
+      setLoading(false);
     };
 
     fetchAll();
@@ -111,9 +115,16 @@ const Index = () => {
     [realProfiles],
   );
 
-  /* Filtro por género (tab) + búsqueda */
+  /* Filtro por género (tab) + búsqueda + quick filter */
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase().replace(/^#/, "");
+    const baseCity = (() => {
+      const counts: Record<string, number> = {};
+      for (const p of allProfiles) counts[p.city] = (counts[p.city] ?? 0) + 1;
+      return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0];
+    })();
+    const newCutoff = Date.now() - 1000 * 60 * 60 * 24 * 14; // 14 días
+
     return allProfiles
       .filter((p) => p.gender === gender)
       .filter((p) => {
@@ -123,8 +134,17 @@ const Index = () => {
         const matchCity = p.city.toLowerCase().includes(q);
         return matchName || matchId || matchCity;
       })
+      .filter((p) => {
+        if (quickFilter === "verified") return p.verified;
+        if (quickFilter === "new") {
+          const created = (p as Profile & { createdAt?: string }).createdAt;
+          return created ? new Date(created).getTime() > newCutoff : false;
+        }
+        if (quickFilter === "nearby") return baseCity ? p.city === baseCity : true;
+        return true;
+      })
       .sort(sortByTier);
-  }, [allProfiles, gender, query]);
+  }, [allProfiles, gender, query, quickFilter]);
 
   /* Secciones */
   const topWeek = useMemo(
@@ -400,14 +420,43 @@ const Index = () => {
             </div>
           </div>
 
-          {visible.length === 0 ? (
+          {/* Filtros rápidos inteligentes */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {([
+              { k: "all", label: "Todas", icon: <Sparkles className="h-3.5 w-3.5" /> },
+              { k: "new", label: "Nuevas", icon: <Flame className="h-3.5 w-3.5" /> },
+              { k: "verified", label: "Verificadas", icon: <BadgeCheck className="h-3.5 w-3.5" /> },
+              { k: "nearby", label: `Cerca de ti${topCity ? ` · ${topCity}` : ""}`, icon: <MapPin className="h-3.5 w-3.5" /> },
+            ] as const).map((c) => {
+              const active = quickFilter === c.k;
+              return (
+                <button
+                  key={c.k}
+                  onClick={() => setQuickFilter(c.k)}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-300 ring-1",
+                    active
+                      ? "bg-gradient-primary text-primary-foreground ring-accent shadow-glow-soft"
+                      : "bg-secondary/40 text-muted-foreground ring-border hover:text-foreground hover:ring-accent/60",
+                  )}
+                >
+                  {c.icon}
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {loading ? (
+            <ProfileCardSkeleton count={8} />
+          ) : visible.length === 0 ? (
             <div className="card-glass rounded-3xl p-12 text-center">
               <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-accent ring-1 ring-accent/30">
                 <Sparkles className="h-6 w-6" />
               </div>
               <p className="font-display text-xl font-bold">No encontramos perfiles</p>
               <p className="mt-1 text-sm text-muted-foreground">Prueba cambiar la categoría o limpiar la búsqueda.</p>
-              <Button className="mt-6 rounded-full" variant="hero" onClick={() => setQuery("")}>
+              <Button className="mt-6 rounded-full" variant="hero" onClick={() => { setQuery(""); setQuickFilter("all"); }}>
                 Limpiar búsqueda
               </Button>
             </div>

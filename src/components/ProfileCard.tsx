@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { MapPin, Flame } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { MapPin, Flame, Clock } from "lucide-react";
 import type { Profile } from "@/types/profile";
 import { VerifiedBadge } from "./VerifiedBadge";
 import { Stars } from "./Stars";
@@ -12,6 +13,17 @@ interface Props {
   popular?: boolean;
 }
 
+/** "Activa hace X" pseudo-aleatorio estable basado en el id del perfil */
+const fakeActivity = (seed: string) => {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  const min = h % 240; // 0..239 minutos
+  if (min < 5) return { label: "Disponible ahora", live: true };
+  if (min < 60) return { label: `Activa hace ${min} min`, live: false };
+  const hrs = Math.floor(min / 60);
+  return { label: `Activa hace ${hrs} h`, live: false };
+};
+
 export const ProfileCard = ({ profile, index = 0, popular }: Props) => {
   const slug = profile.userNumber ? String(profile.userNumber) : profile.id;
   const tier = profile.subscription?.tier;
@@ -19,24 +31,63 @@ export const ProfileCard = ({ profile, index = 0, popular }: Props) => {
   const showTierBadge = tier === "vip" || tier === "elite";
   const showHighlight = tier === "vip" || tier === "elite";
 
+  const photos = profile.photos.slice(0, 3);
+  const [photoIdx, setPhotoIdx] = useState(0);
+  const [hovering, setHovering] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Pre-visualización: rota cada 1.2s mientras hace hover
+  useEffect(() => {
+    if (!hovering || photos.length <= 1) return;
+    intervalRef.current = setInterval(() => {
+      setPhotoIdx((i) => (i + 1) % photos.length);
+    }, 1200);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [hovering, photos.length]);
+
+  useEffect(() => {
+    if (!hovering) setPhotoIdx(0);
+  }, [hovering]);
+
+  const activity = fakeActivity(profile.id);
+
   return (
     <Link
       to={`/perfil/${slug}`}
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
       className={cn(
-        "group relative block overflow-hidden rounded-3xl bg-card ring-1 shadow-card transition-all duration-500 hover:-translate-y-1.5 hover:shadow-glow-soft animate-fade-in shimmer",
+        "group relative block overflow-hidden rounded-3xl bg-card ring-1 shadow-card card-lift animate-fade-in shimmer",
         showHighlight ? "ring-accent/40 hover:ring-accent" : "ring-border/70 hover:ring-accent/70",
       )}
       style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
     >
       <div className="relative aspect-[4/5] overflow-hidden">
-        <img
-          src={profile.photos[0]}
-          alt={`${profile.name}, ${profile.city}`}
-          loading="lazy"
-          width={768}
-          height={960}
-          className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
-        />
+        {/* Skeleton mientras carga */}
+        {!loaded && (
+          <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-muted via-secondary to-muted" />
+        )}
+
+        {/* Carrusel cross-fade en hover */}
+        {photos.map((src, i) => (
+          <img
+            key={`${src}-${i}`}
+            src={src}
+            alt={`${profile.name}, ${profile.city}`}
+            loading="lazy"
+            width={768}
+            height={960}
+            onLoad={i === 0 ? () => setLoaded(true) : undefined}
+            className={cn(
+              "absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out",
+              i === photoIdx ? "opacity-100 scale-100 group-hover:scale-110" : "opacity-0 scale-105",
+            )}
+          />
+        ))}
+
         <div className="absolute inset-0 overlay-bottom" />
 
         {/* Borde acento al hover */}
@@ -65,11 +116,26 @@ export const ProfileCard = ({ profile, index = 0, popular }: Props) => {
           </span>
         )}
 
-        {/* Verificado (top-right) */}
+        {/* Verificado animado (top-right) */}
         {profile.verified && (
           <span className="absolute top-3 right-3">
-            <VerifiedBadge size="sm" />
+            <VerifiedBadge size="sm" animated />
           </span>
+        )}
+
+        {/* Indicador hover dots (preview activo) */}
+        {hovering && photos.length > 1 && (
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-1">
+            {photos.map((_, i) => (
+              <span
+                key={i}
+                className={cn(
+                  "h-1 rounded-full transition-all duration-300",
+                  i === photoIdx ? "w-5 bg-accent" : "w-3 bg-foreground/40",
+                )}
+              />
+            ))}
+          </div>
         )}
 
         {/* ID único */}
@@ -94,6 +160,13 @@ export const ProfileCard = ({ profile, index = 0, popular }: Props) => {
           </h3>
           <p className="mt-1 flex items-center gap-1 text-xs text-foreground/85">
             <MapPin className="h-3 w-3 text-accent" /> {profile.city}
+          </p>
+          <p className={cn(
+            "mt-1 inline-flex items-center gap-1 text-[10px] font-medium",
+            activity.live ? "text-[hsl(var(--online))]" : "text-foreground/70",
+          )}>
+            {activity.live ? <span className="dot-online" /> : <Clock className="h-2.5 w-2.5" />}
+            {activity.label}
           </p>
         </div>
       </div>

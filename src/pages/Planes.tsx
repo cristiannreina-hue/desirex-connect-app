@@ -214,9 +214,9 @@ const PlanCard = ({ plan, onSelect }: { plan: PlanDef; onSelect: () => void }) =
 
     <Button
       onClick={onSelect}
-      variant={plan.highlight ? "hero" : "outline"}
+      variant={plan.highlight ? "default" : "outline"}
       size="lg"
-      className="mt-6 rounded-full w-full"
+      className={cn("mt-6 rounded-full w-full", plan.highlight && "btn-shine border-0")}
     >
       {plan.tier === "starter" ? "Empezar gratis" : "Elegir plan"}
     </Button>
