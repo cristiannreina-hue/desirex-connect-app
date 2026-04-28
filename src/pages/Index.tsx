@@ -186,6 +186,30 @@ const Index = () => {
   );
   const activeNow = useMemo(() => visible.slice(0, 12), [visible]);
 
+  /* === Secciones regionales nacionales === */
+  const bogotaTop = useMemo(
+    () => [...visible].filter((p) => p.city === "Bogotá").slice(0, 8),
+    [visible],
+  );
+  const costaTop = useMemo(
+    () =>
+      [...visible]
+        .filter((p) => REGION_COSTA.includes(p.city))
+        .sort((a, b) => (b.viewCount ?? 0) - (a.viewCount ?? 0))
+        .slice(0, 8),
+    [visible],
+  );
+  const ejeCafeteroNew = useMemo(() => {
+    const cutoff = Date.now() - 1000 * 60 * 60 * 24 * 60; // 60 días
+    return [...visible]
+      .filter((p) => REGION_EJE_CAFETERO.includes(p.city))
+      .filter((p) => {
+        const created = (p as Profile & { createdAt?: string }).createdAt;
+        return created ? new Date(created).getTime() > cutoff : true;
+      })
+      .slice(0, 8);
+  }, [visible]);
+
   const totalCities = new Set(allProfiles.map((p) => p.city)).size;
   const activeCount = Math.max(12, Math.floor(allProfiles.length * 0.4));
 
