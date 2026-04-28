@@ -22,9 +22,9 @@ const ES: Dict = {
   "gateway.creator.cta": "Crear cuenta de creador",
 
   "philosophy.tag": "Filosofía DeseoX",
-  "philosophy.title": "Dopamina real",
+  "philosophy.title": "Calidez auténtica, conexiones reales",
   "philosophy.body":
-    "DeseoX: Supera la saturación digital. Rescatamos el valor del encuentro auténtico y el bienestar a través de conexiones seguras y reales.",
+    "DeseoX une el calor humano colombiano con la seguridad de la verificación digital. Desde Bogotá hasta la Costa, del Eje Cafetero al Valle, rescatamos el valor del encuentro auténtico en todo el territorio nacional 🇨🇴.",
 
   "profile.about": "Sobre mí",
   "profile.services": "Servicios",
