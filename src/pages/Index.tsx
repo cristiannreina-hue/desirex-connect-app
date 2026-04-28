@@ -512,7 +512,34 @@ const Index = () => {
             })}
           </div>
 
-          {loading ? (
+          {/* Selector nacional de ciudades — prioridad a las 6 principales */}
+          <div className="space-y-2">
+            <p className="text-[11px] uppercase tracking-widest text-muted-foreground font-bold">
+              🇨🇴 Ciudades destacadas de Colombia
+            </p>
+            <div className="flex items-center gap-2 flex-wrap">
+              {(["all", ...PRIORITY_CITIES] as const).map((c) => {
+                const active = cityFilter === c;
+                const count = c === "all" ? visible.length : allProfiles.filter((p) => p.city === c).length;
+                return (
+                  <button
+                    key={c}
+                    onClick={() => setCityFilter(c)}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 ring-1",
+                      active
+                        ? "bg-accent text-accent-foreground ring-accent shadow-glow-soft"
+                        : "bg-secondary/40 text-muted-foreground ring-border hover:text-foreground hover:ring-accent/60",
+                    )}
+                  >
+                    {c === "all" ? "Toda Colombia" : c}
+                    <span className={cn("text-[10px] opacity-70", active && "opacity-90")}>({count})</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
             <ProfileCardSkeleton count={8} />
           ) : visible.length === 0 ? (
             <div className="card-glass rounded-3xl p-12 text-center">
