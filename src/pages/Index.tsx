@@ -186,18 +186,32 @@ const Index = () => {
       <Header />
 
       {/* ================= HERO ================= */}
-      <section className="relative overflow-hidden border-b border-border/60">
+      <section className="relative overflow-hidden border-b border-border/60 min-h-hero flex items-center">
         <div aria-hidden className="absolute inset-0 -z-10 mesh-bg" />
-        <div aria-hidden className="absolute inset-0 -z-10 grid-deco opacity-30" />
+        <div aria-hidden className="absolute inset-0 -z-10 grid-deco opacity-25" />
+        {/* Degradado profundo: negro mate → púrpura nocturno */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl opacity-30 animate-float-slow"
-          style={{ background: "radial-gradient(circle, hsl(var(--accent) / 0.5), transparent 70%)" }}
+          className="absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 60% at 50% 0%, hsl(265 40% 14% / 0.6), transparent 60%), linear-gradient(180deg, hsl(240 8% 7%) 0%, hsl(250 14% 5%) 100%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full blur-3xl opacity-40 animate-float-slow"
+          style={{ background: "radial-gradient(circle, hsl(var(--accent) / 0.45), transparent 70%)" }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-32 -right-24 h-96 w-96 rounded-full blur-3xl opacity-30 animate-float-slow"
+          style={{ background: "radial-gradient(circle, hsl(265 80% 50% / 0.35), transparent 70%)" }}
         />
 
         {/* Carrusel de fondo (avatares premium) */}
         {visible.length > 0 && (
-          <div aria-hidden className="absolute inset-0 -z-10 flex opacity-[0.07]">
+          <div aria-hidden className="absolute inset-0 -z-10 flex opacity-[0.06]">
             {visible.slice(0, 6).map((p, i) => (
               <img
                 key={p.id + i}
