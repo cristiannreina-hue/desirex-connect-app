@@ -89,7 +89,8 @@ export const ProfileCard = ({ profile, index = 0, popular }: Props) => {
           />
         ))}
 
-        <div className="absolute inset-0 overlay-bottom" />
+        {/* Overlay sutil para legibilidad sobre la foto */}
+        <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none" />
 
         {/* Borde acento al hover */}
         <div
