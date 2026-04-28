@@ -186,18 +186,32 @@ const Index = () => {
       <Header />
 
       {/* ================= HERO ================= */}
-      <section className="relative overflow-hidden border-b border-border/60">
+      <section className="relative overflow-hidden border-b border-border/60 min-h-hero flex items-center">
         <div aria-hidden className="absolute inset-0 -z-10 mesh-bg" />
-        <div aria-hidden className="absolute inset-0 -z-10 grid-deco opacity-30" />
+        <div aria-hidden className="absolute inset-0 -z-10 grid-deco opacity-25" />
+        {/* Degradado profundo: negro mate → púrpura nocturno */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl opacity-30 animate-float-slow"
-          style={{ background: "radial-gradient(circle, hsl(var(--accent) / 0.5), transparent 70%)" }}
+          className="absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 60% at 50% 0%, hsl(265 40% 14% / 0.6), transparent 60%), linear-gradient(180deg, hsl(240 8% 7%) 0%, hsl(250 14% 5%) 100%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full blur-3xl opacity-40 animate-float-slow"
+          style={{ background: "radial-gradient(circle, hsl(var(--accent) / 0.45), transparent 70%)" }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-32 -right-24 h-96 w-96 rounded-full blur-3xl opacity-30 animate-float-slow"
+          style={{ background: "radial-gradient(circle, hsl(265 80% 50% / 0.35), transparent 70%)" }}
         />
 
         {/* Carrusel de fondo (avatares premium) */}
         {visible.length > 0 && (
-          <div aria-hidden className="absolute inset-0 -z-10 flex opacity-[0.07]">
+          <div aria-hidden className="absolute inset-0 -z-10 flex opacity-[0.06]">
             {visible.slice(0, 6).map((p, i) => (
               <img
                 key={p.id + i}
@@ -222,8 +236,8 @@ const Index = () => {
           <h1 className="mt-6 font-display text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-[0.95] min-h-[3em] flex items-center justify-center">
             <span key={slideIdx} className="animate-fade-in">
               {HERO_SLIDES[slideIdx].title.split(" ").map((w, i, arr) =>
-                i === arr.length - 2 ? (
-                  <span key={i} className="text-gradient text-shadow-glow"> {w} </span>
+                i === arr.length - 2 || i === arr.length - 1 ? (
+                  <span key={i} className="text-gradient hero-text-glow"> {w} </span>
                 ) : (
                   <span key={i}> {w} </span>
                 ),
@@ -231,7 +245,7 @@ const Index = () => {
             </span>
           </h1>
 
-          <p key={`s-${slideIdx}`} className="mt-5 text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-fade-in">
+          <p key={`s-${slideIdx}`} className="mt-5 text-base md:text-lg text-foreground/70 max-w-2xl mx-auto leading-relaxed animate-fade-in">
             {HERO_SLIDES[slideIdx].subtitle}
           </p>
 
@@ -317,7 +331,7 @@ const Index = () => {
       <main className="flex-1 space-y-14 py-10">
         {/* TOP SEMANA */}
         {topWeek.length > 0 && (
-          <Section title="Top de la semana" icon={<Flame className="h-4 w-4" />} subtitle="Los más buscados">
+          <Section title="Top de la semana" icon={<Flame className="h-4 w-4" />} subtitle="Los más buscados" tone="a">
             <div className="container">
               <div className="h-scroll no-scrollbar">
                 {topWeek.map((p) => (
@@ -330,7 +344,7 @@ const Index = () => {
 
         {/* MEJOR VALORADAS */}
         {bestRated.length > 0 && (
-          <Section title="Mejor valoradas" icon={<Star className="h-4 w-4" />} subtitle="Las que más reseñas positivas tienen">
+          <Section title="Mejor valoradas" icon={<Star className="h-4 w-4" />} subtitle="Las que más reseñas positivas tienen" tone="b">
             <div className="container">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
                 {bestRated.slice(0, 8).map((p, i) => (
@@ -343,7 +357,7 @@ const Index = () => {
 
         {/* EN TENDENCIA */}
         {trending.length > 0 && (
-          <Section title="En tendencia" icon={<TrendingUp className="h-4 w-4" />} subtitle="Lo que sube esta semana">
+          <Section title="En tendencia" icon={<TrendingUp className="h-4 w-4" />} subtitle="Lo que sube esta semana" tone="c">
             <div className="container">
               <div className="h-scroll no-scrollbar">
                 {trending.map((p) => (
@@ -356,7 +370,7 @@ const Index = () => {
 
         {/* DESTACADOS */}
         {featured.length > 0 && (
-          <Section title="Perfiles destacados" icon={<Crown className="h-4 w-4" />} subtitle="Plan VIP y verificados">
+          <Section title="Perfiles destacados" icon={<Crown className="h-4 w-4" />} subtitle="Plan VIP y verificados" tone="b">
             <div className="container">
               <div className="h-scroll no-scrollbar">
                 {featured.map((p) => (
@@ -373,6 +387,7 @@ const Index = () => {
             title={`Cerca de ti${topCity ? ` · ${topCity}` : ""}`}
             icon={<MapPin className="h-4 w-4" />}
             subtitle="Los más cercanos a tu zona"
+            tone="c"
           >
             <div className="container">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
@@ -386,7 +401,7 @@ const Index = () => {
 
         {/* ACTIVOS HOY */}
         {activeNow.length > 0 && (
-          <Section title="Activos hoy" icon={<span className="dot-online" />} subtitle="Conectados en este momento">
+          <Section title="Activos hoy" icon={<span className="dot-online" />} subtitle="Conectados en este momento" tone="a">
             <div className="container">
               <div className="h-scroll no-scrollbar">
                 {activeNow.map((p) => (
@@ -493,14 +508,22 @@ const Index = () => {
 };
 
 const Section = ({
-  title, subtitle, icon, children,
+  title, subtitle, icon, children, tone,
 }: {
   title: string;
   subtitle?: string;
   icon?: React.ReactNode;
   children: React.ReactNode;
+  tone?: "a" | "b" | "c";
 }) => (
-  <section className="space-y-4">
+  <section
+    className={cn(
+      "space-y-5 py-8 rounded-3xl",
+      tone === "a" && "section-tone-a",
+      tone === "b" && "section-tone-b",
+      tone === "c" && "section-tone-c",
+    )}
+  >
     <div className="container flex items-end justify-between gap-3">
       <div>
         <h2 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight inline-flex items-center gap-2">

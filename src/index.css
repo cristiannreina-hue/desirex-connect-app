@@ -9,14 +9,15 @@
 
 @layer base {
   :root {
-    /* === Base oscura sobria === */
-    --background: 220 12% 5%;            /* casi negro frío */
+    /* === Base oscura — negro mate con tinte púrpura nocturno === */
+    --background: 240 8% 6%;             /* negro mate #0F0F12 */
+    --background-deep: 250 12% 4%;       /* púrpura casi negro */
     --foreground: 30 15% 96%;
 
-    --card: 220 10% 8%;
+    --card: 240 8% 9%;                   /* gris humo */
     --card-foreground: 30 15% 96%;
 
-    --popover: 220 12% 6%;
+    --popover: 240 10% 7%;
     --popover-foreground: 30 15% 96%;
 
     /* === Único acento: ámbar cálido === */
@@ -121,7 +122,13 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-image: var(--gradient-radial-glow);
+    /* Degradado profundo: negro mate → púrpura casi negro */
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(ellipse 90% 60% at 50% -10%, hsl(var(--accent) / 0.10), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 100% 100%, hsl(265 40% 18% / 0.35), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 0% 100%, hsl(220 30% 12% / 0.45), transparent 60%),
+      linear-gradient(180deg, hsl(240 8% 6%) 0%, hsl(250 12% 4%) 100%);
     background-attachment: fixed;
     font-feature-settings: "ss01", "cv11";
     /* padding extra para no tapar contenido con bottom nav en mobile */
@@ -297,6 +304,45 @@
   @screen md {
     .pb-bottom-nav { padding-bottom: 0; }
   }
+  /* === Glassmorphism overlay para tarjetas === */
+  .glass-overlay {
+    background: linear-gradient(180deg, hsl(240 10% 6% / 0) 0%, hsl(240 10% 6% / 0.55) 45%, hsl(240 10% 4% / 0.85) 100%);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-top: 1px solid hsl(0 0% 100% / 0.08);
+  }
+
+  /* === Medalla dorada premium (verificado) === */
+  .gold-medal {
+    background: radial-gradient(circle at 30% 25%, hsl(48 100% 78%), hsl(38 90% 55%) 55%, hsl(28 80% 38%));
+    color: hsl(28 50% 15%);
+    box-shadow:
+      0 0 0 1.5px hsl(45 100% 70% / 0.9),
+      0 0 12px hsl(38 100% 55% / 0.55),
+      inset 0 1px 0 hsl(0 0% 100% / 0.45),
+      inset 0 -2px 4px hsl(28 70% 30% / 0.5);
+    animation: gold-shimmer 3.4s ease-in-out infinite;
+  }
+  @keyframes gold-shimmer {
+    0%, 100% { box-shadow: 0 0 0 1.5px hsl(45 100% 70% / 0.9), 0 0 10px hsl(38 100% 55% / 0.45), inset 0 1px 0 hsl(0 0% 100% / 0.45), inset 0 -2px 4px hsl(28 70% 30% / 0.5); }
+    50%      { box-shadow: 0 0 0 1.5px hsl(45 100% 80% / 1), 0 0 22px hsl(38 100% 60% / 0.85), inset 0 1px 0 hsl(0 0% 100% / 0.6), inset 0 -2px 4px hsl(28 70% 30% / 0.5); }
+  }
+
+  /* === Tonos de sección para ritmo visual === */
+  .section-tone-a { background: linear-gradient(180deg, hsl(240 8% 6% / 0) 0%, hsl(240 10% 8% / 0.6) 50%, hsl(240 8% 6% / 0) 100%); }
+  .section-tone-b { background: linear-gradient(180deg, hsl(250 12% 5% / 0) 0%, hsl(250 14% 9% / 0.55) 50%, hsl(250 12% 5% / 0) 100%); }
+  .section-tone-c { background: linear-gradient(180deg, hsl(240 8% 6% / 0) 0%, hsl(220 12% 10% / 0.5) 50%, hsl(240 8% 6% / 0) 100%); }
+
+  /* Hero glow naranja muy sutil tras el título */
+  .hero-text-glow { text-shadow: 0 0 28px hsl(var(--accent) / 0.55), 0 0 60px hsl(var(--accent) / 0.18); }
+
+  /* Cross-fade más natural para el carrusel de fotos */
+  .photo-fade { transition: opacity 700ms cubic-bezier(0.4, 0, 0.2, 1), transform 1200ms cubic-bezier(0.22, 1, 0.36, 1); }
+}
+
+@layer utilities {
+  .min-h-hero { min-height: 85vh; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
 }
 
 @keyframes marquee {

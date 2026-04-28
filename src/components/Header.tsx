@@ -11,7 +11,7 @@ export const Header = () => {
   const { user } = useAuth();
   const { t } = useI18n();
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-background/55 backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/40">
       <div className="container flex h-16 items-center justify-between gap-4">
         <Logo size="md" />
 
