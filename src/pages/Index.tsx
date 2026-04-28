@@ -91,6 +91,7 @@ const Index = () => {
         .filter((p) => isVisible(p.subscription?.status, p.subscription?.expiresAt));
 
       setRealProfiles(mapped);
+      setLoading(false);
     };
 
     fetchAll();
