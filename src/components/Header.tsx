@@ -55,11 +55,11 @@ export const Header = () => {
               <Link to="/auth">{t("nav.signin")}</Link>
             </Button>
           )}
-          <Button asChild variant="hero" size="sm" className="gap-2 rounded-full">
+          <Button asChild variant="hero" size="sm" className="gap-2 rounded-full btn-shine">
             <Link to={user ? "/dashboard" : "/registro"}>
               <Sparkles className="h-4 w-4" />
-              <span className="hidden sm:inline">{user ? t("nav.edit") : t("nav.create")}</span>
-              <span className="sm:hidden">{user ? "Editar" : "Crear"}</span>
+              <span className="hidden sm:inline">{user ? t("nav.edit") : "Unirme a DeseoX"}</span>
+              <span className="sm:hidden">{user ? "Editar" : "Unirme"}</span>
             </Link>
           </Button>
         </div>

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { MapPin, Flame, Clock } from "lucide-react";
+import { MapPin, Flame, Clock, ShieldCheck } from "lucide-react";
 import type { Profile } from "@/types/profile";
 import { VerifiedBadge } from "./VerifiedBadge";
 import { Stars } from "./Stars";
@@ -96,6 +96,16 @@ export const ProfileCard = ({ profile, index = 0, popular }: Props) => {
           className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
           style={{ boxShadow: "inset 0 0 0 1px hsl(var(--accent) / 0.6), inset 0 0 30px hsl(var(--accent) / 0.18)" }}
         />
+
+        {/* CTA hover: Ver detalles verificados */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-3 top-1/2 -translate-y-1/2 flex justify-center opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500"
+        >
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-background/85 backdrop-blur-md px-3 py-1.5 text-[11px] font-bold ring-1 ring-accent/60 text-accent shadow-glow-soft">
+            <ShieldCheck className="h-3.5 w-3.5" /> Ver Detalles Verificados
+          </span>
+        </div>
 
         {/* TIER (top-left) */}
         {showTierBadge && tierMeta && (
