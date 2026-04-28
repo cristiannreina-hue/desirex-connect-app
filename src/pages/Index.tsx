@@ -11,7 +11,7 @@ import { DEMO_PROFILES } from "@/data/profiles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Flame, Search, X, MapPin, Sparkles, Crown, ChevronRight, Star, TrendingUp, ShieldCheck,
+  Flame, Search, X, MapPin, Sparkles, Crown, ChevronRight, Star, TrendingUp, ShieldCheck, BadgeCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
