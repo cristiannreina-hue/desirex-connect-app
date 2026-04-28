@@ -77,6 +77,8 @@ export type Database = {
           hair_color: string | null
           height: number | null
           id: string
+          is_featured: boolean
+          is_suspended: boolean
           is_verified: boolean
           last_active_at: string
           measurements: string | null
@@ -123,6 +125,8 @@ export type Database = {
           hair_color?: string | null
           height?: number | null
           id: string
+          is_featured?: boolean
+          is_suspended?: boolean
           is_verified?: boolean
           last_active_at?: string
           measurements?: string | null
@@ -169,6 +173,8 @@ export type Database = {
           hair_color?: string | null
           height?: number | null
           id?: string
+          is_featured?: boolean
+          is_suspended?: boolean
           is_verified?: boolean
           last_active_at?: string
           measurements?: string | null
