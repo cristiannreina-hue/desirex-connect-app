@@ -507,14 +507,22 @@ const Index = () => {
 };
 
 const Section = ({
-  title, subtitle, icon, children,
+  title, subtitle, icon, children, tone,
 }: {
   title: string;
   subtitle?: string;
   icon?: React.ReactNode;
   children: React.ReactNode;
+  tone?: "a" | "b" | "c";
 }) => (
-  <section className="space-y-4">
+  <section
+    className={cn(
+      "space-y-5 py-8 rounded-3xl",
+      tone === "a" && "section-tone-a",
+      tone === "b" && "section-tone-b",
+      tone === "c" && "section-tone-c",
+    )}
+  >
     <div className="container flex items-end justify-between gap-3">
       <div>
         <h2 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight inline-flex items-center gap-2">
