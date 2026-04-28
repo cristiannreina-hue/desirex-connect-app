@@ -44,6 +44,18 @@ const Cuenta = () => {
       setPayments(pay.data ?? []);
       setProfileLoading(false);
     });
+
+    // Realtime: refleja cambios del admin (aprobación/rechazo) sin recargar
+    const channel = supabase
+      .channel(`profile-self-${user.id}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${user.id}` },
+        (payload) => setProfile(payload.new),
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [user, loading, navigate]);
 
   if (loading || !user) return null;
