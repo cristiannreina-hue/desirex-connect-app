@@ -9,14 +9,15 @@
 
 @layer base {
   :root {
-    /* === Base oscura sobria === */
-    --background: 220 12% 5%;            /* casi negro frío */
+    /* === Base oscura — negro mate con tinte púrpura nocturno === */
+    --background: 240 8% 6%;             /* negro mate #0F0F12 */
+    --background-deep: 250 12% 4%;       /* púrpura casi negro */
     --foreground: 30 15% 96%;
 
-    --card: 220 10% 8%;
+    --card: 240 8% 9%;                   /* gris humo */
     --card-foreground: 30 15% 96%;
 
-    --popover: 220 12% 6%;
+    --popover: 240 10% 7%;
     --popover-foreground: 30 15% 96%;
 
     /* === Único acento: ámbar cálido === */
