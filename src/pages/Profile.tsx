@@ -353,6 +353,17 @@ const Profile = () => {
         )}
       </main>
 
+      {/* FAB WhatsApp flotante para conversión inmediata */}
+      <a
+        href={waUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Contactar a ${profile.name} por WhatsApp`}
+        className="fab-whatsapp"
+      >
+        <MessageCircle className="h-7 w-7" />
+      </a>
+
       <Footer />
       <BottomNav />
     </div>
