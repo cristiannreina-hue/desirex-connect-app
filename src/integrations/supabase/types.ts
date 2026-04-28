@@ -61,6 +61,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_type: string
           age: number | null
           birth_date: string | null
           birth_place: string | null
@@ -70,12 +71,19 @@ export type Database = {
           department: string | null
           description: string | null
           display_name: string | null
+          exclusive_photos: string[]
+          exclusive_videos: string[]
           gender: Database["public"]["Enums"]["gender_category"]
+          hair_color: string | null
           height: number | null
           id: string
           is_verified: boolean
           last_active_at: string
+          measurements: string | null
+          nickname: string | null
           photos: string[] | null
+          preferred_language: string
+          public_photos: string[]
           rate_full_day: number | null
           rate_one_hour: number | null
           rate_short: number | null
@@ -88,13 +96,18 @@ export type Database = {
           updated_at: string
           user_number: number
           verification_id_url: string | null
+          verification_selfie_face_url: string | null
+          verification_selfie_id_url: string | null
           verification_selfie_url: string | null
           verification_status: string
           verification_submitted_at: string | null
           view_count: number
+          weight: number | null
           whatsapp: string | null
+          work_zone: string | null
         }
         Insert: {
+          account_type?: string
           age?: number | null
           birth_date?: string | null
           birth_place?: string | null
@@ -104,12 +117,19 @@ export type Database = {
           department?: string | null
           description?: string | null
           display_name?: string | null
+          exclusive_photos?: string[]
+          exclusive_videos?: string[]
           gender?: Database["public"]["Enums"]["gender_category"]
+          hair_color?: string | null
           height?: number | null
           id: string
           is_verified?: boolean
           last_active_at?: string
+          measurements?: string | null
+          nickname?: string | null
           photos?: string[] | null
+          preferred_language?: string
+          public_photos?: string[]
           rate_full_day?: number | null
           rate_one_hour?: number | null
           rate_short?: number | null
@@ -122,13 +142,18 @@ export type Database = {
           updated_at?: string
           user_number?: number
           verification_id_url?: string | null
+          verification_selfie_face_url?: string | null
+          verification_selfie_id_url?: string | null
           verification_selfie_url?: string | null
           verification_status?: string
           verification_submitted_at?: string | null
           view_count?: number
+          weight?: number | null
           whatsapp?: string | null
+          work_zone?: string | null
         }
         Update: {
+          account_type?: string
           age?: number | null
           birth_date?: string | null
           birth_place?: string | null
@@ -138,12 +163,19 @@ export type Database = {
           department?: string | null
           description?: string | null
           display_name?: string | null
+          exclusive_photos?: string[]
+          exclusive_videos?: string[]
           gender?: Database["public"]["Enums"]["gender_category"]
+          hair_color?: string | null
           height?: number | null
           id?: string
           is_verified?: boolean
           last_active_at?: string
+          measurements?: string | null
+          nickname?: string | null
           photos?: string[] | null
+          preferred_language?: string
+          public_photos?: string[]
           rate_full_day?: number | null
           rate_one_hour?: number | null
           rate_short?: number | null
@@ -156,11 +188,15 @@ export type Database = {
           updated_at?: string
           user_number?: number
           verification_id_url?: string | null
+          verification_selfie_face_url?: string | null
+          verification_selfie_id_url?: string | null
           verification_selfie_url?: string | null
           verification_status?: string
           verification_submitted_at?: string | null
           view_count?: number
+          weight?: number | null
           whatsapp?: string | null
+          work_zone?: string | null
         }
         Relationships: []
       }
@@ -316,6 +352,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_verification_and_purge: {
+        Args: { _user_id: string }
+        Returns: undefined
+      }
       award_weekly_top: { Args: never; Returns: undefined }
       extend_subscription: {
         Args: {
@@ -339,6 +379,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      reject_verification: {
+        Args: { _reason?: string; _user_id: string }
+        Returns: undefined
       }
     }
     Enums: {
