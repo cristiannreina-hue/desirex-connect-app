@@ -20,20 +20,29 @@ import type { Profile, Gender, Subscription } from "@/types/profile";
 import { GENDER_LABELS, TIER_RANK } from "@/types/profile";
 import { isVisible } from "@/lib/tier";
 import { isProfileComplete } from "@/lib/profile-completion";
+import heroCartagena from "@/assets/hero-cartagena.jpg";
+import heroPenol from "@/assets/hero-penol.jpg";
+import heroConcierge from "@/assets/hero-concierge.jpg";
 
 /* ============== Hero rotativo ============== */
 const HERO_SLIDES = [
   {
-    title: "Conexiones Reales en Toda Colombia",
+    title: "Conexiones Reales en Colombia",
     subtitle: "La red de acompañamiento más segura y exclusiva del país.",
+    bg: heroCartagena,
+    alt: "Pareja sonriente en una calle histórica de Cartagena al atardecer",
   },
   {
     title: "Calidez auténtica, bienestar digital",
     subtitle: "Conexiones reales con personas verificadas en todo el territorio nacional.",
+    bg: heroPenol,
+    alt: "Pareja en El Peñol al amanecer, paisaje colombiano premium",
   },
   {
-    title: "Verificación manual del CEO",
+    title: "Verificación manual del CEO — 100% Real",
     subtitle: "Cada perfil revisado uno a uno con cédula colombiana. Cero tolerancia con fraudes o menores.",
+    bg: heroConcierge,
+    alt: "Oficina concierge de lujo con escudo de verificación dorado",
   },
 ];
 
@@ -221,41 +230,52 @@ const Index = () => {
 
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden border-b border-border/60 min-h-hero flex items-center">
-        <div aria-hidden className="absolute inset-0 -z-10 mesh-bg" />
-        <div aria-hidden className="absolute inset-0 -z-10 grid-deco opacity-25" />
-        {/* Degradado profundo: negro mate → púrpura nocturno */}
+        {/* === FONDO CINEMATOGRÁFICO DINÁMICO (cross-fade por slide) === */}
+        <div aria-hidden className="absolute inset-0 -z-20">
+          {HERO_SLIDES.map((s, i) => (
+            <img
+              key={s.bg}
+              src={s.bg}
+              alt={s.alt}
+              fetchPriority={i === 0 ? "high" : "low"}
+              loading={i === 0 ? "eager" : "lazy"}
+              decoding="async"
+              width={1920}
+              height={1080}
+              className={cn(
+                "absolute inset-0 h-full w-full object-cover transition-opacity duration-[1400ms] ease-out will-change-[opacity,transform]",
+                i === slideIdx ? "opacity-100 scale-105 animate-[hero-zoom_8s_ease-out_forwards]" : "opacity-0 scale-100",
+              )}
+            />
+          ))}
+        </div>
+
+        {/* Scrim cinematográfico para legibilidad */}
         <div
           aria-hidden
           className="absolute inset-0 -z-10"
           style={{
             background:
-              "radial-gradient(ellipse 80% 60% at 50% 0%, hsl(265 40% 14% / 0.6), transparent 60%), linear-gradient(180deg, hsl(240 8% 7%) 0%, hsl(250 14% 5%) 100%)",
+              "radial-gradient(ellipse 70% 60% at 50% 50%, hsl(240 10% 4% / 0.35), hsl(240 10% 4% / 0.78) 75%), linear-gradient(180deg, hsl(240 10% 4% / 0.55) 0%, hsl(240 10% 3% / 0.85) 100%)",
           }}
         />
+        {/* Vignette */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full blur-3xl opacity-40 animate-float-slow"
+          className="absolute inset-0 -z-10 pointer-events-none"
+          style={{ boxShadow: "inset 0 0 220px 60px hsl(240 12% 2% / 0.85)" }}
+        />
+        {/* Toque neón ámbar */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full blur-3xl opacity-40 animate-float-slow -z-10"
           style={{ background: "radial-gradient(circle, hsl(var(--accent) / 0.45), transparent 70%)" }}
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute -bottom-32 -right-24 h-96 w-96 rounded-full blur-3xl opacity-30 animate-float-slow"
-          style={{ background: "radial-gradient(circle, hsl(265 80% 50% / 0.35), transparent 70%)" }}
+          className="pointer-events-none absolute -bottom-32 -right-24 h-96 w-96 rounded-full blur-3xl opacity-30 animate-float-slow -z-10"
+          style={{ background: "radial-gradient(circle, hsl(var(--accent) / 0.35), transparent 70%)" }}
         />
-
-        {/* Carrusel de fondo (avatares premium) */}
-        {visible.length > 0 && (
-          <div aria-hidden className="absolute inset-0 -z-10 flex opacity-[0.06]">
-            {visible.slice(0, 6).map((p, i) => (
-              <img
-                key={p.id + i}
-                src={p.photos[0]}
-                alt=""
-                className="h-full w-1/6 object-cover"
-              />
-            ))}
-          </div>
-        )}
 
         <div className="container py-14 md:py-20 text-center relative">
           {/* Activity ping */}
@@ -267,7 +287,7 @@ const Index = () => {
             <span className="font-medium">{ACTIVITY_PINGS[pingIdx]}</span>
           </span>
 
-          <h1 className="mt-6 font-display text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-[0.95] min-h-[3em] flex items-center justify-center">
+          <h1 className="mt-6 font-display text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-[0.95] min-h-[3em] flex items-center justify-center [text-shadow:0_4px_30px_rgb(0_0_0_/_0.85)]">
             <span key={slideIdx} className="animate-fade-in">
               {HERO_SLIDES[slideIdx].title.split(" ").map((w, i, arr) =>
                 i === arr.length - 2 || i === arr.length - 1 ? (
