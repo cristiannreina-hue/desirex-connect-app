@@ -540,6 +540,7 @@ const Index = () => {
             </div>
           </div>
 
+          {loading ? (
             <ProfileCardSkeleton count={8} />
           ) : visible.length === 0 ? (
             <div className="card-glass rounded-3xl p-12 text-center">
