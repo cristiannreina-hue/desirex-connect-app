@@ -7,11 +7,13 @@ import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAccountType } from "@/hooks/useAccountType";
 
 const Registro = () => {
   const { t } = useI18n();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { accountType, loading: accountTypeLoading } = useAccountType(user?.id);
   const [checkingProfile, setCheckingProfile] = useState(true);
   const [savingChoice, setSavingChoice] = useState(false);
 
@@ -26,34 +28,24 @@ const Registro = () => {
       return;
     }
 
-    let cancelled = false;
-    setCheckingProfile(true);
+    if (accountTypeLoading) {
+      setCheckingProfile(true);
+      return;
+    }
 
-    supabase
-      .from("profiles")
-      .select("account_type")
-      .eq("id", user.id)
-      .maybeSingle()
-      .then(({ data, error }) => {
-        if (cancelled) return;
-        if (error) {
-          toast.error("No se pudo validar tu perfil actual.");
-          setCheckingProfile(false);
-          return;
-        }
+    if (accountType === "creator") {
+      navigate("/dashboard", { replace: true });
+      return;
+    }
 
-        if ((data as { account_type?: string } | null)?.account_type === "creator") {
-          navigate("/dashboard", { replace: true });
-          return;
-        }
+    if (accountType === "visitor") {
+      toast.info("Tu cuenta es de visitante");
+      navigate("/", { replace: true });
+      return;
+    }
 
-        setCheckingProfile(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [authLoading, navigate, user]);
+    setCheckingProfile(false);
+  }, [accountType, accountTypeLoading, authLoading, navigate, user]);
 
   const choose = async (type: "visitor" | "creator") => {
     try {
