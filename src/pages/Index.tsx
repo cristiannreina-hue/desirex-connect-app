@@ -446,6 +446,45 @@ const Index = () => {
           </Section>
         )}
 
+        {/* ===== Secciones regionales nacionales ===== */}
+        {bogotaTop.length > 0 && (
+          <Section title="Destacados en Bogotá" icon={<Crown className="h-4 w-4" />} subtitle="Lo mejor de la capital" tone="b">
+            <div className="container">
+              <div className="h-scroll no-scrollbar">
+                {bogotaTop.map((p) => (
+                  <FeaturedProfileCard key={p.id} profile={p} active={Math.random() > 0.5} />
+                ))}
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {bogotaTop.length === 0 && allProfiles.filter((p) => p.city === "Bogotá").length === 0 && null}
+
+        {costaTop.length > 0 && (
+          <Section title="Lo más buscado en la Costa" icon={<Flame className="h-4 w-4" />} subtitle="Cartagena, Barranquilla, Santa Marta y más" tone="c">
+            <div className="container">
+              <div className="h-scroll no-scrollbar">
+                {costaTop.map((p) => (
+                  <FeaturedProfileCard key={p.id} profile={p} active={Math.random() > 0.5} />
+                ))}
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {ejeCafeteroNew.length > 0 && (
+          <Section title="Nuevos perfiles en el Eje Cafetero" icon={<Sparkles className="h-4 w-4" />} subtitle="Pereira, Manizales, Armenia" tone="a">
+            <div className="container">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+                {ejeCafeteroNew.map((p, i) => (
+                  <ProfileCard key={p.id} profile={p} index={i} popular />
+                ))}
+              </div>
+            </div>
+          </Section>
+        )}
+
         {/* FILOSOFÍA · La Experiencia DeseoX */}
         <PhilosophySection />
 
