@@ -11,6 +11,8 @@ interface Row {
   verification_status: string;
   verification_id_url: string | null;
   verification_selfie_url: string | null;
+  verification_selfie_face_url: string | null;
+  verification_selfie_id_url: string | null;
   verification_submitted_at: string | null;
 }
 
@@ -22,7 +24,7 @@ export const AdminVerifications = () => {
     setLoading(true);
     const { data } = await supabase
       .from("profiles")
-      .select("id,user_number,display_name,verification_status,verification_id_url,verification_selfie_url,verification_submitted_at")
+      .select("id,user_number,display_name,verification_status,verification_id_url,verification_selfie_url,verification_selfie_face_url,verification_selfie_id_url,verification_submitted_at")
       .eq("verification_status", "pending")
       .order("verification_submitted_at", { ascending: true });
     setRows((data as any) ?? []);
@@ -31,19 +33,17 @@ export const AdminVerifications = () => {
 
   useEffect(() => { load(); }, []);
 
-  const decide = async (id: string, approved: boolean) => {
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        verification_status: approved ? "approved" : "rejected",
-        is_verified: approved,
-      })
-      .eq("id", id);
-    if (error) {
-      toast.error("Error", { description: error.message });
-      return;
-    }
-    toast.success(approved ? "Verificación aprobada" : "Verificación rechazada");
+  const approve = async (id: string) => {
+    const { error } = await supabase.rpc("approve_verification_and_purge" as any, { _user_id: id });
+    if (error) { toast.error(error.message); return; }
+    toast.success("Verificación aprobada · selfies eliminadas");
+    setRows((r) => r.filter((x) => x.id !== id));
+  };
+
+  const reject = async (id: string) => {
+    const { error } = await supabase.rpc("reject_verification" as any, { _user_id: id, _reason: null });
+    if (error) { toast.error(error.message); return; }
+    toast.success("Verificación rechazada");
     setRows((r) => r.filter((x) => x.id !== id));
   };
 
@@ -65,28 +65,33 @@ export const AdminVerifications = () => {
   return (
     <div className="space-y-3">
       {rows.map((r) => (
-        <VerificationCard key={r.id} row={r} onDecide={decide} signed={signed} />
+        <VerificationCard key={r.id} row={r} onApprove={approve} onReject={reject} signed={signed} />
       ))}
     </div>
   );
 };
 
 const VerificationCard = ({
-  row,
-  onDecide,
-  signed,
+  row, onApprove, onReject, signed,
 }: {
   row: Row;
-  onDecide: (id: string, approved: boolean) => void;
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
   signed: (p: string | null) => Promise<string | null>;
 }) => {
-  const [idUrl, setIdUrl] = useState<string | null>(null);
-  const [selfieUrl, setSelfieUrl] = useState<string | null>(null);
+  const [faceUrl, setFaceUrl] = useState<string | null>(null);
+  const [idSelfieUrl, setIdSelfieUrl] = useState<string | null>(null);
+  const [legacyIdUrl, setLegacyIdUrl] = useState<string | null>(null);
+  const [legacySelfieUrl, setLegacySelfieUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    signed(row.verification_id_url).then(setIdUrl);
-    signed(row.verification_selfie_url).then(setSelfieUrl);
+    signed(row.verification_selfie_face_url).then(setFaceUrl);
+    signed(row.verification_selfie_id_url).then(setIdSelfieUrl);
+    signed(row.verification_id_url).then(setLegacyIdUrl);
+    signed(row.verification_selfie_url).then(setLegacySelfieUrl);
   }, [row.id]);
+
+  const useLegacy = !row.verification_selfie_face_url && !row.verification_selfie_id_url;
 
   return (
     <div className="card-glass rounded-2xl p-5">
@@ -101,18 +106,28 @@ const VerificationCard = ({
           </p>
         </div>
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" className="gap-1.5" onClick={() => onDecide(row.id, false)}>
+          <Button size="sm" variant="outline" className="gap-1.5" onClick={() => onReject(row.id)}>
             <X className="h-3.5 w-3.5" /> Rechazar
           </Button>
-          <Button size="sm" variant="hero" className="gap-1.5" onClick={() => onDecide(row.id, true)}>
-            <Check className="h-3.5 w-3.5" /> Aprobar
+          <Button size="sm" variant="hero" className="gap-1.5" onClick={() => onApprove(row.id)}>
+            <Check className="h-3.5 w-3.5" /> Aprobar y purgar
           </Button>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3">
-        <DocPreview label="Documento" url={idUrl} />
-        <DocPreview label="Selfie" url={selfieUrl} />
-      </div>
+      {useLegacy ? (
+        <div className="grid grid-cols-2 gap-3">
+          <DocPreview label="Documento (legacy)" url={legacyIdUrl} />
+          <DocPreview label="Selfie (legacy)" url={legacySelfieUrl} />
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3">
+          <DocPreview label="Selfie 1 · Rostro" url={faceUrl} />
+          <DocPreview label="Selfie 2 · Rostro + cédula" url={idSelfieUrl} />
+        </div>
+      )}
+      <p className="mt-3 text-[11px] text-muted-foreground">
+        Al aprobar, las imágenes se eliminan automáticamente del almacenamiento.
+      </p>
     </div>
   );
 };
