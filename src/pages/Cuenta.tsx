@@ -64,6 +64,13 @@ const Cuenta = () => {
   const isVerified = status === "approved";
   const completion = getCompletion(profile);
   const hasProfile = completion.done > 0;
+  const isCreator = profile?.account_type === "creator";
+  const profileCtaHref = isCreator ? "/dashboard" : "/registro";
+  const profileCtaLabel = isCreator
+    ? completion.isComplete
+      ? "Mi Panel"
+      : "Editar mis datos"
+    : "Crear mi perfil";
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -166,8 +173,8 @@ const Cuenta = () => {
                   size="sm"
                   className="mt-5 rounded-full gap-1.5 w-full sm:w-auto"
                 >
-                  <Link to="/registro">
-                    {hasProfile ? "Continuar editando" : "Crear mi perfil"}
+                  <Link to={profileCtaHref}>
+                    {isCreator || hasProfile ? profileCtaLabel : "Crear mi perfil"}
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </Button>
