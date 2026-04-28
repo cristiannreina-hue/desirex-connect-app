@@ -7,8 +7,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import {
-  ShieldCheck, LogOut, Sparkles, ArrowRight, Clock, CheckCircle2, Circle, Eye, EyeOff,
+  ShieldCheck, LogOut, Sparkles, ArrowRight, Clock, CheckCircle2, Circle, Eye, EyeOff, Crown, Receipt,
 } from "lucide-react";
+import { TIER_LABELS } from "@/types/profile";
 import { getCompletion } from "@/lib/profile-completion";
 import { cn } from "@/lib/utils";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -20,6 +21,8 @@ const Cuenta = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [profileLoading, setProfileLoading] = useState(true);
+  const [subs, setSubs] = useState<any[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
 
   useEffect(() => { document.title = "Mi cuenta · DeseoX"; }, []);
 
@@ -29,15 +32,18 @@ const Cuenta = () => {
       navigate("/auth", { replace: true });
       return;
     }
-    supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        setProfile(data);
-        setProfileLoading(false);
-      });
+    Promise.all([
+      supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+      supabase.from("subscriptions").select("tier,status,started_at,expires_at")
+        .eq("user_id", user.id).order("expires_at", { ascending: false }),
+      supabase.from("payments").select("amount_cents,currency,status,tier,paid_at,created_at")
+        .eq("user_id", user.id).order("created_at", { ascending: false }).limit(10),
+    ]).then(([p, s, pay]) => {
+      setProfile(p.data);
+      setSubs(s.data ?? []);
+      setPayments(pay.data ?? []);
+      setProfileLoading(false);
+    });
   }, [user, loading, navigate]);
 
   if (loading || !user) return null;
