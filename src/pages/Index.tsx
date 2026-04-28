@@ -236,8 +236,8 @@ const Index = () => {
           <h1 className="mt-6 font-display text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-[0.95] min-h-[3em] flex items-center justify-center">
             <span key={slideIdx} className="animate-fade-in">
               {HERO_SLIDES[slideIdx].title.split(" ").map((w, i, arr) =>
-                i === arr.length - 2 ? (
-                  <span key={i} className="text-gradient text-shadow-glow"> {w} </span>
+                i === arr.length - 2 || i === arr.length - 1 ? (
+                  <span key={i} className="text-gradient hero-text-glow"> {w} </span>
                 ) : (
                   <span key={i}> {w} </span>
                 ),
@@ -245,7 +245,7 @@ const Index = () => {
             </span>
           </h1>
 
-          <p key={`s-${slideIdx}`} className="mt-5 text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-fade-in">
+          <p key={`s-${slideIdx}`} className="mt-5 text-base md:text-lg text-foreground/70 max-w-2xl mx-auto leading-relaxed animate-fade-in">
             {HERO_SLIDES[slideIdx].subtitle}
           </p>
 
