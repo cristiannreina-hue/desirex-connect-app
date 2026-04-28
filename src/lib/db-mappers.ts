@@ -13,21 +13,34 @@ type Row = Tables<"profiles"> & {
 };
 
 export function dbToProfile(p: Row, sub?: Subscription): Profile {
+  const anyP = p as any;
+  const publicPhotos: string[] = anyP.public_photos ?? [];
+  const legacy: string[] = anyP.photos ?? [];
+  // Si hay fotos públicas explícitas, usarlas; si no, fallback al campo legacy
+  const photos = publicPhotos.length > 0 ? publicPhotos : legacy;
   return {
     id: p.id,
     userNumber: p.user_number ?? undefined,
-    name: p.display_name ?? "Sin nombre",
+    name: anyP.nickname || p.display_name || "Sin nombre",
+    nickname: anyP.nickname ?? undefined,
     age: p.age ?? 18,
     birthDate: p.birth_date ?? "",
     birthPlace: p.birth_place ?? "",
     height: p.height ?? 0,
+    weight: anyP.weight ?? undefined,
+    hairColor: anyP.hair_color ?? undefined,
+    measurements: anyP.measurements ?? undefined,
     country: "Colombia",
     department: p.department ?? "",
     city: p.city ?? "",
+    workZone: anyP.work_zone ?? undefined,
     category: (p.category as Category) ?? "femenino",
     serviceType: (p.service_type as ServiceType) ?? "hetero",
     gender: (p.gender as Gender) ?? "mujeres",
-    photos: p.photos ?? [],
+    photos,
+    publicPhotos,
+    exclusivePhotos: anyP.exclusive_photos ?? [],
+    exclusiveVideos: anyP.exclusive_videos ?? [],
     rates: {
       short: p.rate_short ?? undefined,
       oneHour: p.rate_one_hour ?? undefined,
@@ -38,6 +51,7 @@ export function dbToProfile(p: Row, sub?: Subscription): Profile {
     services: p.services ?? [],
     whatsapp: p.whatsapp ?? "",
     telegram: p.telegram ?? "",
+    accountType: (anyP.account_type as any) ?? "visitor",
     verified: p.is_verified ?? false,
     ratingAvg: p.rating_avg ?? 0,
     ratingCount: p.rating_count ?? 0,

@@ -32,26 +32,38 @@ export interface Subscription {
   expiresAt: string; // ISO
 }
 
+export type AccountType = "visitor" | "creator";
+
 export interface Profile {
   id: string;
   userNumber?: number;
   name: string;
+  nickname?: string;
   age: number;
   birthDate: string;
   birthPlace: string;
   height: number;
+  weight?: number;
+  hairColor?: string;
+  measurements?: string;
   country: string;
   department: string;
   city: string;
+  workZone?: string;
   category: Category;
   serviceType: ServiceType;
   gender: Gender;
+  /** Compat: galería pública (3 fotos limpias) */
   photos: string[];
+  publicPhotos?: string[];
+  exclusivePhotos?: string[]; // storage paths en bucket privado exclusive-media
+  exclusiveVideos?: string[]; // storage paths en bucket privado exclusive-media
   rates: Rates;
   description: string;
   services: string[];
   whatsapp: string;
   telegram: string;
+  accountType?: AccountType;
   verified?: boolean;
   ratingAvg?: number;
   ratingCount?: number;
