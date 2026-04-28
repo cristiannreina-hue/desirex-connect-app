@@ -361,6 +361,9 @@ const Index = () => {
           </Section>
         )}
 
+        {/* FILOSOFÍA · La Experiencia DeseoX */}
+        <PhilosophySection />
+
         {/* EXPLORAR */}
         <section id="explorar" className="container space-y-6 scroll-mt-32">
           <div>
