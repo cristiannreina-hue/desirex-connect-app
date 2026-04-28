@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
@@ -7,33 +6,12 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/lib/i18n";
 import { LangSwitcher } from "@/components/LangSwitcher";
-import { supabase } from "@/integrations/supabase/client";
+import { useAccountType } from "@/hooks/useAccountType";
 
 export const Header = () => {
   const { user } = useAuth();
   const { t } = useI18n();
-  const [accountType, setAccountType] = useState<"visitor" | "creator" | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    if (!user) {
-      setAccountType(null);
-      return;
-    }
-    supabase
-      .from("profiles")
-      .select("account_type")
-      .eq("id", user.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (cancelled) return;
-        const t = (data as any)?.account_type;
-        setAccountType(t === "creator" ? "creator" : t === "visitor" ? "visitor" : null);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [user]);
+  const { accountType } = useAccountType(user?.id);
 
   const creatorCtaHref = !user ? "/registro" : accountType === "creator" ? "/dashboard" : "/registro";
   const creatorCtaLabel = !user
