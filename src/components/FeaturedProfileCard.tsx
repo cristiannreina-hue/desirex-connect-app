@@ -21,7 +21,7 @@ export const FeaturedProfileCard = ({ profile, active }: Props) => {
     <Link
       to={`/perfil/${slug}`}
       className={cn(
-        "group relative block w-[260px] sm:w-[280px] overflow-hidden rounded-3xl bg-card ring-1 shadow-card transition-all duration-500 hover:-translate-y-1.5 hover:shadow-glow-soft",
+        "group relative block w-[260px] sm:w-[280px] overflow-hidden rounded-3xl bg-card ring-1 shadow-card card-lift",
         tier === "vip" ? "ring-accent" : "ring-border/70 hover:ring-accent/60",
       )}
     >
