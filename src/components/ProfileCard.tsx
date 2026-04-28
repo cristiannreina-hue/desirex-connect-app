@@ -60,12 +60,13 @@ export const ProfileCard = ({ profile, index = 0, popular }: Props) => {
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
       className={cn(
-        "group relative block overflow-hidden rounded-3xl bg-card ring-1 shadow-card card-lift animate-fade-in shimmer",
-        showHighlight ? "ring-accent/40 hover:ring-accent" : "ring-border/70 hover:ring-accent/70",
+        "group relative block overflow-hidden bg-card card-lift animate-fade-in shimmer",
+        "rounded-3xl border border-white/[0.06]",
+        showHighlight ? "ring-1 ring-accent/40 hover:ring-accent" : "hover:border-accent/40",
       )}
-      style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
+      style={{ animationDelay: `${Math.min(index, 8) * 60}ms`, borderRadius: "24px" }}
     >
-      <div className="relative aspect-[4/5] overflow-hidden">
+      <div className="relative aspect-[4/5] overflow-hidden" style={{ borderRadius: "24px" }}>
         {/* Skeleton mientras carga */}
         {!loaded && (
           <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-muted via-secondary to-muted" />
@@ -82,7 +83,7 @@ export const ProfileCard = ({ profile, index = 0, popular }: Props) => {
             height={960}
             onLoad={i === 0 ? () => setLoaded(true) : undefined}
             className={cn(
-              "absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out",
+              "absolute inset-0 h-full w-full object-cover photo-fade",
               i === photoIdx ? "opacity-100 scale-100 group-hover:scale-110" : "opacity-0 scale-105",
             )}
           />
