@@ -117,7 +117,7 @@ const Index = () => {
 
   /* Hero rotativo */
   useEffect(() => {
-    const id = setInterval(() => setSlideIdx((i) => (i + 1) % HERO_SLIDES.length), 5000);
+    const id = setInterval(() => setSlideIdx((i) => (i + 1) % HERO_SLIDES.length), 10000);
     return () => clearInterval(id);
   }, []);
 
