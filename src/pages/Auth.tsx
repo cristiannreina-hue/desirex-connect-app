@@ -35,7 +35,6 @@ const Auth = () => {
   const [birthDate, setBirthDate] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Intent (visitor/creator) viene de /registro vía sessionStorage o ?intent=
   const intent: "visitor" | "creator" = useMemo(() => {
     if (intentParam === "creator" || intentParam === "visitor") return intentParam;
     try {
@@ -45,7 +44,6 @@ const Auth = () => {
     return "visitor";
   }, [intentParam]);
 
-  // Si llega con ?intent=*, mostramos signup directamente
   useEffect(() => {
     if (intentParam === "creator" || intentParam === "visitor") setMode("signup");
   }, [intentParam]);
@@ -54,7 +52,6 @@ const Auth = () => {
   const ageValid = birthDate !== "" && age >= 18;
   const ageError = birthDate !== "" && age < 18;
 
-  // Hoy menos 18 años (para max del input)
   const maxDob = useMemo(() => {
     const d = new Date();
     return new Date(d.getFullYear() - 18, d.getMonth(), d.getDate()).toISOString().slice(0, 10);
@@ -83,39 +80,29 @@ const Auth = () => {
         if (!birthDate) throw new Error("La fecha de nacimiento es obligatoria");
         if (age < 18) throw new Error("Debes ser mayor de 18 años para acceder a esta plataforma");
 
-        const { error } = await supabase.auth.signUp({
+        // Enviar OTP de 6 dígitos al correo. shouldCreateUser=true crea el usuario al verificar.
+        const { error } = await supabase.auth.signInWithOtp({
           email,
-          password,
           options: {
-            emailRedirectTo: `${window.location.origin}/cuenta`,
+            shouldCreateUser: true,
             data: { birth_date: birthDate, account_type: intent },
           },
         });
         if (error) throw error;
 
-        // Auto-login (en caso de auto-confirm)
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-        if (signInError && !signInError.message.toLowerCase().includes("already")) {
-          toast({
-            title: "Revisa tu email",
-            description: "Confirma tu cuenta para iniciar sesión.",
-          });
-          return;
-        }
+        // Guardamos los datos del registro temporalmente para usarlos tras la verificación
+        try {
+          sessionStorage.setItem(
+            "deseox.pendingSignup",
+            JSON.stringify({ email, password, birthDate, age, intent }),
+          );
+        } catch {}
 
-        // Guardar fecha de nacimiento, edad calculada y tipo de cuenta en el perfil
-        const uid = signInData?.user?.id;
-        if (uid) {
-          await supabase.from("profiles").upsert({
-            id: uid,
-            birth_date: birthDate,
-            age,
-            account_type: intent,
-          });
-        }
-
-        toast({ title: "¡Bienvenido a DeseoX!", description: "Tu cuenta fue creada." });
-        navigate(intent === "creator" ? "/dashboard" : "/cuenta", { replace: true });
+        toast({
+          title: "Código enviado",
+          description: "Revisa tu correo y escribe el código de 6 dígitos.",
+        });
+        navigate("/verificar", { replace: true });
       } else if (mode === "login") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -168,7 +155,7 @@ const Auth = () => {
               {mode === "login"
                 ? "Inicia sesión para gestionar tu perfil."
                 : mode === "signup"
-                  ? `Cuenta de ${intent === "creator" ? "creador" : "visitante"} · solo mayores de 18.`
+                  ? `Cuenta de ${intent === "creator" ? "creador" : "visitante"} · te enviaremos un código de 6 dígitos.`
                   : "Te enviaremos un enlace para restablecerla."}
             </p>
 
@@ -281,7 +268,7 @@ const Auth = () => {
                   : mode === "login"
                     ? "Iniciar sesión"
                     : mode === "signup"
-                      ? "Crear cuenta"
+                      ? "Enviar código"
                       : "Enviar enlace"}
                 {!loading && <ArrowRight className="h-4 w-4" />}
               </Button>

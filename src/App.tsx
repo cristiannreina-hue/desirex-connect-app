@@ -11,6 +11,7 @@ import Registro from "./pages/Registro.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import Auth from "./pages/Auth.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
+import VerifyOtp from "./pages/VerifyOtp.tsx";
 import Verificacion from "./pages/Verificacion.tsx";
 import Cuenta from "./pages/Cuenta.tsx";
 import Planes from "./pages/Planes.tsx";
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/editar-perfil" element={<Navigate to="/dashboard" replace />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/verificar" element={<VerifyOtp />} />
             <Route path="/verificacion" element={<Verificacion />} />
             <Route path="/cuenta" element={<Cuenta />} />
             <Route path="/planes" element={<Planes />} />
