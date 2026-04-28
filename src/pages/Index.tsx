@@ -57,9 +57,11 @@ const sortByTier = (a: Profile, b: Profile) => {
 const Index = () => {
   const [gender, setGender] = useState<Gender>("mujeres");
   const [realProfiles, setRealProfiles] = useState<Profile[]>([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [slideIdx, setSlideIdx] = useState(0);
   const [pingIdx, setPingIdx] = useState(0);
+  const [quickFilter, setQuickFilter] = useState<"all" | "new" | "verified" | "nearby">("all");
 
   /* Carga */
   useEffect(() => {
