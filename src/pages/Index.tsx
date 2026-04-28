@@ -256,7 +256,7 @@ const Index = () => {
           className="absolute inset-0 -z-10"
           style={{
             background:
-              "radial-gradient(ellipse 70% 60% at 50% 50%, hsl(240 10% 4% / 0.35), hsl(240 10% 4% / 0.78) 75%), linear-gradient(180deg, hsl(240 10% 4% / 0.55) 0%, hsl(240 10% 3% / 0.85) 100%)",
+              "radial-gradient(ellipse 80% 70% at 50% 45%, hsl(240 10% 4% / 0.05), hsl(240 10% 4% / 0.45) 80%), linear-gradient(180deg, hsl(240 10% 4% / 0.15) 0%, hsl(240 10% 4% / 0.25) 45%, hsl(240 10% 3% / 0.75) 100%)",
           }}
         />
         {/* Vignette */}
