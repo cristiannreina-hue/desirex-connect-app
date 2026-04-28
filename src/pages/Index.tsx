@@ -24,24 +24,32 @@ import { isProfileComplete } from "@/lib/profile-completion";
 /* ============== Hero rotativo ============== */
 const HERO_SLIDES = [
   {
-    title: "Conexiones Auténticas, Seguridad Garantizada",
-    subtitle: "La experiencia concierge para encuentros adultos verificados.",
+    title: "Conexiones Reales en Toda Colombia",
+    subtitle: "La red de acompañamiento más segura y exclusiva del país.",
   },
   {
-    title: "Dopamina real, bienestar digital",
-    subtitle: "Superamos la saturación: rescatamos el valor del encuentro auténtico.",
+    title: "Calidez auténtica, bienestar digital",
+    subtitle: "Conexiones reales con personas verificadas en todo el territorio nacional.",
   },
   {
     title: "Verificación manual del CEO",
-    subtitle: "Cada perfil revisado uno a uno. Cero tolerancia con fraudes o menores.",
+    subtitle: "Cada perfil revisado uno a uno con cédula colombiana. Cero tolerancia con fraudes o menores.",
   },
 ];
 
+/* Principales ciudades de Colombia (priorizadas en filtros y búsqueda) */
+const PRIORITY_CITIES = ["Bogotá", "Medellín", "Cali", "Barranquilla", "Cartagena", "Pereira"] as const;
+
+/* Agrupaciones regionales para secciones dinámicas */
+const REGION_COSTA = ["Barranquilla", "Cartagena", "Santa Marta", "Riohacha", "Sincelejo", "Montería", "Valledupar", "Ciénaga", "Soledad"];
+const REGION_EJE_CAFETERO = ["Pereira", "Manizales", "Armenia", "Dosquebradas", "Santa Rosa de Cabal", "Calarcá", "Chinchiná", "Villamaría"];
+
 const ACTIVITY_PINGS = [
   "Alguien vio este perfil hace 2 min",
-  "Nuevo usuario registrado",
-  "Perfil destacado actualizado",
+  "Nuevo usuario registrado en Bogotá",
+  "Perfil destacado actualizado en Medellín",
   "+3 reseñas nuevas en los últimos 10 min",
+  "Verificación KYC aprobada en Cali",
 ];
 
 /* ============== Helpers ============== */
