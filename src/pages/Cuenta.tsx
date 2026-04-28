@@ -14,11 +14,13 @@ import { getCompletion } from "@/lib/profile-completion";
 import { cn } from "@/lib/utils";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { Shield } from "lucide-react";
+import { useAccountType } from "@/hooks/useAccountType";
 
 const Cuenta = () => {
   const { user, loading, signOut } = useAuth();
   const { isAdmin } = useIsAdmin();
   const navigate = useNavigate();
+  const { accountType } = useAccountType(user?.id);
   const [profile, setProfile] = useState<any>(null);
   const [profileLoading, setProfileLoading] = useState(true);
   const [subs, setSubs] = useState<any[]>([]);
@@ -64,13 +66,28 @@ const Cuenta = () => {
   const isVerified = status === "approved";
   const completion = getCompletion(profile);
   const hasProfile = completion.done > 0;
-  const isCreator = profile?.account_type === "creator";
-  const profileCtaHref = isCreator ? "/dashboard" : "/registro";
+  const isCreator = (accountType ?? profile?.account_type) === "creator";
+  const isVisitor = (accountType ?? profile?.account_type) === "visitor";
   const profileCtaLabel = isCreator
     ? completion.isComplete
       ? "Mi Panel"
       : "Editar mis datos"
     : "Crear mi perfil";
+
+  const handleProfileAction = () => {
+    if (isCreator) {
+      navigate("/dashboard");
+      return;
+    }
+
+    if (isVisitor) {
+      toast.error("Tu cuenta es de visitante");
+      navigate("/", { replace: true });
+      return;
+    }
+
+    navigate("/registro");
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -168,15 +185,13 @@ const Cuenta = () => {
                 </ul>
 
                 <Button
-                  asChild
                   variant="hero"
                   size="sm"
                   className="mt-5 rounded-full gap-1.5 w-full sm:w-auto"
+                  onClick={handleProfileAction}
                 >
-                  <Link to={profileCtaHref}>
-                    {isCreator || hasProfile ? profileCtaLabel : "Crear mi perfil"}
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
+                  {isCreator || hasProfile ? profileCtaLabel : "Crear mi perfil"}
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </div>
