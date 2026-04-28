@@ -331,7 +331,7 @@ const Index = () => {
       <main className="flex-1 space-y-14 py-10">
         {/* TOP SEMANA */}
         {topWeek.length > 0 && (
-          <Section title="Top de la semana" icon={<Flame className="h-4 w-4" />} subtitle="Los más buscados">
+          <Section title="Top de la semana" icon={<Flame className="h-4 w-4" />} subtitle="Los más buscados" tone="a">
             <div className="container">
               <div className="h-scroll no-scrollbar">
                 {topWeek.map((p) => (
@@ -344,7 +344,7 @@ const Index = () => {
 
         {/* MEJOR VALORADAS */}
         {bestRated.length > 0 && (
-          <Section title="Mejor valoradas" icon={<Star className="h-4 w-4" />} subtitle="Las que más reseñas positivas tienen">
+          <Section title="Mejor valoradas" icon={<Star className="h-4 w-4" />} subtitle="Las que más reseñas positivas tienen" tone="b">
             <div className="container">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
                 {bestRated.slice(0, 8).map((p, i) => (
@@ -357,7 +357,7 @@ const Index = () => {
 
         {/* EN TENDENCIA */}
         {trending.length > 0 && (
-          <Section title="En tendencia" icon={<TrendingUp className="h-4 w-4" />} subtitle="Lo que sube esta semana">
+          <Section title="En tendencia" icon={<TrendingUp className="h-4 w-4" />} subtitle="Lo que sube esta semana" tone="c">
             <div className="container">
               <div className="h-scroll no-scrollbar">
                 {trending.map((p) => (
@@ -370,7 +370,7 @@ const Index = () => {
 
         {/* DESTACADOS */}
         {featured.length > 0 && (
-          <Section title="Perfiles destacados" icon={<Crown className="h-4 w-4" />} subtitle="Plan VIP y verificados">
+          <Section title="Perfiles destacados" icon={<Crown className="h-4 w-4" />} subtitle="Plan VIP y verificados" tone="b">
             <div className="container">
               <div className="h-scroll no-scrollbar">
                 {featured.map((p) => (
@@ -400,7 +400,7 @@ const Index = () => {
 
         {/* ACTIVOS HOY */}
         {activeNow.length > 0 && (
-          <Section title="Activos hoy" icon={<span className="dot-online" />} subtitle="Conectados en este momento">
+          <Section title="Activos hoy" icon={<span className="dot-online" />} subtitle="Conectados en este momento" tone="a">
             <div className="container">
               <div className="h-scroll no-scrollbar">
                 {activeNow.map((p) => (
