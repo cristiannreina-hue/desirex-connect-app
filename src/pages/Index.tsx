@@ -387,6 +387,7 @@ const Index = () => {
             title={`Cerca de ti${topCity ? ` · ${topCity}` : ""}`}
             icon={<MapPin className="h-4 w-4" />}
             subtitle="Los más cercanos a tu zona"
+            tone="c"
           >
             <div className="container">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
