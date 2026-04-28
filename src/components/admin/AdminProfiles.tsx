@@ -22,7 +22,7 @@ interface Row {
   photos: string[] | null;
 }
 
-const CITIES = ["Todas", "Medellín", "Bogotá", "Cali", "Cartagena"];
+const CITIES = ["Todas", "Bogotá", "Medellín", "Cali", "Barranquilla", "Cartagena", "Pereira"];
 const CATEGORIES = ["Todas", "Escort", "Gigoló", "Trans"];
 
 export const AdminProfiles = () => {
