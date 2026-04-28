@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -7,19 +7,58 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { Mail, Lock, Sparkles, ShieldCheck, ArrowRight } from "lucide-react";
+import { Mail, Lock, Sparkles, ShieldCheck, ArrowRight, Calendar as CalendarIcon, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 type Mode = "login" | "signup" | "forgot";
 
+const calculateAge = (dob: string): number => {
+  if (!dob) return 0;
+  const today = new Date();
+  const birth = new Date(dob);
+  if (Number.isNaN(birth.getTime())) return 0;
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  return age;
+};
+
 const Auth = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [params] = useSearchParams();
+  const intentParam = params.get("intent");
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Intent (visitor/creator) viene de /registro vía sessionStorage o ?intent=
+  const intent: "visitor" | "creator" = useMemo(() => {
+    if (intentParam === "creator" || intentParam === "visitor") return intentParam;
+    try {
+      const v = sessionStorage.getItem("deseox.intent");
+      if (v === "creator" || v === "visitor") return v;
+    } catch {}
+    return "visitor";
+  }, [intentParam]);
+
+  // Si llega con ?intent=*, mostramos signup directamente
+  useEffect(() => {
+    if (intentParam === "creator" || intentParam === "visitor") setMode("signup");
+  }, [intentParam]);
+
+  const age = useMemo(() => calculateAge(birthDate), [birthDate]);
+  const ageValid = birthDate !== "" && age >= 18;
+  const ageError = birthDate !== "" && age < 18;
+
+  // Hoy menos 18 años (para max del input)
+  const maxDob = useMemo(() => {
+    const d = new Date();
+    return new Date(d.getFullYear() - 18, d.getMonth(), d.getDate()).toISOString().slice(0, 10);
+  }, []);
 
   useEffect(() => {
     document.title =
@@ -41,19 +80,22 @@ const Auth = () => {
       if (mode === "signup") {
         if (password.length < 6) throw new Error("La contraseña debe tener al menos 6 caracteres");
         if (password !== confirmPassword) throw new Error("Las contraseñas no coinciden");
+        if (!birthDate) throw new Error("La fecha de nacimiento es obligatoria");
+        if (age < 18) throw new Error("Debes ser mayor de 18 años para acceder a esta plataforma");
 
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/cuenta` },
+          options: {
+            emailRedirectTo: `${window.location.origin}/cuenta`,
+            data: { birth_date: birthDate, account_type: intent },
+          },
         });
         if (error) throw error;
 
-        // Auto-login: si auto-confirm está activo, signUp ya devuelve sesión.
-        // Por seguridad, intentamos signIn explícito por si acaso.
-        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+        // Auto-login (en caso de auto-confirm)
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError && !signInError.message.toLowerCase().includes("already")) {
-          // Si requiere confirmación de email, avisamos.
           toast({
             title: "Revisa tu email",
             description: "Confirma tu cuenta para iniciar sesión.",
@@ -61,8 +103,19 @@ const Auth = () => {
           return;
         }
 
+        // Guardar fecha de nacimiento, edad calculada y tipo de cuenta en el perfil
+        const uid = signInData?.user?.id;
+        if (uid) {
+          await supabase.from("profiles").upsert({
+            id: uid,
+            birth_date: birthDate,
+            age,
+            account_type: intent,
+          });
+        }
+
         toast({ title: "¡Bienvenido a DeseoX!", description: "Tu cuenta fue creada." });
-        navigate("/cuenta", { replace: true });
+        navigate(intent === "creator" ? "/dashboard" : "/cuenta", { replace: true });
       } else if (mode === "login") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -85,6 +138,10 @@ const Auth = () => {
       setLoading(false);
     }
   };
+
+  const submitDisabled =
+    loading ||
+    (mode === "signup" && (!ageValid || password.length < 6 || password !== confirmPassword));
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -111,7 +168,7 @@ const Auth = () => {
               {mode === "login"
                 ? "Inicia sesión para gestionar tu perfil."
                 : mode === "signup"
-                  ? "Solo email y contraseña. El perfil lo creas después."
+                  ? `Cuenta de ${intent === "creator" ? "creador" : "visitante"} · solo mayores de 18.`
                   : "Te enviaremos un enlace para restablecerla."}
             </p>
 
@@ -154,23 +211,50 @@ const Auth = () => {
               )}
 
               {mode === "signup" && (
-                <div className="space-y-1.5">
-                  <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      required
-                      minLength={6}
-                      autoComplete="new-password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Repite tu contraseña"
-                      className="bg-background/60 pl-10"
-                    />
+                <>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="confirmPassword"
+                        type="password"
+                        required
+                        minLength={6}
+                        autoComplete="new-password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Repite tu contraseña"
+                        className="bg-background/60 pl-10"
+                      />
+                    </div>
                   </div>
-                </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="birthDate">Fecha de nacimiento</Label>
+                    <div className="relative">
+                      <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="birthDate"
+                        type="date"
+                        required
+                        max={maxDob}
+                        value={birthDate}
+                        onChange={(e) => setBirthDate(e.target.value)}
+                        className="bg-background/60 pl-10"
+                      />
+                    </div>
+                    {birthDate && ageValid && (
+                      <p className="text-xs text-muted-foreground">Edad: {age} años ✓</p>
+                    )}
+                    {ageError && (
+                      <p className="text-xs text-destructive inline-flex items-center gap-1.5">
+                        <AlertTriangle className="h-3.5 w-3.5" />
+                        Debes ser mayor de 18 años para acceder a esta plataforma
+                      </p>
+                    )}
+                  </div>
+                </>
               )}
 
               {mode === "login" && (
@@ -190,7 +274,7 @@ const Auth = () => {
                 variant="hero"
                 size="lg"
                 className="w-full rounded-full gap-2"
-                disabled={loading}
+                disabled={submitDisabled}
               >
                 {loading
                   ? "Procesando…"

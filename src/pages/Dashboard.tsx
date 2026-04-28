@@ -90,6 +90,12 @@ const Dashboard = () => {
     ]).then(([{ data: p }, { data: sub }]) => {
       if (p) {
         const anyP = p as any;
+        // 🔒 Bloqueo por rol: visitantes no pueden editar perfil de creador
+        if ((anyP.account_type ?? "visitor") === "visitor") {
+          toast.error("Esta función solo está disponible para perfiles verificados de creadores");
+          navigate("/", { replace: true });
+          return;
+        }
         setData({
           display_name: p.display_name ?? "",
           nickname: anyP.nickname ?? "",
