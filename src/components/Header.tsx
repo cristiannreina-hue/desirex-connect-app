@@ -28,15 +28,19 @@ export const Header = () => {
       .then(({ data }) => {
         if (cancelled) return;
         const t = (data as any)?.account_type;
-        setAccountType(t === "creator" ? "creator" : "visitor");
+        setAccountType(t === "creator" ? "creator" : t === "visitor" ? "visitor" : null);
       });
     return () => {
       cancelled = true;
     };
   }, [user]);
 
-  const isCreator = accountType === "creator";
-  const showCreatorCta = !user || isCreator;
+  const creatorCtaHref = !user ? "/registro" : accountType === "creator" ? "/dashboard" : "/registro";
+  const creatorCtaLabel = !user
+    ? "Unirme a DeseoX"
+    : accountType === "creator"
+      ? "Mi Panel"
+      : "Crear perfil";
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-background/55 backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/40">
@@ -83,15 +87,15 @@ export const Header = () => {
               <Link to="/auth">{t("nav.signin")}</Link>
             </Button>
           )}
-          {showCreatorCta && (
+          {
             <Button asChild variant="hero" size="sm" className="gap-2 rounded-full btn-shine">
-              <Link to={user ? "/dashboard" : "/registro"}>
+              <Link to={creatorCtaHref}>
                 <Sparkles className="h-4 w-4" />
-                <span className="hidden sm:inline">{user ? t("nav.edit") : "Unirme a DeseoX"}</span>
-                <span className="sm:hidden">{user ? "Editar" : "Unirme"}</span>
+                <span className="hidden sm:inline">{user ? creatorCtaLabel : "Unirme a DeseoX"}</span>
+                <span className="sm:hidden">{user ? (accountType === "creator" ? "Panel" : "Crear") : "Unirme"}</span>
               </Link>
             </Button>
-          )}
+          }
         </div>
       </div>
     </header>
