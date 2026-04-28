@@ -5,7 +5,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { ProfileCard } from "@/components/ProfileCard";
 import { FeaturedProfileCard } from "@/components/FeaturedProfileCard";
 import { ActiveAvatarCard } from "@/components/ActiveAvatarCard";
-import { PhilosophySection } from "@/components/PhilosophySection";
+
 import { ProfileCardSkeleton } from "@/components/ProfileCardSkeleton";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { Button } from "@/components/ui/button";
@@ -505,8 +505,6 @@ const Index = () => {
           </Section>
         )}
 
-        {/* FILOSOFÍA · La Experiencia DeseoX */}
-        <PhilosophySection />
 
         {/* EXPLORAR */}
         <section id="explorar" className="container space-y-6 scroll-mt-32">
