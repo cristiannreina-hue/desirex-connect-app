@@ -122,7 +122,13 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-image: var(--gradient-radial-glow);
+    /* Degradado profundo: negro mate → púrpura casi negro */
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(ellipse 90% 60% at 50% -10%, hsl(var(--accent) / 0.10), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 100% 100%, hsl(265 40% 18% / 0.35), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 0% 100%, hsl(220 30% 12% / 0.45), transparent 60%),
+      linear-gradient(180deg, hsl(240 8% 6%) 0%, hsl(250 12% 4%) 100%);
     background-attachment: fixed;
     font-feature-settings: "ss01", "cv11";
     /* padding extra para no tapar contenido con bottom nav en mobile */
