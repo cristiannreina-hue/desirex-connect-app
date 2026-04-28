@@ -70,6 +70,7 @@ const Index = () => {
   const [slideIdx, setSlideIdx] = useState(0);
   const [pingIdx, setPingIdx] = useState(0);
   const [quickFilter, setQuickFilter] = useState<"all" | "new" | "verified" | "nearby">("all");
+  const [cityFilter, setCityFilter] = useState<string>("all");
 
   /* Carga */
   useEffect(() => {
