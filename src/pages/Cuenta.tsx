@@ -44,6 +44,18 @@ const Cuenta = () => {
       setPayments(pay.data ?? []);
       setProfileLoading(false);
     });
+
+    // Realtime: refleja cambios del admin (aprobación/rechazo) sin recargar
+    const channel = supabase
+      .channel(`profile-self-${user.id}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${user.id}` },
+        (payload) => setProfile(payload.new),
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [user, loading, navigate]);
 
   if (loading || !user) return null;
@@ -164,33 +176,62 @@ const Cuenta = () => {
           </div>
         )}
 
-        {/* Verificación CTA */}
-        <div className="card-glass rounded-3xl p-6">
-          <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow-soft shrink-0">
-              <ShieldCheck className="h-5 w-5" />
-            </span>
-            <div className="flex-1">
-              <p className="font-display font-bold">Verificación de identidad</p>
-              {isVerified ? (
-                <p className="text-sm text-muted-foreground">¡Ya estás verificado! Tu insignia es visible.</p>
-              ) : status === "pending" ? (
-                <p className="text-sm text-muted-foreground inline-flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5 text-accent" /> En revisión (24-48 h)
+        {/* Verificación de identidad */}
+        {isVerified ? (
+          <div className="card-glass rounded-3xl p-6 ring-1 ring-success/40 bg-success/5">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-success/20 text-success ring-1 ring-success/40 shadow-glow-soft shrink-0">
+                <ShieldCheck className="h-5 w-5" />
+              </span>
+              <div className="flex-1">
+                <p className="font-display font-bold inline-flex items-center gap-2">
+                  ✓ Cuenta Verificada
+                  <span className="inline-flex items-center gap-1 rounded-full bg-success/15 text-success ring-1 ring-success/40 px-2.5 py-0.5 text-[11px] font-semibold">
+                    Identidad confirmada
+                  </span>
                 </p>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  Aumenta la confianza con la insignia ✓ Verificado.
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  Tu insignia dorada ya es visible en tu perfil público.
                 </p>
-              )}
+              </div>
             </div>
-            <Button asChild variant="hero" size="sm" className="rounded-full gap-1.5">
-              <Link to="/verificacion">
-                {isVerified ? "Ver" : "Verificar"} <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </Button>
           </div>
-        </div>
+        ) : status === "pending" ? (
+          <div className="card-glass rounded-3xl p-6 ring-1 ring-accent/40">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent/20 text-accent ring-1 ring-accent/40 shadow-glow-soft shrink-0">
+                <Clock className="h-5 w-5 animate-pulse" />
+              </span>
+              <div className="flex-1">
+                <p className="font-display font-bold">Tu verificación está en proceso de revisión</p>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  Tiempo estimado: 24-48 h. Te avisaremos en cuanto se apruebe.
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="card-glass rounded-3xl p-6">
+            <div className="flex items-start gap-3">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow-soft shrink-0">
+                <ShieldCheck className="h-5 w-5" />
+              </span>
+              <div className="flex-1">
+                <p className="font-display font-bold">Verificación de identidad</p>
+                <p className="text-sm text-muted-foreground">
+                  {status === "rejected"
+                    ? "Tu última solicitud fue rechazada. Vuelve a intentarlo con fotos más claras."
+                    : "Aumenta la confianza con la insignia ✓ Verificado."}
+                </p>
+              </div>
+              <Button asChild variant="hero" size="sm" className="rounded-full gap-1.5">
+                <Link to="/verificacion">
+                  Verificar <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Ver perfil público (solo si está completo) */}
         {completion.isComplete && profile?.id && (
