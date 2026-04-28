@@ -5,6 +5,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { ProfileCard } from "@/components/ProfileCard";
 import { FeaturedProfileCard } from "@/components/FeaturedProfileCard";
 import { ActiveAvatarCard } from "@/components/ActiveAvatarCard";
+import { PhilosophySection } from "@/components/PhilosophySection";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -225,7 +226,7 @@ const Index = () => {
               Explorar perfiles
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-full">
-              <a href="/registro">Crear mi perfil</a>
+              <a href="/registro">Unirme a DeseoX</a>
             </Button>
           </div>
 
