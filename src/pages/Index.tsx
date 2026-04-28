@@ -20,20 +20,29 @@ import type { Profile, Gender, Subscription } from "@/types/profile";
 import { GENDER_LABELS, TIER_RANK } from "@/types/profile";
 import { isVisible } from "@/lib/tier";
 import { isProfileComplete } from "@/lib/profile-completion";
+import heroCartagena from "@/assets/hero-cartagena.jpg";
+import heroPenol from "@/assets/hero-penol.jpg";
+import heroConcierge from "@/assets/hero-concierge.jpg";
 
 /* ============== Hero rotativo ============== */
 const HERO_SLIDES = [
   {
-    title: "Conexiones Reales en Toda Colombia",
+    title: "Conexiones Reales en Colombia",
     subtitle: "La red de acompañamiento más segura y exclusiva del país.",
+    bg: heroCartagena,
+    alt: "Pareja sonriente en una calle histórica de Cartagena al atardecer",
   },
   {
     title: "Calidez auténtica, bienestar digital",
     subtitle: "Conexiones reales con personas verificadas en todo el territorio nacional.",
+    bg: heroPenol,
+    alt: "Pareja en El Peñol al amanecer, paisaje colombiano premium",
   },
   {
-    title: "Verificación manual del CEO",
+    title: "Verificación manual del CEO — 100% Real",
     subtitle: "Cada perfil revisado uno a uno con cédula colombiana. Cero tolerancia con fraudes o menores.",
+    bg: heroConcierge,
+    alt: "Oficina concierge de lujo con escudo de verificación dorado",
   },
 ];
 
