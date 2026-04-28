@@ -42,8 +42,13 @@ const ResetPassword = () => {
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      toast({ title: "Contraseña actualizada", description: "Ya puedes usar tu nueva contraseña." });
-      navigate("/cuenta", { replace: true });
+      // Cerrar todas las sesiones activas anteriores por seguridad
+      await supabase.auth.signOut({ scope: "global" });
+      toast({
+        title: "Tu contraseña ha sido actualizada",
+        description: "Ya puedes iniciar sesión con tu nueva contraseña.",
+      });
+      navigate("/auth", { replace: true });
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
     } finally {
