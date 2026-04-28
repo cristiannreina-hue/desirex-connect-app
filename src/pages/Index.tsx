@@ -117,7 +117,7 @@ const Index = () => {
 
   /* Hero rotativo */
   useEffect(() => {
-    const id = setInterval(() => setSlideIdx((i) => (i + 1) % HERO_SLIDES.length), 5000);
+    const id = setInterval(() => setSlideIdx((i) => (i + 1) % HERO_SLIDES.length), 10000);
     return () => clearInterval(id);
   }, []);
 
@@ -243,8 +243,8 @@ const Index = () => {
               width={1920}
               height={1080}
               className={cn(
-                "absolute inset-0 h-full w-full object-cover transition-opacity duration-[1400ms] ease-out will-change-[opacity,transform]",
-                i === slideIdx ? "opacity-100 scale-105 animate-[hero-zoom_8s_ease-out_forwards]" : "opacity-0 scale-100",
+                "absolute inset-0 h-full w-full object-cover transition-opacity duration-[1800ms] ease-out will-change-[opacity,transform]",
+                i === slideIdx ? "opacity-100 scale-105 animate-[hero-zoom_11s_ease-out_forwards]" : "opacity-0 scale-100",
               )}
             />
           ))}
@@ -256,7 +256,7 @@ const Index = () => {
           className="absolute inset-0 -z-10"
           style={{
             background:
-              "radial-gradient(ellipse 80% 70% at 50% 45%, hsl(240 10% 4% / 0.05), hsl(240 10% 4% / 0.45) 80%), linear-gradient(180deg, hsl(240 10% 4% / 0.15) 0%, hsl(240 10% 4% / 0.25) 45%, hsl(240 10% 3% / 0.75) 100%)",
+              "radial-gradient(ellipse 55% 45% at 50% 50%, hsl(240 10% 3% / 0.65), hsl(240 10% 3% / 0.35) 60%, transparent 85%), linear-gradient(180deg, hsl(240 10% 4% / 0.35) 0%, hsl(240 10% 4% / 0.30) 45%, hsl(240 10% 3% / 0.80) 100%)",
           }}
         />
         {/* Vignette */}
@@ -299,7 +299,7 @@ const Index = () => {
             </span>
           </h1>
 
-          <p key={`s-${slideIdx}`} className="mt-5 text-base md:text-lg text-foreground/70 max-w-2xl mx-auto leading-relaxed animate-fade-in">
+          <p key={`s-${slideIdx}`} className="mt-5 text-base md:text-lg text-foreground/95 max-w-2xl mx-auto leading-relaxed animate-fade-in [text-shadow:0_2px_18px_rgb(0_0_0_/_0.85)]">
             {HERO_SLIDES[slideIdx].subtitle}
           </p>
 
