@@ -24,24 +24,32 @@ import { isProfileComplete } from "@/lib/profile-completion";
 /* ============== Hero rotativo ============== */
 const HERO_SLIDES = [
   {
-    title: "Conexiones Auténticas, Seguridad Garantizada",
-    subtitle: "La experiencia concierge para encuentros adultos verificados.",
+    title: "Conexiones Reales en Toda Colombia",
+    subtitle: "La red de acompañamiento más segura y exclusiva del país.",
   },
   {
-    title: "Dopamina real, bienestar digital",
-    subtitle: "Superamos la saturación: rescatamos el valor del encuentro auténtico.",
+    title: "Calidez auténtica, bienestar digital",
+    subtitle: "Conexiones reales con personas verificadas en todo el territorio nacional.",
   },
   {
     title: "Verificación manual del CEO",
-    subtitle: "Cada perfil revisado uno a uno. Cero tolerancia con fraudes o menores.",
+    subtitle: "Cada perfil revisado uno a uno con cédula colombiana. Cero tolerancia con fraudes o menores.",
   },
 ];
 
+/* Principales ciudades de Colombia (priorizadas en filtros y búsqueda) */
+const PRIORITY_CITIES = ["Bogotá", "Medellín", "Cali", "Barranquilla", "Cartagena", "Pereira"] as const;
+
+/* Agrupaciones regionales para secciones dinámicas */
+const REGION_COSTA = ["Barranquilla", "Cartagena", "Santa Marta", "Riohacha", "Sincelejo", "Montería", "Valledupar", "Ciénaga", "Soledad"];
+const REGION_EJE_CAFETERO = ["Pereira", "Manizales", "Armenia", "Dosquebradas", "Santa Rosa de Cabal", "Calarcá", "Chinchiná", "Villamaría"];
+
 const ACTIVITY_PINGS = [
   "Alguien vio este perfil hace 2 min",
-  "Nuevo usuario registrado",
-  "Perfil destacado actualizado",
+  "Nuevo usuario registrado en Bogotá",
+  "Perfil destacado actualizado en Medellín",
   "+3 reseñas nuevas en los últimos 10 min",
+  "Verificación KYC aprobada en Cali",
 ];
 
 /* ============== Helpers ============== */
@@ -62,6 +70,7 @@ const Index = () => {
   const [slideIdx, setSlideIdx] = useState(0);
   const [pingIdx, setPingIdx] = useState(0);
   const [quickFilter, setQuickFilter] = useState<"all" | "new" | "verified" | "nearby">("all");
+  const [cityFilter, setCityFilter] = useState<string>("all");
 
   /* Carga */
   useEffect(() => {
@@ -143,8 +152,9 @@ const Index = () => {
         if (quickFilter === "nearby") return baseCity ? p.city === baseCity : true;
         return true;
       })
+      .filter((p) => (cityFilter === "all" ? true : p.city === cityFilter))
       .sort(sortByTier);
-  }, [allProfiles, gender, query, quickFilter]);
+  }, [allProfiles, gender, query, quickFilter, cityFilter]);
 
   /* Secciones */
   const topWeek = useMemo(
@@ -177,6 +187,30 @@ const Index = () => {
     [visible, topCity],
   );
   const activeNow = useMemo(() => visible.slice(0, 12), [visible]);
+
+  /* === Secciones regionales nacionales === */
+  const bogotaTop = useMemo(
+    () => [...visible].filter((p) => p.city === "Bogotá").slice(0, 8),
+    [visible],
+  );
+  const costaTop = useMemo(
+    () =>
+      [...visible]
+        .filter((p) => REGION_COSTA.includes(p.city))
+        .sort((a, b) => (b.viewCount ?? 0) - (a.viewCount ?? 0))
+        .slice(0, 8),
+    [visible],
+  );
+  const ejeCafeteroNew = useMemo(() => {
+    const cutoff = Date.now() - 1000 * 60 * 60 * 24 * 60; // 60 días
+    return [...visible]
+      .filter((p) => REGION_EJE_CAFETERO.includes(p.city))
+      .filter((p) => {
+        const created = (p as Profile & { createdAt?: string }).createdAt;
+        return created ? new Date(created).getTime() > cutoff : true;
+      })
+      .slice(0, 8);
+  }, [visible]);
 
   const totalCities = new Set(allProfiles.map((p) => p.city)).size;
   const activeCount = Math.max(12, Math.floor(allProfiles.length * 0.4));
@@ -274,8 +308,8 @@ const Index = () => {
                 <ShieldCheck className="h-4 w-4" />
               </span>
               <div className="text-left leading-tight">
-                <div className="text-[11px] uppercase tracking-widest text-accent font-extrabold">Verificación Manual del CEO</div>
-                <div className="text-[11px] text-muted-foreground">100% Real · Cero tolerancia con fraude o menores</div>
+                <div className="text-[11px] uppercase tracking-widest text-accent font-extrabold">Identidades Verificadas con Cédula</div>
+                <div className="text-[11px] text-muted-foreground">Seguridad 100% Colombiana 🇨🇴 · Cero tolerancia con fraude o menores</div>
               </div>
             </div>
           </div>
@@ -412,6 +446,45 @@ const Index = () => {
           </Section>
         )}
 
+        {/* ===== Secciones regionales nacionales ===== */}
+        {bogotaTop.length > 0 && (
+          <Section title="Destacados en Bogotá" icon={<Crown className="h-4 w-4" />} subtitle="Lo mejor de la capital" tone="b">
+            <div className="container">
+              <div className="h-scroll no-scrollbar">
+                {bogotaTop.map((p) => (
+                  <FeaturedProfileCard key={p.id} profile={p} active={Math.random() > 0.5} />
+                ))}
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {bogotaTop.length === 0 && allProfiles.filter((p) => p.city === "Bogotá").length === 0 && null}
+
+        {costaTop.length > 0 && (
+          <Section title="Lo más buscado en la Costa" icon={<Flame className="h-4 w-4" />} subtitle="Cartagena, Barranquilla, Santa Marta y más" tone="c">
+            <div className="container">
+              <div className="h-scroll no-scrollbar">
+                {costaTop.map((p) => (
+                  <FeaturedProfileCard key={p.id} profile={p} active={Math.random() > 0.5} />
+                ))}
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {ejeCafeteroNew.length > 0 && (
+          <Section title="Nuevos perfiles en el Eje Cafetero" icon={<Sparkles className="h-4 w-4" />} subtitle="Pereira, Manizales, Armenia" tone="a">
+            <div className="container">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+                {ejeCafeteroNew.map((p, i) => (
+                  <ProfileCard key={p.id} profile={p} index={i} popular />
+                ))}
+              </div>
+            </div>
+          </Section>
+        )}
+
         {/* FILOSOFÍA · La Experiencia DeseoX */}
         <PhilosophySection />
 
@@ -476,6 +549,34 @@ const Index = () => {
                 </button>
               );
             })}
+          </div>
+
+          {/* Selector nacional de ciudades — prioridad a las 6 principales */}
+          <div className="space-y-2">
+            <p className="text-[11px] uppercase tracking-widest text-muted-foreground font-bold">
+              🇨🇴 Ciudades destacadas de Colombia
+            </p>
+            <div className="flex items-center gap-2 flex-wrap">
+              {(["all", ...PRIORITY_CITIES] as const).map((c) => {
+                const active = cityFilter === c;
+                const count = c === "all" ? visible.length : allProfiles.filter((p) => p.city === c).length;
+                return (
+                  <button
+                    key={c}
+                    onClick={() => setCityFilter(c)}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 ring-1",
+                      active
+                        ? "bg-accent text-accent-foreground ring-accent shadow-glow-soft"
+                        : "bg-secondary/40 text-muted-foreground ring-border hover:text-foreground hover:ring-accent/60",
+                    )}
+                  >
+                    {c === "all" ? "Toda Colombia" : c}
+                    <span className={cn("text-[10px] opacity-70", active && "opacity-90")}>({count})</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {loading ? (
