@@ -361,6 +361,10 @@
   0%   { background-position: 200% 0; opacity: 0.9; }
   100% { background-position: -200% 0; opacity: 0.9; }
 }
+@keyframes hero-zoom {
+  from { transform: scale(1.05); }
+  to   { transform: scale(1.14); }
+}
 @keyframes gradient-shift {
   0%, 100% { background-position: 0% 50%; }
   50%      { background-position: 100% 50%; }
