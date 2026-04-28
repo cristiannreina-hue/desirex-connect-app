@@ -51,7 +51,7 @@ export const AdminNotifications = () => {
       pendings.data?.forEach((r: any) =>
         list.push({
           id: `v-${r.id}`,
-          kind: "verification",
+          kind: "verification" as const,
           title: r.display_name ?? "Sin nombre",
           subtitle: "Subió documentos para verificar",
           at: r.verification_submitted_at,
@@ -60,7 +60,7 @@ export const AdminNotifications = () => {
       signups.data?.forEach((r: any) =>
         list.push({
           id: `s-${r.id}`,
-          kind: "signup",
+          kind: "signup" as const,
           title: r.display_name ?? "Nuevo usuario",
           subtitle: r.account_type === "creator" ? "Nuevo creador" : "Nuevo cliente",
           at: r.created_at,
@@ -69,7 +69,7 @@ export const AdminNotifications = () => {
       premiums.data?.forEach((r: any) =>
         list.push({
           id: `p-${r.id}`,
-          kind: "premium",
+          kind: "premium" as const,
           title: `Plan ${r.tier}`,
           subtitle: "Suscripción premium activada",
           at: r.started_at,
@@ -93,7 +93,7 @@ export const AdminNotifications = () => {
           setItems((prev) => [
             {
               id: `v-${p.new.id}-${Date.now()}`,
-              kind: "verification",
+              kind: "verification" as const,
               title: p.new.display_name ?? "Sin nombre",
               subtitle: "Subió documentos para verificar",
               at: p.new.verification_submitted_at ?? new Date().toISOString(),
@@ -110,7 +110,7 @@ export const AdminNotifications = () => {
           setItems((prev) => [
             {
               id: `s-${p.new.id}-${Date.now()}`,
-              kind: "signup",
+              kind: "signup" as const,
               title: p.new.display_name ?? "Nuevo usuario",
               subtitle: p.new.account_type === "creator" ? "Nuevo creador" : "Nuevo cliente",
               at: p.new.created_at ?? new Date().toISOString(),
@@ -128,7 +128,7 @@ export const AdminNotifications = () => {
           setItems((prev) => [
             {
               id: `p-${p.new.id}-${Date.now()}`,
-              kind: "premium",
+              kind: "premium" as const,
               title: `Plan ${p.new.tier}`,
               subtitle: "Suscripción premium activada",
               at: p.new.started_at ?? new Date().toISOString(),
