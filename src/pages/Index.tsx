@@ -24,16 +24,16 @@ import { isProfileComplete } from "@/lib/profile-completion";
 /* ============== Hero rotativo ============== */
 const HERO_SLIDES = [
   {
-    title: "Explora perfiles disponibles en tu ciudad",
-    subtitle: "Cientos de personas verificadas a un clic",
+    title: "Conexiones Auténticas, Seguridad Garantizada",
+    subtitle: "La experiencia concierge para encuentros adultos verificados.",
   },
   {
-    title: "Accede a contacto directo",
-    subtitle: "Sin intermediarios. WhatsApp del perfil al instante",
+    title: "Dopamina real, bienestar digital",
+    subtitle: "Superamos la saturación: rescatamos el valor del encuentro auténtico.",
   },
   {
-    title: "Conecta de forma rápida y segura",
-    subtitle: "Perfiles verificados y reseñas reales",
+    title: "Verificación manual del CEO",
+    subtitle: "Cada perfil revisado uno a uno. Cero tolerancia con fraudes o menores.",
   },
 ];
 
