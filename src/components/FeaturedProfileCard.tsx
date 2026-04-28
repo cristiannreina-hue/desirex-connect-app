@@ -61,7 +61,7 @@ export const FeaturedProfileCard = ({ profile, active }: Props) => {
               {profile.name}
               <span className="ml-1 text-foreground/75 font-semibold">· {profile.age}</span>
             </span>
-            {profile.verified && <VerifiedBadge size="sm" />}
+            {profile.verified && <VerifiedBadge size="sm" animated />}
           </h3>
           <div className="mt-1 flex items-center justify-between gap-2">
             <p className="flex items-center gap-1 text-xs text-foreground/85">
