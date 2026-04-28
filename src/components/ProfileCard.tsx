@@ -150,36 +150,38 @@ export const ProfileCard = ({ profile, index = 0, popular }: Props) => {
           </div>
         )}
 
-        {/* ID único */}
+        {/* ID único (esquina sup-izq inferior) */}
         {profile.userNumber && (
-          <span className="absolute bottom-3 left-3 inline-flex items-center gap-1 rounded-full bg-background/80 backdrop-blur-md px-2 py-0.5 text-[10px] font-mono font-bold tracking-wide text-accent ring-1 ring-accent/40">
+          <span className="absolute bottom-[5.5rem] left-3 inline-flex items-center gap-1 rounded-full bg-background/70 backdrop-blur-md px-2 py-0.5 text-[10px] font-mono font-bold tracking-wide text-accent ring-1 ring-accent/40 z-10">
             #{profile.userNumber}
           </span>
         )}
 
         {/* Rating */}
         {(profile.ratingCount ?? 0) > 0 && (
-          <span className="absolute bottom-3 right-3 inline-flex items-center rounded-full bg-background/80 backdrop-blur-md px-2 py-0.5 ring-1 ring-border/70">
+          <span className="absolute bottom-[5.5rem] right-3 inline-flex items-center rounded-full bg-background/70 backdrop-blur-md px-2 py-0.5 ring-1 ring-border/70 z-10">
             <Stars value={profile.ratingAvg ?? 0} count={profile.ratingCount} size="xs" showCount={false} />
           </span>
         )}
 
-        {/* Info */}
-        <div className="absolute inset-x-0 bottom-10 p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
+        {/* Info — Glassmorphism panel inferior */}
+        <div className="absolute inset-x-0 bottom-0 glass-overlay px-4 py-3 transition-all duration-500">
           <h3 className="font-display text-lg font-extrabold leading-tight tracking-tight">
             {profile.name}
             <span className="ml-1 text-foreground/75 font-semibold">· {profile.age}</span>
           </h3>
-          <p className="mt-1 flex items-center gap-1 text-xs text-foreground/85">
-            <MapPin className="h-3 w-3 text-accent" /> {profile.city}
-          </p>
-          <p className={cn(
-            "mt-1 inline-flex items-center gap-1 text-[10px] font-medium",
-            activity.live ? "text-[hsl(var(--online))]" : "text-foreground/70",
-          )}>
-            {activity.live ? <span className="dot-online" /> : <Clock className="h-2.5 w-2.5" />}
-            {activity.label}
-          </p>
+          <div className="mt-1 flex items-center justify-between gap-2">
+            <p className="flex items-center gap-1 text-xs text-foreground/90">
+              <MapPin className="h-3 w-3 text-accent" /> {profile.city}
+            </p>
+            <p className={cn(
+              "inline-flex items-center gap-1 text-[10px] font-medium",
+              activity.live ? "text-[hsl(var(--online))]" : "text-foreground/70",
+            )}>
+              {activity.live ? <span className="dot-online" /> : <Clock className="h-2.5 w-2.5" />}
+              {activity.label}
+            </p>
+          </div>
         </div>
       </div>
     </Link>
