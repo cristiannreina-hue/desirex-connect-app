@@ -420,14 +420,43 @@ const Index = () => {
             </div>
           </div>
 
-          {visible.length === 0 ? (
+          {/* Filtros rápidos inteligentes */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {([
+              { k: "all", label: "Todas", icon: <Sparkles className="h-3.5 w-3.5" /> },
+              { k: "new", label: "Nuevas", icon: <Flame className="h-3.5 w-3.5" /> },
+              { k: "verified", label: "Verificadas", icon: <BadgeCheck className="h-3.5 w-3.5" /> },
+              { k: "nearby", label: `Cerca de ti${topCity ? ` · ${topCity}` : ""}`, icon: <MapPin className="h-3.5 w-3.5" /> },
+            ] as const).map((c) => {
+              const active = quickFilter === c.k;
+              return (
+                <button
+                  key={c.k}
+                  onClick={() => setQuickFilter(c.k)}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-300 ring-1",
+                    active
+                      ? "bg-gradient-primary text-primary-foreground ring-accent shadow-glow-soft"
+                      : "bg-secondary/40 text-muted-foreground ring-border hover:text-foreground hover:ring-accent/60",
+                  )}
+                >
+                  {c.icon}
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {loading ? (
+            <ProfileCardSkeleton count={8} />
+          ) : visible.length === 0 ? (
             <div className="card-glass rounded-3xl p-12 text-center">
               <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-accent ring-1 ring-accent/30">
                 <Sparkles className="h-6 w-6" />
               </div>
               <p className="font-display text-xl font-bold">No encontramos perfiles</p>
               <p className="mt-1 text-sm text-muted-foreground">Prueba cambiar la categoría o limpiar la búsqueda.</p>
-              <Button className="mt-6 rounded-full" variant="hero" onClick={() => setQuery("")}>
+              <Button className="mt-6 rounded-full" variant="hero" onClick={() => { setQuery(""); setQuickFilter("all"); }}>
                 Limpiar búsqueda
               </Button>
             </div>
