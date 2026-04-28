@@ -299,7 +299,7 @@ const Index = () => {
             </span>
           </h1>
 
-          <p key={`s-${slideIdx}`} className="mt-5 text-base md:text-lg text-foreground/70 max-w-2xl mx-auto leading-relaxed animate-fade-in">
+          <p key={`s-${slideIdx}`} className="mt-5 text-base md:text-lg text-foreground/95 max-w-2xl mx-auto leading-relaxed animate-fade-in [text-shadow:0_2px_18px_rgb(0_0_0_/_0.85)]">
             {HERO_SLIDES[slideIdx].subtitle}
           </p>
 
