@@ -152,8 +152,9 @@ const Index = () => {
         if (quickFilter === "nearby") return baseCity ? p.city === baseCity : true;
         return true;
       })
+      .filter((p) => (cityFilter === "all" ? true : p.city === cityFilter))
       .sort(sortByTier);
-  }, [allProfiles, gender, query, quickFilter]);
+  }, [allProfiles, gender, query, quickFilter, cityFilter]);
 
   /* Secciones */
   const topWeek = useMemo(
