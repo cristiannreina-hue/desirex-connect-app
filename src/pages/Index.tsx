@@ -245,9 +245,25 @@ const Index = () => {
               <Flame className="h-4 w-4" />
               Explorar perfiles
             </Button>
-            <Button asChild variant="outline" size="lg" className="rounded-full">
-              <a href="/registro">Unirme a DeseoX</a>
+            <Button asChild variant="outline" size="lg" className="rounded-full gap-2 btn-shine">
+              <a href="/registro">
+                <Sparkles className="h-4 w-4" />
+                Unirme a DeseoX
+              </a>
             </Button>
+          </div>
+
+          {/* Escudo de confianza CEO */}
+          <div className="mt-7 flex justify-center">
+            <div className="inline-flex items-center gap-3 rounded-full card-glass px-4 py-2 ring-1 ring-accent/40 shadow-glow-soft">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-primary text-primary-foreground">
+                <ShieldCheck className="h-4 w-4" />
+              </span>
+              <div className="text-left leading-tight">
+                <div className="text-[11px] uppercase tracking-widest text-accent font-extrabold">Verificación Manual del CEO</div>
+                <div className="text-[11px] text-muted-foreground">100% Real · Cero tolerancia con fraude o menores</div>
+              </div>
+            </div>
           </div>
 
           <div className="mt-10 flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
