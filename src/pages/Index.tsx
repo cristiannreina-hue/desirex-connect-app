@@ -282,8 +282,8 @@ const Index = () => {
                 <ShieldCheck className="h-4 w-4" />
               </span>
               <div className="text-left leading-tight">
-                <div className="text-[11px] uppercase tracking-widest text-accent font-extrabold">Verificación Manual del CEO</div>
-                <div className="text-[11px] text-muted-foreground">100% Real · Cero tolerancia con fraude o menores</div>
+                <div className="text-[11px] uppercase tracking-widest text-accent font-extrabold">Identidades Verificadas con Cédula</div>
+                <div className="text-[11px] text-muted-foreground">Seguridad 100% Colombiana 🇨🇴 · Cero tolerancia con fraude o menores</div>
               </div>
             </div>
           </div>
