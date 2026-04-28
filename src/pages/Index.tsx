@@ -243,8 +243,8 @@ const Index = () => {
               width={1920}
               height={1080}
               className={cn(
-                "absolute inset-0 h-full w-full object-cover transition-opacity duration-[1400ms] ease-out will-change-[opacity,transform]",
-                i === slideIdx ? "opacity-100 scale-105 animate-[hero-zoom_8s_ease-out_forwards]" : "opacity-0 scale-100",
+                "absolute inset-0 h-full w-full object-cover transition-opacity duration-[1800ms] ease-out will-change-[opacity,transform]",
+                i === slideIdx ? "opacity-100 scale-105 animate-[hero-zoom_11s_ease-out_forwards]" : "opacity-0 scale-100",
               )}
             />
           ))}
