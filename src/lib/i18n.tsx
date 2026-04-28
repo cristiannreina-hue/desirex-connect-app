@@ -70,9 +70,9 @@ const EN: Dict = {
   "gateway.creator.cta": "Create creator account",
 
   "philosophy.tag": "DeseoX Philosophy",
-  "philosophy.title": "Real dopamine",
+  "philosophy.title": "Authentic warmth, real connections",
   "philosophy.body":
-    "DeseoX: Beat digital overload. We rescue the value of authentic encounters and wellbeing through safe, real connections.",
+    "DeseoX blends Colombian human warmth with digital verification security. From Bogotá to the Caribbean coast, from the Coffee Region to the Valley — real, safe encounters across the entire country 🇨🇴.",
 
   "profile.about": "About me",
   "profile.services": "Services",
