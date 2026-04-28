@@ -287,7 +287,7 @@ const Index = () => {
             <span className="font-medium">{ACTIVITY_PINGS[pingIdx]}</span>
           </span>
 
-          <h1 className="mt-6 font-display text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-[0.95] min-h-[3em] flex items-center justify-center">
+          <h1 className="mt-6 font-display text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-[0.95] min-h-[3em] flex items-center justify-center [text-shadow:0_4px_30px_rgb(0_0_0_/_0.85)]">
             <span key={slideIdx} className="animate-fade-in">
               {HERO_SLIDES[slideIdx].title.split(" ").map((w, i, arr) =>
                 i === arr.length - 2 || i === arr.length - 1 ? (
