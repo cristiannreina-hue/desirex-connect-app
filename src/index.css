@@ -210,6 +210,74 @@
   .dot-online {
     @apply relative inline-flex h-2.5 w-2.5;
   }
+
+  /* Sello verificado animado: pulso + sheen */
+  .verified-pulse {
+    position: relative;
+    isolation: isolate;
+    animation: verified-pulse 2.6s ease-in-out infinite;
+  }
+  .verified-pulse::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background: linear-gradient(115deg, transparent 35%, hsl(var(--verified) / 0.55) 50%, transparent 65%);
+    background-size: 250% 100%;
+    animation: verified-sheen 3.2s linear infinite;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+
+  /* Botón con gradiente brillante en movimiento (planes premium) */
+  .btn-shine {
+    background: linear-gradient(
+      120deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--primary-glow)) 25%,
+      hsl(var(--gold)) 50%,
+      hsl(var(--primary-glow)) 75%,
+      hsl(var(--primary)) 100%
+    );
+    background-size: 220% 220%;
+    animation: gradient-shift 6s ease infinite;
+    color: hsl(var(--primary-foreground));
+    box-shadow: var(--shadow-glow-soft);
+    transition: filter 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .btn-shine:hover {
+    filter: brightness(1.1);
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-1px);
+  }
+
+  /* Pre-hover lift sutil en cards (plus al hover existente) */
+  .card-lift {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .card-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-elevated), 0 0 32px hsl(var(--accent) / 0.18);
+  }
+
+  /* FAB WhatsApp flotante */
+  .fab-whatsapp {
+    position: fixed;
+    right: 1rem;
+    bottom: calc(5.5rem + env(safe-area-inset-bottom));
+    z-index: 40;
+    @apply inline-flex h-14 w-14 items-center justify-center rounded-full;
+    background: hsl(var(--success));
+    color: hsl(var(--success-foreground));
+    box-shadow: 0 0 0 0 hsl(var(--success) / 0.55), 0 14px 30px -12px hsl(var(--success) / 0.6);
+    animation: fab-pulse 2.4s ease-out infinite;
+    transition: transform 0.3s ease;
+  }
+  .fab-whatsapp:hover { transform: scale(1.06); }
+  @screen md {
+    .fab-whatsapp { bottom: 1.5rem; }
+  }
   .dot-online::before {
     content: "";
     @apply absolute inset-0 rounded-full bg-[hsl(var(--online))] animate-ping opacity-60;
