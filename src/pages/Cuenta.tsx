@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { Shield } from "lucide-react";
 import { useAccountType } from "@/hooks/useAccountType";
+import { toast } from "sonner";
 
 const Cuenta = () => {
   const { user, loading, signOut } = useAuth();
