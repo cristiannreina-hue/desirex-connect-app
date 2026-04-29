@@ -46,7 +46,7 @@ export const useAccountType = (userId?: string) => {
     if (!userId) return;
 
     const channel = supabase
-      .channel(`profile-account-type-${userId}`)
+      .channel(`profile-account-type-${userId}-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "profiles", filter: `id=eq.${userId}` },
