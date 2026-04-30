@@ -458,6 +458,10 @@ const Dashboard = () => {
               </Block>
             </>
           )}
+        </div>
+      </main>
+
+      {/* Botón flotante guardar */}
       <div className="fixed bottom-4 left-0 right-0 z-30 px-4 pointer-events-none">
         <div className="max-w-2xl mx-auto pointer-events-auto">
           <button
@@ -473,7 +477,7 @@ const Dashboard = () => {
             )}
           >
             <Save className="h-5 w-5" />
-            {saving ? t("common.saving") : "Guardar cambios"}
+            {saving ? t("common.saving") : isVisitor ? "Actualizar mi información" : "Guardar cambios"}
           </button>
         </div>
       </div>
