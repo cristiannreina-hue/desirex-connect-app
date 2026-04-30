@@ -208,8 +208,8 @@ const Cuenta = () => {
           </div>
         ))}
 
-        {/* Ver perfil público (solo si está completo) */}
-        {completion.isComplete && profile?.id && (
+        {/* Ver perfil público (solo creadoras con perfil completo) */}
+        {isCreator && completion.isComplete && profile?.id && (
           <div className="card-glass rounded-3xl p-6">
             <div className="flex items-start gap-3">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-accent text-accent-foreground shadow-glow-soft shrink-0">
