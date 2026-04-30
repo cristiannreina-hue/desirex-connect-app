@@ -31,6 +31,21 @@ const Cuenta = () => {
   const [subs, setSubs] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
   const [upgrading, setUpgrading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const { error } = await supabase.functions.invoke("delete-account");
+      if (error) throw error;
+      await supabase.auth.signOut();
+      toast.success("Cuenta eliminada");
+      navigate("/", { replace: true });
+    } catch (err: any) {
+      toast.error(err?.message ?? "No se pudo eliminar la cuenta");
+      setDeleting(false);
+    }
+  };
 
   useEffect(() => { document.title = "Mi cuenta · DeseoX"; }, []);
 
