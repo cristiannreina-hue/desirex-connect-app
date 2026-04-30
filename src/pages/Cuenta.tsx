@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import {
-  ShieldCheck, LogOut, Sparkles, ArrowRight, Clock, CheckCircle2, Circle, Eye, EyeOff, Crown, Receipt,
+  ShieldCheck, LogOut, Sparkles, ArrowRight, Clock, Crown, Receipt, BadgeCheck, User as UserIcon,
 } from "lucide-react";
 import { TIER_LABELS } from "@/types/profile";
 import { getCompletion } from "@/lib/profile-completion";
