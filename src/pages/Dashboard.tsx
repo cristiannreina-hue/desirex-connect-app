@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SeoNoIndex } from "@/components/SeoNoIndex";
 import { useI18n } from "@/lib/i18n";
 import { watermarkFile } from "@/lib/watermark";
+import { WatermarkOverlay } from "@/components/WatermarkOverlay";
 
 interface FormState {
   display_name: string;
