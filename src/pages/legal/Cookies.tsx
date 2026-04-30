@@ -1,7 +1,7 @@
 import { LegalLayout } from "./LegalLayout";
 
 const Cookies = () => (
-  <LegalLayout title="Política de Cookies">
+  <LegalLayout title="Política de Cookies" updatedAt="Abril 2026">
     <section>
       <h2 className="text-xl font-semibold text-foreground mb-2">1. ¿Qué son las cookies?</h2>
       <p>

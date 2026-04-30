@@ -1,7 +1,7 @@
 import { LegalLayout } from "./LegalLayout";
 
 const Disclaimer = () => (
-  <LegalLayout title="Descargo de Responsabilidad">
+  <LegalLayout title="Descargo de Responsabilidad" updatedAt="Abril 2026">
     <section>
       <h2 className="text-xl font-semibold text-foreground mb-2">1. Naturaleza de la plataforma</h2>
       <p>

@@ -10,7 +10,7 @@ interface LegalLayoutProps {
   children: ReactNode;
 }
 
-export const LegalLayout = ({ title, updatedAt = "Octubre 2025", children }: LegalLayoutProps) => {
+export const LegalLayout = ({ title, updatedAt = "Abril 2026", children }: LegalLayoutProps) => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
