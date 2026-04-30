@@ -232,8 +232,7 @@ const Profile = () => {
             </div>
 
             {/* Mini-stats bajo la foto */}
-            <div className="grid grid-cols-3 gap-2">
-              <MiniStat icon={<Eye className="h-4 w-4" />} value={`${profile.viewCount ?? 0}`} label="Vistas" />
+            <div className="grid grid-cols-2 gap-2">
               <MiniStat icon={<Star className="h-4 w-4" />} value={(profile.ratingAvg ?? 0).toFixed(1)} label={`${profile.ratingCount ?? 0} reseñas`} />
               <MiniStat icon={<Zap className="h-4 w-4" />} value="Rápida" label="Respuesta" />
             </div>
