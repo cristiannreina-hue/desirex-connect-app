@@ -282,152 +282,182 @@ const Dashboard = () => {
           {/* Header móvil */}
           <header className="flex items-center justify-between gap-3 px-1">
             <div>
-              <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Editar perfil</h1>
-              <p className="text-xs text-white/50 mt-0.5">Tu marca personal · sin intermediarios</p>
+              <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                {isVisitor ? "Mi información" : "Editar perfil"}
+              </h1>
+              <p className="text-xs text-white/50 mt-0.5">
+                {isVisitor ? "Cuenta de visitante · datos básicos" : "Tu marca personal · sin intermediarios"}
+              </p>
             </div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/15 ring-1 ring-accent/40 px-3 py-1 text-[10px] font-bold text-accent uppercase tracking-wider backdrop-blur-md">
-              <Crown className="h-3 w-3" /> {tier}
-            </span>
+            {!isVisitor && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/15 ring-1 ring-accent/40 px-3 py-1 text-[10px] font-bold text-accent uppercase tracking-wider backdrop-blur-md">
+                <Crown className="h-3 w-3" /> {tier}
+              </span>
+            )}
           </header>
 
-          {/* Banner KYC persistente */}
-          <VerifiedBanner status={data.verification_status} verified={data.is_verified} />
+          {isVisitor ? (
+            <>
+              {/* Visitante: solo nombre + 1 foto de perfil */}
+              <Block icon={<Camera className="h-4 w-4" />} title="Foto de perfil" subtitle="Una imagen para tu cuenta">
+                <SubLabel>Foto · {data.public_photos.length}/{publicPhotoLimit}</SubLabel>
+                <UploadBox
+                  icon={<ImagePlus className="h-6 w-6 text-accent" />}
+                  accept="image/*"
+                  onChange={onPublicPhotos}
+                  disabled={data.public_photos.length >= publicPhotoLimit}
+                  hint="JPG / PNG · 1 sola foto"
+                />
+                {data.public_photos.length > 0 && (
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    {data.public_photos.map((src, i) => <Tile key={i} url={src} onRemove={() => removePublic(i)} />)}
+                  </div>
+                )}
+              </Block>
 
-          {/* 1 · IDENTIDAD VISUAL */}
-          <Block icon={<Camera className="h-4 w-4" />} title="Identidad Visual" subtitle="Galería pública y contenido exclusivo">
-            <SubLabel>Fotos públicas · {data.public_photos.length}/{PUBLIC_PHOTO_LIMIT}</SubLabel>
-            <UploadBox icon={<ImagePlus className="h-6 w-6 text-accent" />} accept="image/*" onChange={onPublicPhotos} disabled={data.public_photos.length >= PUBLIC_PHOTO_LIMIT} hint="JPG / PNG · máximo 3" />
-            {data.public_photos.length > 0 && (
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                {data.public_photos.map((src, i) => <Tile key={i} url={src} onRemove={() => removePublic(i)} />)}
-              </div>
-            )}
+              <Block icon={<FileText className="h-4 w-4" />} title="Identidad" subtitle="Cómo apareces en DeseoX">
+                <GlassField label="Nombre o alias">
+                  <GlassInput value={data.display_name} onChange={(e) => update("display_name", e.target.value)} maxLength={40} />
+                </GlassField>
+              </Block>
+            </>
+          ) : (
+            <>
+              {/* Banner KYC persistente */}
+              <VerifiedBanner status={data.verification_status} verified={data.is_verified} />
 
-            <div className="h-px bg-white/5 my-2" />
+              {/* 1 · IDENTIDAD VISUAL */}
+              <Block icon={<Camera className="h-4 w-4" />} title="Identidad Visual" subtitle="Galería pública y contenido exclusivo">
+                <SubLabel>Fotos públicas · {data.public_photos.length}/{publicPhotoLimit}</SubLabel>
+                <UploadBox icon={<ImagePlus className="h-6 w-6 text-accent" />} accept="image/*" onChange={onPublicPhotos} disabled={data.public_photos.length >= publicPhotoLimit} hint="JPG / PNG · máximo 3" />
+                {data.public_photos.length > 0 && (
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    {data.public_photos.map((src, i) => <Tile key={i} url={src} onRemove={() => removePublic(i)} />)}
+                  </div>
+                )}
 
-            <SubLabel>
-              <Lock className="h-3 w-3 inline mr-1 text-accent" />
-              Fotos exclusivas · {data.exclusive_photos.length}/{exclusivePhotoLimit}
-            </SubLabel>
-            <UploadBox icon={<Lock className="h-6 w-6 text-accent" />} accept="image/*" onChange={onExclusivePhotos} disabled={data.exclusive_photos.length >= exclusivePhotoLimit} hint={`Plan ${tier} · cupo ${exclusivePhotoLimit}`} />
-            {data.exclusive_photos.length > 0 && (
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                {data.exclusive_photos.map((p, i) => <PrivateTile key={p} path={p} onRemove={() => removeExclPhoto(i)} />)}
-              </div>
-            )}
+                <div className="h-px bg-white/5 my-2" />
 
-            <div className="h-px bg-white/5 my-2" />
+                <SubLabel>
+                  <Lock className="h-3 w-3 inline mr-1 text-accent" />
+                  Fotos exclusivas · {data.exclusive_photos.length}/{exclusivePhotoLimit}
+                </SubLabel>
+                <UploadBox icon={<Lock className="h-6 w-6 text-accent" />} accept="image/*" onChange={onExclusivePhotos} disabled={data.exclusive_photos.length >= exclusivePhotoLimit} hint={`Plan ${tier} · cupo ${exclusivePhotoLimit}`} />
+                {data.exclusive_photos.length > 0 && (
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    {data.exclusive_photos.map((p, i) => <PrivateTile key={p} path={p} onRemove={() => removeExclPhoto(i)} />)}
+                  </div>
+                )}
 
-            <SubLabel>
-              <Video className="h-3 w-3 inline mr-1 text-accent" />
-              Videos exclusivos · {data.exclusive_videos.length}/{exclusiveVideoLimit}
-            </SubLabel>
-            <UploadBox icon={<Video className="h-6 w-6 text-accent" />} accept="video/*" onChange={onExclusiveVideos} disabled={data.exclusive_videos.length >= exclusiveVideoLimit} hint={`Cupo ${exclusiveVideoLimit} videos`} />
-            {data.exclusive_videos.length > 0 && (
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                {data.exclusive_videos.map((p, i) => <PrivateTile key={p} path={p} type="video" onRemove={() => removeExclVideo(i)} />)}
-              </div>
-            )}
-          </Block>
+                <div className="h-px bg-white/5 my-2" />
 
-          {/* 2 · NARRATIVA PROFESIONAL */}
-          <Block icon={<FileText className="h-4 w-4" />} title="Narrativa Profesional" subtitle="Tu historia, tu voz">
-            <GlassField label={`Biografía · ${data.description.length}/500 (mín. 40)`}>
-              <Textarea
-                value={data.description}
-                onChange={(e) => update("description", e.target.value)}
-                rows={6}
-                maxLength={500}
-                placeholder="Cuéntale al mundo cómo eres, qué te apasiona, qué te hace única..."
-                className="bg-white/[0.03] border-white/10 text-white placeholder:text-white/30 rounded-2xl backdrop-blur-md focus-visible:ring-accent/60 focus-visible:border-accent/40 resize-none"
-              />
-            </GlassField>
-            <div className="grid sm:grid-cols-2 gap-3">
-              <GlassField label="WhatsApp (sin +)">
-                <GlassInput value={data.whatsapp} onChange={(e) => update("whatsapp", e.target.value.replace(/[^\d]/g, ""))} placeholder="573001234567" inputMode="numeric" />
-              </GlassField>
-              <GlassField label="Telegram (sin @)">
-                <GlassInput value={data.telegram} onChange={(e) => update("telegram", e.target.value.replace(/[^\w]/g, ""))} placeholder="usuario_tg" />
-              </GlassField>
-            </div>
-          </Block>
+                <SubLabel>
+                  <Video className="h-3 w-3 inline mr-1 text-accent" />
+                  Videos exclusivos · {data.exclusive_videos.length}/{exclusiveVideoLimit}
+                </SubLabel>
+                <UploadBox icon={<Video className="h-6 w-6 text-accent" />} accept="video/*" onChange={onExclusiveVideos} disabled={data.exclusive_videos.length >= exclusiveVideoLimit} hint={`Cupo ${exclusiveVideoLimit} videos`} />
+                {data.exclusive_videos.length > 0 && (
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    {data.exclusive_videos.map((p, i) => <PrivateTile key={p} path={p} type="video" onRemove={() => removeExclVideo(i)} />)}
+                  </div>
+                )}
+              </Block>
 
-          {/* 3 · ESPECIFICACIONES */}
-          <Block icon={<Ruler className="h-4 w-4" />} title="Especificaciones de Perfil" subtitle="Datos técnicos y atributos">
-            <div className="grid sm:grid-cols-2 gap-3">
-              <GlassField label="Nombre">
-                <GlassInput value={data.display_name} onChange={(e) => update("display_name", e.target.value)} maxLength={40} />
-              </GlassField>
-              <GlassField label="Apodo público">
-                <GlassInput value={data.nickname} onChange={(e) => update("nickname", e.target.value)} maxLength={40} placeholder="Cómo aparecerás" />
-              </GlassField>
-              <GlassField label="Edad">
-                <GlassInput type="number" min={18} max={99} value={data.age} onChange={(e) => update("age", e.target.value)} />
-              </GlassField>
-              <GlassField label="Fecha de nacimiento">
-                <GlassInput type="date" value={data.birth_date} onChange={(e) => update("birth_date", e.target.value)} />
-              </GlassField>
-              <GlassField label="Altura (cm)">
-                <GlassInput type="number" min={120} max={220} value={data.height} onChange={(e) => update("height", e.target.value)} />
-              </GlassField>
-              <GlassField label="Peso (kg)">
-                <GlassInput type="number" min={30} max={200} value={data.weight} onChange={(e) => update("weight", e.target.value)} />
-              </GlassField>
-              <GlassField label="Color de cabello">
-                <GlassInput value={data.hair_color} onChange={(e) => update("hair_color", e.target.value)} placeholder="Castaño, rubio, negro..." />
-              </GlassField>
-              <GlassField label="Medidas">
-                <GlassInput value={data.measurements} onChange={(e) => update("measurements", e.target.value)} placeholder="90-60-90" />
-              </GlassField>
-              <GlassField label="Lugar de nacimiento">
-                <GlassInput value={data.birth_place} onChange={(e) => update("birth_place", e.target.value)} />
-              </GlassField>
-            </div>
+              {/* 2 · NARRATIVA PROFESIONAL */}
+              <Block icon={<FileText className="h-4 w-4" />} title="Narrativa Profesional" subtitle="Tu historia, tu voz">
+                <GlassField label={`Biografía · ${data.description.length}/500 (mín. 40)`}>
+                  <Textarea
+                    value={data.description}
+                    onChange={(e) => update("description", e.target.value)}
+                    rows={6}
+                    maxLength={500}
+                    placeholder="Cuéntale al mundo cómo eres, qué te apasiona, qué te hace única..."
+                    className="bg-white/[0.03] border-white/10 text-white placeholder:text-white/30 rounded-2xl backdrop-blur-md focus-visible:ring-accent/60 focus-visible:border-accent/40 resize-none"
+                  />
+                </GlassField>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <GlassField label="WhatsApp (sin +)">
+                    <GlassInput value={data.whatsapp} onChange={(e) => update("whatsapp", e.target.value.replace(/[^\d]/g, ""))} placeholder="573001234567" inputMode="numeric" />
+                  </GlassField>
+                  <GlassField label="Telegram (sin @)">
+                    <GlassInput value={data.telegram} onChange={(e) => update("telegram", e.target.value.replace(/[^\w]/g, ""))} placeholder="usuario_tg" />
+                  </GlassField>
+                </div>
+              </Block>
 
-            <div className="h-px bg-white/5 my-2" />
+              {/* 3 · ESPECIFICACIONES */}
+              <Block icon={<Ruler className="h-4 w-4" />} title="Especificaciones de Perfil" subtitle="Datos técnicos y atributos">
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <GlassField label="Nombre">
+                    <GlassInput value={data.display_name} onChange={(e) => update("display_name", e.target.value)} maxLength={40} />
+                  </GlassField>
+                  <GlassField label="Apodo público">
+                    <GlassInput value={data.nickname} onChange={(e) => update("nickname", e.target.value)} maxLength={40} placeholder="Cómo aparecerás" />
+                  </GlassField>
+                  <GlassField label="Edad">
+                    <GlassInput type="number" min={18} max={99} value={data.age} onChange={(e) => update("age", e.target.value)} />
+                  </GlassField>
+                  <GlassField label="Fecha de nacimiento">
+                    <GlassInput type="date" value={data.birth_date} onChange={(e) => update("birth_date", e.target.value)} />
+                  </GlassField>
+                  <GlassField label="Altura (cm)">
+                    <GlassInput type="number" min={120} max={220} value={data.height} onChange={(e) => update("height", e.target.value)} />
+                  </GlassField>
+                  <GlassField label="Peso (kg)">
+                    <GlassInput type="number" min={30} max={200} value={data.weight} onChange={(e) => update("weight", e.target.value)} />
+                  </GlassField>
+                  <GlassField label="Color de cabello">
+                    <GlassInput value={data.hair_color} onChange={(e) => update("hair_color", e.target.value)} placeholder="Castaño, rubio, negro..." />
+                  </GlassField>
+                  <GlassField label="Medidas">
+                    <GlassInput value={data.measurements} onChange={(e) => update("measurements", e.target.value)} placeholder="90-60-90" />
+                  </GlassField>
+                  <GlassField label="Lugar de nacimiento">
+                    <GlassInput value={data.birth_place} onChange={(e) => update("birth_place", e.target.value)} />
+                  </GlassField>
+                </div>
 
-            <SubLabel>Ubicación</SubLabel>
-            <GlassField label="Departamento">
-              <Select value={data.department} onValueChange={(v) => { update("department", v); update("city", ""); }}>
-                <SelectTrigger className="bg-white/[0.03] border-white/10 text-white rounded-2xl backdrop-blur-md focus:ring-accent/60"><SelectValue placeholder="Selecciona" /></SelectTrigger>
-                <SelectContent className="max-h-72 bg-[#0A0A0A] border-white/10">
-                  {DEPARTMENTS.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </GlassField>
-            <div className="grid sm:grid-cols-2 gap-3">
-              <GlassField label="Ciudad">
-                <Select value={data.city} onValueChange={(v) => update("city", v)} disabled={!data.department}>
-                  <SelectTrigger className="bg-white/[0.03] border-white/10 text-white rounded-2xl backdrop-blur-md focus:ring-accent/60"><SelectValue placeholder={data.department ? "Selecciona" : "Elige depto"} /></SelectTrigger>
-                  <SelectContent className="max-h-72 bg-[#0A0A0A] border-white/10">
-                    {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </GlassField>
-              <GlassField label="Zona de trabajo">
-                <GlassInput value={data.work_zone} onChange={(e) => update("work_zone", e.target.value)} placeholder="El Poblado, Norte..." />
-              </GlassField>
-            </div>
+                <div className="h-px bg-white/5 my-2" />
 
-            <div className="h-px bg-white/5 my-2" />
+                <SubLabel>Ubicación</SubLabel>
+                <GlassField label="Departamento">
+                  <Select value={data.department} onValueChange={(v) => { update("department", v); update("city", ""); }}>
+                    <SelectTrigger className="bg-white/[0.03] border-white/10 text-white rounded-2xl backdrop-blur-md focus:ring-accent/60"><SelectValue placeholder="Selecciona" /></SelectTrigger>
+                    <SelectContent className="max-h-72 bg-[#0A0A0A] border-white/10">
+                      {DEPARTMENTS.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </GlassField>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <GlassField label="Ciudad">
+                    <Select value={data.city} onValueChange={(v) => update("city", v)} disabled={!data.department}>
+                      <SelectTrigger className="bg-white/[0.03] border-white/10 text-white rounded-2xl backdrop-blur-md focus:ring-accent/60"><SelectValue placeholder={data.department ? "Selecciona" : "Elige depto"} /></SelectTrigger>
+                      <SelectContent className="max-h-72 bg-[#0A0A0A] border-white/10">
+                        {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </GlassField>
+                  <GlassField label="Zona de trabajo">
+                    <GlassInput value={data.work_zone} onChange={(e) => update("work_zone", e.target.value)} placeholder="El Poblado, Norte..." />
+                  </GlassField>
+                </div>
 
-            <SubLabel>Categoría</SubLabel>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {(Object.entries(CATEGORY_LABELS) as [Category, string][]).map(([k, label]) => (
-                <Pill key={k} active={data.category === k} onClick={() => update("category", k)}>{label}</Pill>
-              ))}
-            </div>
-            <div className="grid grid-cols-3 gap-2 mt-2">
-              {(Object.entries(SERVICE_LABELS) as [ServiceType, string][]).map(([k, label]) => (
-                <Pill key={k} active={data.service_type === k} onClick={() => update("service_type", k)}>{label}</Pill>
-              ))}
-            </div>
-          </Block>
+                <div className="h-px bg-white/5 my-2" />
 
-        </div>
-      </main>
-
-      {/* Botón flotante guardar */}
+                <SubLabel>Categoría</SubLabel>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {(Object.entries(CATEGORY_LABELS) as [Category, string][]).map(([k, label]) => (
+                    <Pill key={k} active={data.category === k} onClick={() => update("category", k)}>{label}</Pill>
+                  ))}
+                </div>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  {(Object.entries(SERVICE_LABELS) as [ServiceType, string][]).map(([k, label]) => (
+                    <Pill key={k} active={data.service_type === k} onClick={() => update("service_type", k)}>{label}</Pill>
+                  ))}
+                </div>
+              </Block>
+            </>
+          )}
       <div className="fixed bottom-4 left-0 right-0 z-30 px-4 pointer-events-none">
         <div className="max-w-2xl mx-auto pointer-events-auto">
           <button
