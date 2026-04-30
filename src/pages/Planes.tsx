@@ -198,10 +198,15 @@ const PlanCard = ({ plan, onSelect }: { plan: PlanDef; onSelect: () => void }) =
       {plan.price === 0 ? (
         <p className="font-display text-3xl font-extrabold">Gratis <span className="text-sm font-medium text-muted-foreground">/ 90 días</span></p>
       ) : (
-        <p className="font-display text-3xl font-extrabold">
-          {formatCOP(plan.price)}
-          <span className="text-sm font-medium text-muted-foreground"> / mes</span>
-        </p>
+        <>
+          <p className="font-display text-3xl font-extrabold">
+            {formatCOP(plan.price)}
+            <span className="text-sm font-medium text-muted-foreground"> / mes</span>
+          </p>
+          <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-accent/10 ring-1 ring-accent/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
+            Próximamente
+          </span>
+        </>
       )}
     </div>
 
@@ -220,7 +225,7 @@ const PlanCard = ({ plan, onSelect }: { plan: PlanDef; onSelect: () => void }) =
       size="lg"
       className={cn("mt-6 rounded-full w-full", plan.highlight && "btn-shine border-0")}
     >
-      {plan.tier === "starter" ? "Empezar gratis" : "Elegir plan"}
+      {plan.tier === "starter" ? "Empezar gratis" : "Notificarme"}
     </Button>
   </div>
 );
