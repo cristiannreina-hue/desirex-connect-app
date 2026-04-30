@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { SeoNoIndex } from "@/components/SeoNoIndex";
 import { useI18n } from "@/lib/i18n";
+import { watermarkFile } from "@/lib/watermark";
 
 interface FormState {
   display_name: string;
@@ -141,7 +142,8 @@ const Dashboard = () => {
     const remaining = PUBLIC_PHOTO_LIMIT - data.public_photos.length;
     const picked = Array.from(files).slice(0, remaining);
     const uploaded: string[] = [];
-    for (const file of picked) {
+    for (const original of picked) {
+      const file = await watermarkFile(original);
       const ext = file.name.split(".").pop() ?? "jpg";
       const path = `${user.id}/public-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const { error } = await supabase.storage.from("profile-photos").upload(path, file, { upsert: false });
@@ -151,7 +153,7 @@ const Dashboard = () => {
     }
     if (uploaded.length) {
       update("public_photos", [...data.public_photos, ...uploaded]);
-      toast.success(`${uploaded.length} foto(s) públicas subidas`);
+      toast.success(`${uploaded.length} foto(s) con marca de agua DeseoX subidas`);
     }
   };
 
@@ -160,7 +162,8 @@ const Dashboard = () => {
     const remaining = exclusivePhotoLimit - data.exclusive_photos.length;
     const picked = Array.from(files).slice(0, remaining);
     const uploaded: string[] = [];
-    for (const file of picked) {
+    for (const original of picked) {
+      const file = await watermarkFile(original);
       const ext = file.name.split(".").pop() ?? "jpg";
       const path = `${user.id}/photos/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const { error } = await supabase.storage.from("exclusive-media").upload(path, file, { upsert: false });
@@ -169,7 +172,7 @@ const Dashboard = () => {
     }
     if (uploaded.length) {
       update("exclusive_photos", [...data.exclusive_photos, ...uploaded]);
-      toast.success(`${uploaded.length} foto(s) exclusivas subidas`);
+      toast.success(`${uploaded.length} foto(s) exclusivas con marca DeseoX subidas`);
     }
   };
 
@@ -187,7 +190,7 @@ const Dashboard = () => {
     }
     if (uploaded.length) {
       update("exclusive_videos", [...data.exclusive_videos, ...uploaded]);
-      toast.success(`${uploaded.length} video(s) exclusivos subidos`);
+      toast.success(`${uploaded.length} video(s) subido(s) — la marca de agua se aplica al reproducirlos`);
     }
   };
 

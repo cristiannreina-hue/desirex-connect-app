@@ -9,6 +9,7 @@ import { ShieldCheck, Camera, IdCard, BadgeCheck, Clock, ArrowRight, Lock } from
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { watermarkFile } from "@/lib/watermark";
 
 const STEPS = [
   { icon: <Camera className="h-5 w-5" />, title: "Selfie de rostro", desc: "Una foto clara solo de tu rostro, buena iluminación." },
@@ -41,12 +42,17 @@ const Verificacion = () => {
     if (!user || !faceFile || !idFile) return;
     setSubmitting(true);
     try {
-      const facePath = `${user.id}/face-${Date.now()}-${faceFile.name}`;
-      const idPath = `${user.id}/id-${Date.now()}-${idFile.name}`;
+      // Marca de agua DeseoX antes de subir (protege selfies KYC)
+      const [faceWm, idWm] = await Promise.all([
+        watermarkFile(faceFile),
+        watermarkFile(idFile),
+      ]);
+      const facePath = `${user.id}/face-${Date.now()}-${faceWm.name}`;
+      const idPath = `${user.id}/id-${Date.now()}-${idWm.name}`;
 
       const [a, b] = await Promise.all([
-        supabase.storage.from("verification-docs").upload(facePath, faceFile, { upsert: true }),
-        supabase.storage.from("verification-docs").upload(idPath, idFile, { upsert: true }),
+        supabase.storage.from("verification-docs").upload(facePath, faceWm, { upsert: true }),
+        supabase.storage.from("verification-docs").upload(idPath, idWm, { upsert: true }),
       ]);
       if (a.error) throw a.error;
       if (b.error) throw b.error;
