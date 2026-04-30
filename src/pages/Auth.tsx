@@ -50,6 +50,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [params] = useSearchParams();
+  const location = useLocation();
   const intentParam = params.get("intent");
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
@@ -72,18 +73,30 @@ const Auth = () => {
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const skipRedirectRef = useRef(false);
 
+  // El "intent" decide visitante vs creadora.
+  // Prioridad: ruta (/registro/visitante o /registro/creadora) > query (?intent=) > sessionStorage.
   const intent: "visitor" | "creator" = useMemo(() => {
+    if (location.pathname.endsWith("/registro/creadora")) return "creator";
+    if (location.pathname.endsWith("/registro/visitante")) return "visitor";
     if (intentParam === "creator" || intentParam === "visitor") return intentParam;
     try {
       const v = sessionStorage.getItem("deseox.intent");
       if (v === "creator" || v === "visitor") return v;
     } catch {}
     return "visitor";
-  }, [intentParam]);
+  }, [intentParam, location.pathname]);
 
+  // Si entran por una ruta de registro específica, abrir directo el formulario de signup
   useEffect(() => {
-    if (intentParam === "creator" || intentParam === "visitor") setMode("signup");
-  }, [intentParam]);
+    if (
+      location.pathname.endsWith("/registro/creadora") ||
+      location.pathname.endsWith("/registro/visitante") ||
+      intentParam === "creator" ||
+      intentParam === "visitor"
+    ) {
+      setMode("signup");
+    }
+  }, [intentParam, location.pathname]);
 
   const age = useMemo(() => calculateAge(birthDate), [birthDate]);
   const ageValid = birthDate !== "" && age >= 18;
