@@ -172,8 +172,8 @@ const Cuenta = () => {
           )}
         </div>
 
-        {/* Verificación compacta — banner delgado */}
-        {isVerified ? (
+        {/* Verificación compacta — solo creadoras */}
+        {isCreator && (isVerified ? (
           <div className="card-glass rounded-2xl px-4 py-3 ring-1 ring-gold/30 flex items-center gap-3">
             <BadgeCheck className="h-4 w-4 text-gold shrink-0" strokeWidth={2.5} />
             <p className="text-sm flex-1">
@@ -206,7 +206,7 @@ const Cuenta = () => {
               </Link>
             </Button>
           </div>
-        )}
+        ))}
 
         {/* Ver perfil público (solo si está completo) */}
         {completion.isComplete && profile?.id && (
