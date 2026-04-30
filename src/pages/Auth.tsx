@@ -283,7 +283,7 @@ const Auth = () => {
   const submitDisabled =
     loading ||
     (mode === "signup" &&
-      (!ageValid || password.length < 6 || password !== confirmPassword));
+      (!ageValid || password.length < 6 || password !== confirmPassword || !acceptedTerms));
 
   return (
     <div className="min-h-screen flex flex-col">
