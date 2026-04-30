@@ -220,18 +220,11 @@ const Dashboard = () => {
         photos: photo,
       };
     } else {
-      if (data.age && parseInt(data.age) < 18) { toast.error("Debes ser mayor de 18 años"); setSaving(false); return; }
       payload = {
         id: user.id,
         display_name: data.display_name || null,
         nickname: data.nickname || null,
-        age: data.age ? parseInt(data.age) : null,
-        birth_date: data.birth_date || null,
-        birth_place: data.birth_place || null,
-        height: data.height ? parseInt(data.height) : null,
-        weight: data.weight ? parseInt(data.weight) : null,
         hair_color: data.hair_color || null,
-        measurements: data.measurements || null,
         department: data.department || null,
         city: data.city || null,
         work_zone: data.work_zone || null,
