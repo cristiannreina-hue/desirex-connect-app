@@ -69,7 +69,7 @@ const Cuenta = () => {
   const completion = getCompletion(profile);
   const hasProfile = completion.done > 0;
   const isCreator = (accountType ?? profile?.account_type) === "creator";
-  const [upgrading, setUpgrading] = useState(false);
+  
   const profileCtaLabel = completion.percent === 0 ? "Crear mi perfil" : "Editar mi panel";
 
   const handleProfileAction = async () => {
