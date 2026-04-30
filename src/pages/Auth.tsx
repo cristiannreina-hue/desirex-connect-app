@@ -245,6 +245,8 @@ const Auth = () => {
         if (!birthDate) throw new Error("La fecha de nacimiento es obligatoria");
         if (age < 18)
           throw new Error("Debes ser mayor de 18 años para acceder a esta plataforma");
+        if (!acceptedTerms)
+          throw new Error("Debes aceptar los Términos y Condiciones para continuar");
 
         await sendOtp();
 
