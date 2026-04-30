@@ -315,12 +315,14 @@ const Index = () => {
               <Flame className="h-4 w-4" />
               Explorar perfiles
             </Button>
-            <Button asChild variant="outline" size="lg" className="rounded-full gap-2 btn-shine">
-              <a href="/registro">
-                <Sparkles className="h-4 w-4" />
-                Unirme a DeseoX
-              </a>
-            </Button>
+            {!user && (
+              <Button asChild variant="outline" size="lg" className="rounded-full gap-2 btn-shine">
+                <a href="/registro">
+                  <Sparkles className="h-4 w-4" />
+                  Unirme a DeseoX
+                </a>
+              </Button>
+            )}
           </div>
 
           {/* Escudo de confianza CEO */}
