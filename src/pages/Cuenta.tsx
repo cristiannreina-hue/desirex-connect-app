@@ -191,8 +191,9 @@ const Cuenta = () => {
                   size="sm"
                   className="mt-5 rounded-full gap-1.5 w-full sm:w-auto"
                   onClick={handleProfileAction}
+                  disabled={upgrading}
                 >
-                  {isCreator || hasProfile ? profileCtaLabel : "Crear mi perfil"}
+                  {upgrading ? "Abriendo…" : profileCtaLabel}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </div>
