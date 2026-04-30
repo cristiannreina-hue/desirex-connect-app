@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import {
-  ShieldCheck, LogOut, Sparkles, ArrowRight, Clock, Crown, Receipt, BadgeCheck, User as UserIcon,
+  ShieldCheck, LogOut, Sparkles, ArrowRight, Clock, Crown, Receipt, BadgeCheck, User as UserIcon, Eye,
 } from "lucide-react";
 import { TIER_LABELS } from "@/types/profile";
 import { getCompletion } from "@/lib/profile-completion";
@@ -120,6 +120,26 @@ const Cuenta = () => {
                     className="inline-flex items-center justify-center"
                   >
                     <BadgeCheck className="h-5 w-5 text-gold" strokeWidth={2.5} />
+                  </span>
+                )}
+                {/* Insignia de tipo de cuenta */}
+                {isCreator ? (
+                  <span
+                    title="Cuenta de creadora"
+                    aria-label="Cuenta de creadora"
+                    className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-gold/20 to-accent/20 ring-1 ring-gold/40 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold"
+                  >
+                    <Crown className="h-3 w-3" strokeWidth={2.5} />
+                    Creadora
+                  </span>
+                ) : (
+                  <span
+                    title="Cuenta de visitante"
+                    aria-label="Cuenta de visitante"
+                    className="inline-flex items-center gap-1 rounded-full bg-secondary/60 ring-1 ring-border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                  >
+                    <Eye className="h-3 w-3" strokeWidth={2.5} />
+                    Visitante
                   </span>
                 )}
               </h1>
