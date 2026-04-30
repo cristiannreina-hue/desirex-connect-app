@@ -175,10 +175,10 @@ const Profile = () => {
           <Link to="/"><ArrowLeft className="h-4 w-4" /> Volver</Link>
         </Button>
 
-        <div className="grid lg:grid-cols-[1.2fr_1fr] gap-8">
-          {/* Carrusel auto-fade */}
+        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-8">
+          {/* Carrusel auto-fade con overlay info */}
           <div className="space-y-3">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl ring-1 ring-border bg-card shadow-card">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl ring-1 ring-border bg-card shadow-card group">
               <WatermarkOverlay size="lg" className="absolute inset-0 h-full w-full">
                 {photos.map((src, i) => (
                   <img
@@ -194,23 +194,53 @@ const Profile = () => {
                   />
                 ))}
               </WatermarkOverlay>
+
+              {/* Gradiente inferior + info clave sobre foto */}
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background/95 via-background/40 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-5 flex items-end justify-between gap-3">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[hsl(var(--online))]/90 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur">
+                    <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" /> EN LÍNEA
+                  </span>
+                  {profile.verified && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-accent/90 px-2.5 py-1 text-[11px] font-bold text-accent-foreground backdrop-blur">
+                      ✓ Verificada
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={handleShare}
+                  aria-label="Compartir perfil"
+                  className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-background/80 ring-1 ring-border backdrop-blur hover:bg-background transition"
+                >
+                  <Share2 className="h-4 w-4" />
+                </button>
+              </div>
+
               {photos.length > 1 && (
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 flex gap-1.5">
                   {photos.map((_, i) => (
                     <button
                       key={i}
                       onClick={() => setPhotoIdx(i)}
                       aria-label={`foto ${i + 1}`}
-                      className={`h-1.5 rounded-full transition-all ${i === photoIdx ? "w-6 bg-accent" : "w-1.5 bg-foreground/40"}`}
+                      className={`h-1.5 rounded-full transition-all ${i === photoIdx ? "w-6 bg-accent" : "w-1.5 bg-white/60"}`}
                     />
                   ))}
                 </div>
               )}
             </div>
+
+            {/* Mini-stats bajo la foto */}
+            <div className="grid grid-cols-3 gap-2">
+              <MiniStat icon={<Eye className="h-4 w-4" />} value={`${profile.viewCount ?? 0}`} label="Vistas" />
+              <MiniStat icon={<Star className="h-4 w-4" />} value={(profile.ratingAvg ?? 0).toFixed(1)} label={`${profile.ratingCount ?? 0} reseñas`} />
+              <MiniStat icon={<Zap className="h-4 w-4" />} value="Rápida" label="Respuesta" />
+            </div>
           </div>
 
-          {/* Columna info + sidebar técnica con iconos */}
-          <div className="space-y-6">
+          {/* Columna info */}
+          <div className="space-y-5">
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 {tierMeta && (
@@ -242,45 +272,32 @@ const Profile = () => {
                 <div className="mt-3"><Stars value={profile.ratingAvg ?? 0} count={profile.ratingCount} size="md" /></div>
               )}
 
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-2 rounded-full bg-[hsl(var(--online))]/10 px-3 py-1 text-xs font-semibold text-[hsl(var(--online))] ring-1 ring-[hsl(var(--online))]/30">
-                  <span className="dot-online" /> Activo ahora
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/70 px-3 py-1 text-xs font-medium ring-1 ring-border">
-                  <Zap className="h-3 w-3 text-accent" /> Responde rápido
-                </span>
-              </div>
-
               <div className="mt-5 grid sm:grid-cols-2 gap-3">
                 <Button asChild variant="whatsapp" size="xl" className="w-full rounded-full">
                   <a href={waUrl} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="h-5 w-5" /> Contactar por WhatsApp
+                    <MessageCircle className="h-5 w-5" /> WhatsApp
                   </a>
                 </Button>
-                {profile.telegram && (
+                {profile.telegram ? (
                   <Button asChild variant="telegram" size="xl" className="w-full rounded-full">
                     <a href={tgUrl} target="_blank" rel="noopener noreferrer">
                       <Send className="h-5 w-5" /> Telegram
                     </a>
                   </Button>
+                ) : (
+                  <Button onClick={handleShare} variant="outline" size="xl" className="w-full rounded-full">
+                    <Share2 className="h-5 w-5" /> Compartir
+                  </Button>
                 )}
-              </div>
-
-            </div>
-
-            {/* Ficha técnica con iconos elegantes — solo campos activos */}
-            <div className="card-glass rounded-2xl p-4">
-              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Ficha técnica</p>
-              <div className="grid grid-cols-2 gap-2">
-                <SidebarStat icon={<Calendar className="h-4 w-4" />} label="Edad" value={`${profile.age}`} />
-                {profile.hairColor && <SidebarStat icon={<Scissors className="h-4 w-4" />} label="Cabello" value={profile.hairColor} />}
               </div>
             </div>
 
             {/* Descripción + traducción IA */}
-            <section>
+            <section className="card-glass rounded-2xl p-5">
               <div className="flex items-center justify-between gap-3 mb-2">
-                <h2 className="font-display text-lg font-bold">{t("profile.about")}</h2>
+                <h2 className="font-display text-lg font-bold flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-accent" /> {t("profile.about")}
+                </h2>
                 {profile.description && (
                   <button
                     onClick={translate}
@@ -296,15 +313,47 @@ const Profile = () => {
                   </button>
                 )}
               </div>
-              <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-                {showTranslated && translation ? translation : profile.description}
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm">
+                {showTranslated && translation
+                  ? translation
+                  : (profile.description || "Esta creadora aún no ha añadido una descripción.")}
               </p>
             </section>
 
+            {/* Ficha técnica + Tarifas en grid lado a lado */}
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div className="card-glass rounded-2xl p-4">
+                <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
+                  <Heart className="h-3.5 w-3.5 text-accent" /> Ficha
+                </p>
+                <div className="space-y-2">
+                  <SidebarStat icon={<Calendar className="h-4 w-4" />} label="Edad" value={`${profile.age} años`} />
+                  {profile.hairColor && <SidebarStat icon={<Scissors className="h-4 w-4" />} label="Cabello" value={profile.hairColor} />}
+                  <SidebarStat icon={<MapPin className="h-4 w-4" />} label="Ubicación" value={profile.city} />
+                </div>
+              </div>
+
+              {hasAnyRate && (
+                <div className="card-glass rounded-2xl p-4">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
+                    <DollarSign className="h-3.5 w-3.5 text-accent" /> Tarifas
+                  </p>
+                  <div className="space-y-2 text-sm">
+                    {rates.short && <RateRow label="Rapidito" value={fmtCop(rates.short)} />}
+                    {rates.oneHour && <RateRow label="1 hora" value={fmtCop(rates.oneHour)} />}
+                    {rates.twoHours && <RateRow label="2 horas" value={fmtCop(rates.twoHours)} />}
+                    {rates.fullDay && <RateRow label="Día completo" value={fmtCop(rates.fullDay)} />}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Servicios */}
             {profile.services.length > 0 && (
-              <section>
-                <h2 className="font-display text-lg font-bold mb-2">{t("profile.services")}</h2>
+              <section className="card-glass rounded-2xl p-5">
+                <h2 className="font-display text-lg font-bold mb-3 flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-accent" /> {t("profile.services")}
+                </h2>
                 <div className="flex flex-wrap gap-2">
                   {profile.services.map((s) => (
                     <span key={s} className="rounded-full bg-secondary px-3 py-1.5 text-sm ring-1 ring-border">{s}</span>
@@ -313,6 +362,7 @@ const Profile = () => {
               </section>
             )}
           </div>
+        </div>
         </div>
 
         {/* Contenido exclusivo (paywall con signed URLs) */}
