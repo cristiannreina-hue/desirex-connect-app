@@ -224,7 +224,7 @@ const PlanCard = ({ plan, onSelect }: { plan: PlanDef; onSelect: () => void }) =
       size="lg"
       className={cn("mt-6 rounded-full w-full", plan.highlight && "btn-shine border-0")}
     >
-      {plan.tier === "starter" ? "Empezar gratis" : "Notificarme"}
+      {plan.tier === "starter" ? "Empezar gratis" : "Pagar con Wompi"}
     </Button>
   </div>
 );
