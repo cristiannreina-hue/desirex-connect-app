@@ -7,8 +7,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import {
-  ShieldCheck, LogOut, Sparkles, ArrowRight, Clock, Crown, Receipt, BadgeCheck, User as UserIcon, Eye,
+  ShieldCheck, LogOut, Sparkles, ArrowRight, Clock, Crown, Receipt, BadgeCheck, User as UserIcon, Eye, Trash2,
 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { TIER_LABELS } from "@/types/profile";
 import { getCompletion } from "@/lib/profile-completion";
 import { cn } from "@/lib/utils";
@@ -27,6 +31,21 @@ const Cuenta = () => {
   const [subs, setSubs] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
   const [upgrading, setUpgrading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const { error } = await supabase.functions.invoke("delete-account");
+      if (error) throw error;
+      await supabase.auth.signOut();
+      toast.success("Cuenta eliminada");
+      navigate("/", { replace: true });
+    } catch (err: any) {
+      toast.error(err?.message ?? "No se pudo eliminar la cuenta");
+      setDeleting(false);
+    }
+  };
 
   useEffect(() => { document.title = "Mi cuenta · DeseoX"; }, []);
 
@@ -349,6 +368,47 @@ const Cuenta = () => {
             </ul>
           </div>
         )}
+
+        {/* Zona de peligro: eliminar cuenta */}
+        <div className="card-glass rounded-3xl p-6 ring-1 ring-destructive/30">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-destructive/10 text-destructive ring-1 ring-destructive/30 shrink-0">
+              <Trash2 className="h-5 w-5" />
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className="font-display font-bold">Eliminar mi cuenta</p>
+              <p className="text-sm text-muted-foreground">
+                Esta acción es permanente. Borraremos tu perfil, fotos y todos tus datos.
+              </p>
+            </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="sm" className="rounded-full gap-1.5 shrink-0">
+                  <Trash2 className="h-3.5 w-3.5" /> Eliminar
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>¿Eliminar tu cuenta de DeseoX?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta acción no se puede deshacer. Se eliminarán de forma permanente
+                    tu perfil, foto, reseñas y cualquier dato asociado a tu cuenta.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={deleting}>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteAccount}
+                    disabled={deleting}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {deleting ? "Eliminando…" : "Sí, eliminar"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
       </main>
       <Footer />
     </div>
