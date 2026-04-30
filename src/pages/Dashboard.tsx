@@ -19,6 +19,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { SeoNoIndex } from "@/components/SeoNoIndex";
 import { useI18n } from "@/lib/i18n";
 import { watermarkFile } from "@/lib/watermark";
+import {
+  validateVideo,
+  PUBLIC_IMAGE_MAX_SIDE,
+  EXCLUSIVE_IMAGE_MAX_SIDE,
+} from "@/lib/compress";
 import { WatermarkOverlay } from "@/components/WatermarkOverlay";
 
 interface FormState {
