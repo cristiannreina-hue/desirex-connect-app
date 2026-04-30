@@ -71,12 +71,14 @@ export const Header = () => {
               <Link to="/auth">{t("nav.signin")}</Link>
             </Button>
           )}
-          {(!user || accountType !== null) && (
+          {/* El CTA "Ser creadora" se oculta para visitantes ya registrados.
+              Solo aparece para visitantes anónimos (invita a unirse) o para creadoras (acceso a su panel). */}
+          {(!user || accountType === "creator") && (
             <Button asChild variant="hero" size="sm" className="gap-2 rounded-full btn-shine">
               <Link to={creatorCtaHref}>
                 <Sparkles className="h-4 w-4" />
                 <span className="hidden sm:inline">{creatorCtaLabel}</span>
-                <span className="sm:hidden">{!user ? "Unirme" : accountType === "creator" ? "Panel" : "Planes"}</span>
+                <span className="sm:hidden">{!user ? "Unirme" : "Panel"}</span>
               </Link>
             </Button>
           )}
