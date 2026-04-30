@@ -394,26 +394,8 @@ const Dashboard = () => {
                   <GlassField label="Apodo público">
                     <GlassInput value={data.nickname} onChange={(e) => update("nickname", e.target.value)} maxLength={40} placeholder="Cómo aparecerás" />
                   </GlassField>
-                  <GlassField label="Edad">
-                    <GlassInput type="number" min={18} max={99} value={data.age} onChange={(e) => update("age", e.target.value)} />
-                  </GlassField>
-                  <GlassField label="Fecha de nacimiento">
-                    <GlassInput type="date" value={data.birth_date} onChange={(e) => update("birth_date", e.target.value)} />
-                  </GlassField>
-                  <GlassField label="Altura (cm)">
-                    <GlassInput type="number" min={120} max={220} value={data.height} onChange={(e) => update("height", e.target.value)} />
-                  </GlassField>
-                  <GlassField label="Peso (kg)">
-                    <GlassInput type="number" min={30} max={200} value={data.weight} onChange={(e) => update("weight", e.target.value)} />
-                  </GlassField>
                   <GlassField label="Color de cabello">
                     <GlassInput value={data.hair_color} onChange={(e) => update("hair_color", e.target.value)} placeholder="Castaño, rubio, negro..." />
-                  </GlassField>
-                  <GlassField label="Medidas">
-                    <GlassInput value={data.measurements} onChange={(e) => update("measurements", e.target.value)} placeholder="90-60-90" />
-                  </GlassField>
-                  <GlassField label="Lugar de nacimiento">
-                    <GlassInput value={data.birth_place} onChange={(e) => update("birth_place", e.target.value)} />
                   </GlassField>
                 </div>
 
