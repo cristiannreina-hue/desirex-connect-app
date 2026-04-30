@@ -44,7 +44,7 @@ export const Header = () => {
           >
             <Compass className="h-4 w-4" /> {t("nav.explore")}
           </NavLink>
-          {accountType !== "visitor" && (
+          {accountType === "creator" && (
             <NavLink
               to="/planes"
               className={({ isActive }) =>

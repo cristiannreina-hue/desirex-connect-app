@@ -7,7 +7,7 @@ import { useAccountType } from "@/hooks/useAccountType";
 const allItems = [
   { to: "/", label: "Inicio", icon: Home, end: true },
   { to: "/explorar", label: "Explorar", icon: Compass, end: false },
-  { to: "/planes", label: "Planes", icon: Crown, end: false, hideForVisitor: true },
+  { to: "/planes", label: "Planes", icon: Crown, end: false, creatorOnly: true },
   { to: "/cuenta", label: "Perfil", icon: User, end: false, requiresAuth: true },
 ];
 
@@ -15,9 +15,9 @@ export const BottomNav = () => {
   const { user } = useAuth();
   const { accountType } = useAccountType(user?.id);
 
-  // Visitantes no ven la opción de Planes (no aplica para ellos).
+  // Solo las creadoras ven la opción de Planes (planes de suscripción para creadoras).
   const items = allItems.filter(
-    (it) => !(it.hideForVisitor && accountType === "visitor"),
+    (it) => !(it.creatorOnly && accountType !== "creator"),
   );
 
   return (
