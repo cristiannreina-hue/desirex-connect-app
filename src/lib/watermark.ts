@@ -114,20 +114,21 @@ export async function watermarkImage(
   ctx.fillText(stampText, textX, textY);
   ctx.restore();
 
-  // Determinar formato de salida (preferimos JPEG por tamaño, salvo PNG transparente)
-  const outputType = file.type === "image/png" ? "image/png" : "image/jpeg";
+  // Para fotos de perfil siempre convertimos a JPEG (mucho menos peso).
+  // El sello de marca de agua ya rellena el fondo, así que la transparencia
+  // del PNG no aporta valor en este contexto.
+  const outputType = "image/jpeg";
   const blob: Blob = await new Promise((resolve, reject) => {
     canvas.toBlob(
       (b) => (b ? resolve(b) : reject(new Error("canvas.toBlob failed"))),
       outputType,
-      outputType === "image/jpeg" ? quality : undefined,
+      quality,
     );
   });
 
-  // Conserva nombre original cambiando extensión si hace falta
-  const ext = outputType === "image/png" ? "png" : "jpg";
+  // Conserva nombre original cambiando extensión a .jpg
   const baseName = file.name.replace(/\.[^/.]+$/, "");
-  const newName = `${baseName}_wm.${ext}`;
+  const newName = `${baseName}_wm.jpg`;
 
   return new File([blob], newName, { type: outputType, lastModified: Date.now() });
 }
