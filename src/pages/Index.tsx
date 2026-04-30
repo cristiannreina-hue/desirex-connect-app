@@ -167,25 +167,40 @@ const Index = () => {
       .sort(sortByTier);
   }, [allProfiles, gender, query, quickFilter, cityFilter]);
 
-  /* Secciones */
+  /* Secciones — fijadas/priorizadas según plan adquirido (ver /planes) */
+  // VIP queda fijado arriba; el resto se ordena por vistas
   const topWeek = useMemo(
-    () => [...visible].sort((a, b) => (b.viewCount ?? 0) - (a.viewCount ?? 0)).slice(0, 8),
+    () => {
+      const vips = visible.filter((p) => p.subscription?.tier === "vip");
+      const rest = visible
+        .filter((p) => p.subscription?.tier !== "vip")
+        .sort((a, b) => (b.viewCount ?? 0) - (a.viewCount ?? 0));
+      return [...vips, ...rest].slice(0, 8);
+    },
     [visible],
   );
+  // Mejor valoradas: solo Elite y VIP, ordenado por rating
   const bestRated = useMemo(
     () =>
       [...visible]
+        .filter((p) => p.subscription?.tier === "elite" || p.subscription?.tier === "vip")
         .filter((p) => (p.ratingCount ?? 0) > 0)
         .sort((a, b) => (b.ratingAvg ?? 0) - (a.ratingAvg ?? 0))
         .slice(0, 8),
     [visible],
   );
+  // En tendencia: Elite y VIP
   const trending = useMemo(
     () => [...visible].filter((p) => p.subscription?.tier === "elite" || p.subscription?.tier === "vip").slice(0, 8),
     [visible],
   );
+  // Destacados: VIP fijo arriba, luego verificados
   const featured = useMemo(
-    () => [...visible].filter((p) => p.verified || p.subscription?.tier === "vip").slice(0, 8),
+    () => {
+      const vips = visible.filter((p) => p.subscription?.tier === "vip");
+      const others = visible.filter((p) => p.subscription?.tier !== "vip" && p.verified);
+      return [...vips, ...others].slice(0, 8);
+    },
     [visible],
   );
   const topCity = useMemo(() => {
@@ -197,11 +212,16 @@ const Index = () => {
     () => visible.filter((p) => p.city === topCity).slice(0, 6),
     [visible, topCity],
   );
-  const activeNow = useMemo(() => visible.slice(0, 12), [visible]);
+  // Activos hoy: prioriza Boost/Elite/VIP (promesa del plan Boost)
+  const activeNow = useMemo(
+    () => [...visible].sort(sortByTier).slice(0, 12),
+    [visible],
+  );
 
   /* === Secciones regionales nacionales === */
+  // Destacados en Bogotá: ordenado por tier (Boost+ tiene posición preferente en su ciudad)
   const bogotaTop = useMemo(
-    () => [...visible].filter((p) => p.city === "Bogotá").slice(0, 8),
+    () => [...visible].filter((p) => p.city === "Bogotá").sort(sortByTier).slice(0, 8),
     [visible],
   );
   const costaTop = useMemo(

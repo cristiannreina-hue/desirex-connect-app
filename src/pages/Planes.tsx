@@ -32,6 +32,7 @@ const PLANS: PlanDef[] = [
       "Aparece en el grid general",
       "Contacto por WhatsApp directo",
       "Recibe reseñas de visitantes",
+      "Hasta 6 fotos exclusivas + 2 videos",
     ],
   },
   {
@@ -43,7 +44,8 @@ const PLANS: PlanDef[] = [
     features: [
       "Todo lo del plan Starter",
       "Posición preferente en tu ciudad",
-      "Aparece en 'Activos hoy'",
+      "Prioridad en 'Activos hoy'",
+      "Hasta 12 fotos exclusivas + 5 videos",
       "Hasta 3x más visualizaciones",
     ],
   },
@@ -58,7 +60,7 @@ const PLANS: PlanDef[] = [
       "Todo lo del plan Boost",
       "Aparece en 'Mejor valoradas' y 'En tendencia'",
       "Badge ⭐ Destacada visible",
-      "Soporte prioritario",
+      "Hasta 24 fotos exclusivas + 10 videos",
       "Hasta 7x más visualizaciones",
     ],
   },
@@ -70,10 +72,10 @@ const PLANS: PlanDef[] = [
     icon: <Crown className="h-5 w-5" />,
     features: [
       "Todo lo del plan Elite",
-      "Fijado en 'Top de la semana' y 'Destacados'",
+      "Fijado primero en 'Top de la semana' y 'Destacados'",
       "Badge 💎 VIP brillante",
       "Aparece primero en TODA la búsqueda",
-      "Análisis de visitas semanal",
+      "Hasta 48 fotos exclusivas + 20 videos",
       "Hasta 15x más visualizaciones",
     ],
   },
@@ -98,8 +100,8 @@ const Planes = () => {
       navigate("/cuenta");
       return;
     }
-    toast("Pronto disponible", {
-      description: "La activación de pagos con Wompi estará lista en la próxima entrega.",
+    toast("Planes pagos próximamente", {
+      description: "Estamos terminando la integración con Wompi. Mientras tanto, disfruta de tu plan Starter gratis (90 días).",
     });
   };
 
@@ -196,10 +198,15 @@ const PlanCard = ({ plan, onSelect }: { plan: PlanDef; onSelect: () => void }) =
       {plan.price === 0 ? (
         <p className="font-display text-3xl font-extrabold">Gratis <span className="text-sm font-medium text-muted-foreground">/ 90 días</span></p>
       ) : (
-        <p className="font-display text-3xl font-extrabold">
-          {formatCOP(plan.price)}
-          <span className="text-sm font-medium text-muted-foreground"> / mes</span>
-        </p>
+        <>
+          <p className="font-display text-3xl font-extrabold">
+            {formatCOP(plan.price)}
+            <span className="text-sm font-medium text-muted-foreground"> / mes</span>
+          </p>
+          <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-accent/10 ring-1 ring-accent/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
+            Próximamente
+          </span>
+        </>
       )}
     </div>
 
@@ -218,7 +225,7 @@ const PlanCard = ({ plan, onSelect }: { plan: PlanDef; onSelect: () => void }) =
       size="lg"
       className={cn("mt-6 rounded-full w-full", plan.highlight && "btn-shine border-0")}
     >
-      {plan.tier === "starter" ? "Empezar gratis" : "Elegir plan"}
+      {plan.tier === "starter" ? "Empezar gratis" : "Notificarme"}
     </Button>
   </div>
 );
