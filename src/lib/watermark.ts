@@ -138,10 +138,13 @@ export async function watermarkImage(
  * (la protección visual se aplica con overlay en el reproductor).
  * Si es imagen, devuelve la versión marcada.
  */
-export async function watermarkFile(file: File): Promise<File> {
+export async function watermarkFile(
+  file: File,
+  options: WatermarkOptions = {},
+): Promise<File> {
   if (file.type.startsWith("image/")) {
     try {
-      return await watermarkImage(file);
+      return await watermarkImage(file, options);
     } catch (err) {
       console.warn("[watermark] fallo al marcar imagen, se sube original", err);
       return file;
@@ -149,3 +152,4 @@ export async function watermarkFile(file: File): Promise<File> {
   }
   return file;
 }
+
