@@ -368,6 +368,47 @@ const Cuenta = () => {
             </ul>
           </div>
         )}
+
+        {/* Zona de peligro: eliminar cuenta */}
+        <div className="card-glass rounded-3xl p-6 ring-1 ring-destructive/30">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-destructive/10 text-destructive ring-1 ring-destructive/30 shrink-0">
+              <Trash2 className="h-5 w-5" />
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className="font-display font-bold">Eliminar mi cuenta</p>
+              <p className="text-sm text-muted-foreground">
+                Esta acción es permanente. Borraremos tu perfil, fotos y todos tus datos.
+              </p>
+            </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="sm" className="rounded-full gap-1.5 shrink-0">
+                  <Trash2 className="h-3.5 w-3.5" /> Eliminar
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>¿Eliminar tu cuenta de DeseoX?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta acción no se puede deshacer. Se eliminarán de forma permanente
+                    tu perfil, foto, reseñas y cualquier dato asociado a tu cuenta.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={deleting}>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteAccount}
+                    disabled={deleting}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {deleting ? "Eliminando…" : "Sí, eliminar"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
       </main>
       <Footer />
     </div>
