@@ -320,32 +320,16 @@ const Profile = () => {
               </p>
             </section>
 
-            {/* Ficha técnica + Tarifas en grid lado a lado */}
-            <div className="grid sm:grid-cols-2 gap-3">
-              <div className="card-glass rounded-2xl p-4">
-                <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
-                  <Heart className="h-3.5 w-3.5 text-accent" /> Ficha
-                </p>
-                <div className="space-y-2">
-                  <SidebarStat icon={<Calendar className="h-4 w-4" />} label="Edad" value={`${profile.age} años`} />
-                  {profile.hairColor && <SidebarStat icon={<Scissors className="h-4 w-4" />} label="Cabello" value={profile.hairColor} />}
-                  <SidebarStat icon={<MapPin className="h-4 w-4" />} label="Ubicación" value={profile.city} />
-                </div>
+            {/* Ficha técnica */}
+            <div className="card-glass rounded-2xl p-4">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
+                <Heart className="h-3.5 w-3.5 text-accent" /> Ficha
+              </p>
+              <div className="grid sm:grid-cols-3 gap-2">
+                <SidebarStat icon={<Calendar className="h-4 w-4" />} label="Edad" value={`${profile.age} años`} />
+                {profile.hairColor && <SidebarStat icon={<Scissors className="h-4 w-4" />} label="Cabello" value={profile.hairColor} />}
+                <SidebarStat icon={<MapPin className="h-4 w-4" />} label="Ubicación" value={profile.city} />
               </div>
-
-              {hasAnyRate && (
-                <div className="card-glass rounded-2xl p-4">
-                  <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
-                    <DollarSign className="h-3.5 w-3.5 text-accent" /> Tarifas
-                  </p>
-                  <div className="space-y-2 text-sm">
-                    {rates.short && <RateRow label="Rapidito" value={fmtCop(rates.short)} />}
-                    {rates.oneHour && <RateRow label="1 hora" value={fmtCop(rates.oneHour)} />}
-                    {rates.twoHours && <RateRow label="2 horas" value={fmtCop(rates.twoHours)} />}
-                    {rates.fullDay && <RateRow label="Día completo" value={fmtCop(rates.fullDay)} />}
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Servicios */}
