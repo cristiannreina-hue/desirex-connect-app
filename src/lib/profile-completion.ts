@@ -15,8 +15,17 @@ const MIN_PHOTOS = 3;
 
 export function getCompletionChecks(p: Partial<DBProfile> | null | undefined): CompletionCheck[] {
   const photos = (p?.photos ?? []) as string[];
-  const hasContact = !!((p?.whatsapp && p.whatsapp.length >= 8) || (p?.telegram && p.telegram.length >= 3));
 
+  // Visitantes: solo necesitan nombre/alias y 1 foto de perfil.
+  if ((p as any)?.account_type === "visitor") {
+    return [
+      { key: "name", label: "Nombre o alias", done: !!p?.display_name?.trim() },
+      { key: "photo", label: "Foto de perfil", done: photos.length >= 1 },
+    ];
+  }
+
+  // Creadoras: perfil completo profesional.
+  const hasContact = !!((p?.whatsapp && p.whatsapp.length >= 8) || (p?.telegram && p.telegram.length >= 3));
   return [
     { key: "name", label: "Nombre o alias", done: !!p?.display_name?.trim() },
     { key: "age", label: "Edad", done: !!p?.age && p.age >= 18 },
