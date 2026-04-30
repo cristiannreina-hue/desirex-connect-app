@@ -259,40 +259,14 @@ const Profile = () => {
                 )}
               </div>
 
-              {isOwner && (
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <Button asChild variant="outline" size="sm" className="rounded-full gap-2">
-                    <Link to="/dashboard"><Pencil className="h-3.5 w-3.5" /> Editar perfil</Link>
-                  </Button>
-                  <Button asChild variant="ghost" size="sm" className="rounded-full gap-2">
-                    <Link to="/planes"><Crown className="h-3.5 w-3.5" /> Cambiar plan</Link>
-                  </Button>
-                </div>
-              )}
             </div>
 
-            {isOwner && profile.subscription && (
-              <div className="card-glass rounded-2xl p-4 flex items-center justify-between gap-3 flex-wrap">
-                <div>
-                  <p className="text-xs uppercase tracking-wider text-muted-foreground">Plan actual</p>
-                  <p className="font-display text-lg font-extrabold mt-0.5">{TIER_LABELS[profile.subscription.tier]}</p>
-                </div>
-                <div className={cn("inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold ring-1", subColorClass)}>
-                  {subColor === "red" ? (<><RefreshCw className="h-3.5 w-3.5" /> Expirado</>) : (<>📅 {days} {days === 1 ? "día restante" : "días restantes"}</>)}
-                </div>
-              </div>
-            )}
-
-            {/* Ficha técnica con iconos elegantes */}
+            {/* Ficha técnica con iconos elegantes — solo campos activos */}
             <div className="card-glass rounded-2xl p-4">
               <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Ficha técnica</p>
               <div className="grid grid-cols-2 gap-2">
                 <SidebarStat icon={<Calendar className="h-4 w-4" />} label="Edad" value={`${profile.age}`} />
-                <SidebarStat icon={<Ruler className="h-4 w-4" />} label="Altura" value={profile.height ? `${profile.height} cm` : "—"} />
-                {profile.weight && <SidebarStat icon={<Weight className="h-4 w-4" />} label="Peso" value={`${profile.weight} kg`} />}
                 {profile.hairColor && <SidebarStat icon={<Scissors className="h-4 w-4" />} label="Cabello" value={profile.hairColor} />}
-                {profile.measurements && <SidebarStat icon={<Activity className="h-4 w-4" />} label="Medidas" value={profile.measurements} />}
-                <SidebarStat icon={<MapPin className="h-4 w-4" />} label="Origen" value={profile.birthPlace?.split(",")[0] || "—"} />
               </div>
             </div>
 
