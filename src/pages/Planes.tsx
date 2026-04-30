@@ -100,9 +100,20 @@ const Planes = () => {
       navigate("/cuenta");
       return;
     }
-    // Redirigir a Wompi con referencia userId|tier para identificar el pago
+    // Links personalizados de Wompi por plan
+    const WOMPI_LINKS: Record<string, string> = {
+      boost: "https://checkout.wompi.co/l/test_44cIxY",
+      elite: "https://checkout.wompi.co/l/test_SaZsOZ",
+      vip: "https://checkout.wompi.co/l/test_dBnTCo",
+    };
+    const baseUrl = WOMPI_LINKS[plan.tier];
+    if (!baseUrl) {
+      toast.error("Plan no disponible por ahora.");
+      return;
+    }
+    // Referencia userId|tier para identificar el pago al activar
     const reference = `${user.id}|${plan.tier}`;
-    const url = `https://checkout.wompi.co/l/test_VPOS_uN1xtS?reference=${encodeURIComponent(reference)}`;
+    const url = `${baseUrl}?reference=${encodeURIComponent(reference)}`;
     toast.success("Te redirigimos a Wompi para completar tu pago…", {
       description: "Tu plan se activará apenas confirmemos el pago. Si tarda, escríbenos.",
     });
