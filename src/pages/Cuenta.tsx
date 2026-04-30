@@ -72,7 +72,7 @@ const Cuenta = () => {
 
   const profileCtaLabel = isCreator
     ? completion.percent === 0 ? "Crear mi perfil" : "Editar mi panel"
-    : "Actualizar mi información";
+    : "Editar nombre y foto";
 
   const handleProfileAction = () => {
     // El Dashboard adapta el formulario al rol (visitor → solo nombre + 1 foto;
@@ -172,8 +172,8 @@ const Cuenta = () => {
           )}
         </div>
 
-        {/* Verificación compacta — banner delgado */}
-        {isVerified ? (
+        {/* Verificación compacta — solo creadoras */}
+        {isCreator && (isVerified ? (
           <div className="card-glass rounded-2xl px-4 py-3 ring-1 ring-gold/30 flex items-center gap-3">
             <BadgeCheck className="h-4 w-4 text-gold shrink-0" strokeWidth={2.5} />
             <p className="text-sm flex-1">
@@ -206,10 +206,10 @@ const Cuenta = () => {
               </Link>
             </Button>
           </div>
-        )}
+        ))}
 
-        {/* Ver perfil público (solo si está completo) */}
-        {completion.isComplete && profile?.id && (
+        {/* Ver perfil público (solo creadoras con perfil completo) */}
+        {isCreator && completion.isComplete && profile?.id && (
           <div className="card-glass rounded-3xl p-6">
             <div className="flex items-start gap-3">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-accent text-accent-foreground shadow-glow-soft shrink-0">
@@ -245,52 +245,54 @@ const Cuenta = () => {
             </div>
           </div>
         )}
-        {/* Historial de suscripciones */}
-        <div className="card-glass rounded-3xl p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow-soft shrink-0">
-              <Crown className="h-5 w-5" />
-            </span>
-            <div>
-              <p className="font-display font-bold">Historial de suscripciones</p>
-              <p className="text-sm text-muted-foreground">Tus planes activos y anteriores.</p>
+        {/* Historial de suscripciones — solo creadoras */}
+        {isCreator && (
+          <div className="card-glass rounded-3xl p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow-soft shrink-0">
+                <Crown className="h-5 w-5" />
+              </span>
+              <div>
+                <p className="font-display font-bold">Historial de suscripciones</p>
+                <p className="text-sm text-muted-foreground">Tus planes activos y anteriores.</p>
+              </div>
             </div>
+            {subs.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                Aún no tienes suscripciones. <Link to="/planes" className="text-accent hover:underline">Ver planes</Link>
+              </p>
+            ) : (
+              <ul className="space-y-2">
+                {subs.map((s, i) => {
+                  const active = (s.status === "trial" || s.status === "active") && new Date(s.expires_at) > new Date();
+                  return (
+                    <li key={i} className="flex items-center justify-between gap-3 rounded-xl bg-background/40 ring-1 ring-border px-4 py-3">
+                      <div>
+                        <p className="font-display font-bold text-sm uppercase tracking-wider">
+                          {TIER_LABELS[s.tier as keyof typeof TIER_LABELS] ?? s.tier}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(s.started_at).toLocaleDateString("es-CO")} → {new Date(s.expires_at).toLocaleDateString("es-CO")}
+                        </p>
+                      </div>
+                      <span className={cn(
+                        "rounded-full px-3 py-1 text-xs font-semibold ring-1",
+                        active
+                          ? "bg-success/10 text-success ring-success/40"
+                          : "bg-muted/40 text-muted-foreground ring-border",
+                      )}>
+                        {active ? "Activo" : s.status === "trial" ? "Prueba" : "Expirado"}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
-          {subs.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">
-              Aún no tienes suscripciones. <Link to="/planes" className="text-accent hover:underline">Ver planes</Link>
-            </p>
-          ) : (
-            <ul className="space-y-2">
-              {subs.map((s, i) => {
-                const active = (s.status === "trial" || s.status === "active") && new Date(s.expires_at) > new Date();
-                return (
-                  <li key={i} className="flex items-center justify-between gap-3 rounded-xl bg-background/40 ring-1 ring-border px-4 py-3">
-                    <div>
-                      <p className="font-display font-bold text-sm uppercase tracking-wider">
-                        {TIER_LABELS[s.tier as keyof typeof TIER_LABELS] ?? s.tier}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(s.started_at).toLocaleDateString("es-CO")} → {new Date(s.expires_at).toLocaleDateString("es-CO")}
-                      </p>
-                    </div>
-                    <span className={cn(
-                      "rounded-full px-3 py-1 text-xs font-semibold ring-1",
-                      active
-                        ? "bg-success/10 text-success ring-success/40"
-                        : "bg-muted/40 text-muted-foreground ring-border",
-                    )}>
-                      {active ? "Activo" : s.status === "trial" ? "Prueba" : "Expirado"}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </div>
+        )}
 
         {/* Historial de pagos */}
-        {payments.length > 0 && (
+        {isCreator && payments.length > 0 && (
           <div className="card-glass rounded-3xl p-6">
             <div className="flex items-center gap-3 mb-4">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-accent text-accent-foreground shadow-glow-soft shrink-0">
