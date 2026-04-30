@@ -241,12 +241,14 @@ const Auth = () => {
         }
       }
 
-      // Upsert profile with birth date, age and account_type
+      // Upsert profile con birth_date/age. NUNCA enviamos account_type desde el cliente:
+      // el trigger handle_new_user ya lo fijó en el servidor a partir de la metadata
+      // (account_type) enviada en signInWithOtp. La regla protect_account_type ignoraría
+      // cualquier intento del cliente de cambiarlo.
       await supabase.from("profiles").upsert({
         id: data.user.id,
         birth_date: birthDate || null,
         age: age || null,
-        account_type: intent,
       });
 
       sessionStorage.removeItem("deseox.pendingSignup");
