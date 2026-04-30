@@ -16,6 +16,10 @@ import Verificacion from "./pages/Verificacion.tsx";
 import Cuenta from "./pages/Cuenta.tsx";
 import Planes from "./pages/Planes.tsx";
 import Admin from "./pages/Admin.tsx";
+import Terminos from "./pages/legal/Terminos.tsx";
+import Privacidad from "./pages/legal/Privacidad.tsx";
+import CookiesPage from "./pages/legal/Cookies.tsx";
+import Disclaimer from "./pages/legal/Disclaimer.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -44,6 +48,10 @@ const App = () => (
             <Route path="/cuenta" element={<Cuenta />} />
             <Route path="/planes" element={<Planes />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/legal/terminos" element={<Terminos />} />
+            <Route path="/legal/privacidad" element={<Privacidad />} />
+            <Route path="/legal/cookies" element={<CookiesPage />} />
+            <Route path="/legal/disclaimer" element={<Disclaimer />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
