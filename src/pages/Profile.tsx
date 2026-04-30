@@ -413,10 +413,10 @@ const MiniStat = ({ icon, value, label }: { icon: React.ReactNode; value: string
   </div>
 );
 
-const RateRow = ({ label, value }: { label: string; value: string }) => (
-  <div className="flex items-center justify-between border-b border-border/50 last:border-0 pb-1.5 last:pb-0">
-    <span className="text-muted-foreground text-xs">{label}</span>
-    <span className="font-bold text-accent">{value}</span>
+const TrustWidget = ({ icon, label }: { icon: React.ReactNode; label: string }) => (
+  <div className="rounded-xl bg-accent/5 ring-1 ring-accent/20 px-2.5 py-2 flex flex-col items-center gap-1 text-center">
+    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-accent/15 text-accent">{icon}</span>
+    <p className="text-[10px] font-semibold leading-tight text-foreground/90">{label}</p>
   </div>
 );
 
