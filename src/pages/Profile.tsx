@@ -16,7 +16,7 @@ import { CATEGORY_LABELS, SERVICE_LABELS, type Profile as ProfileT, type Subscri
 import { TIER_BADGE } from "@/lib/tier";
 import {
   ArrowLeft, MapPin, Calendar, Scissors,
-  MessageCircle, Send, Zap, Globe,
+  MessageCircle, Send, Zap, Globe, Clock, Eye, Star, Share2, Heart, DollarSign, Sparkles,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { dbToProfile } from "@/lib/db-mappers";
