@@ -212,7 +212,11 @@ const Index = () => {
     () => visible.filter((p) => p.city === topCity).slice(0, 6),
     [visible, topCity],
   );
-  const activeNow = useMemo(() => visible.slice(0, 12), [visible]);
+  // Activos hoy: prioriza Boost/Elite/VIP (promesa del plan Boost)
+  const activeNow = useMemo(
+    () => [...visible].sort(sortByTier).slice(0, 12),
+    [visible],
+  );
 
   /* === Secciones regionales nacionales === */
   const bogotaTop = useMemo(
