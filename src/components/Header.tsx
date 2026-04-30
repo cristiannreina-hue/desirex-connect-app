@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Compass, Crown, UserCircle2 } from "lucide-react";
@@ -7,41 +7,24 @@ import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/lib/i18n";
 import { LangSwitcher } from "@/components/LangSwitcher";
 import { useAccountType } from "@/hooks/useAccountType";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { useState } from "react";
 
 export const Header = () => {
   const { user } = useAuth();
   const { t } = useI18n();
-  const navigate = useNavigate();
   const { accountType } = useAccountType(user?.id);
-  const [upgrading, setUpgrading] = useState(false);
 
-  const creatorCtaHref = !user ? "/registro" : accountType === "creator" ? "/dashboard" : "#";
+  // Visitantes NO pueden auto-promoverse a creador desde el header.
+  // Si quieren ser creadores deben ir a /planes y contratar un plan.
+  const creatorCtaHref = !user
+    ? "/registro"
+    : accountType === "creator"
+      ? "/dashboard"
+      : "/planes";
   const creatorCtaLabel = !user
     ? "Unirme a DeseoX"
     : accountType === "creator"
       ? "Mi Panel"
-      : "Crear perfil";
-
-  const handleCreatorCta = async (e: React.MouseEvent) => {
-    if (!user) return; // let Link navigate to /registro
-    if (accountType === "creator") return; // let Link navigate to /dashboard
-    e.preventDefault();
-    if (upgrading) return;
-    setUpgrading(true);
-    const { error } = await supabase
-      .from("profiles")
-      .upsert({ id: user.id, account_type: "creator" }, { onConflict: "id" });
-    setUpgrading(false);
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    try { sessionStorage.setItem("deseox.intent", "creator"); } catch {}
-    navigate("/dashboard");
-  };
+      : "Ser creadora";
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-background/55 backdrop-blur-2xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/40">
@@ -89,11 +72,11 @@ export const Header = () => {
             </Button>
           )}
           {(!user || accountType !== null) && (
-            <Button asChild variant="hero" size="sm" className="gap-2 rounded-full btn-shine" disabled={upgrading}>
-              <Link to={creatorCtaHref} onClick={handleCreatorCta}>
+            <Button asChild variant="hero" size="sm" className="gap-2 rounded-full btn-shine">
+              <Link to={creatorCtaHref}>
                 <Sparkles className="h-4 w-4" />
                 <span className="hidden sm:inline">{creatorCtaLabel}</span>
-                <span className="sm:hidden">{!user ? "Unirme" : accountType === "creator" ? "Panel" : "Crear"}</span>
+                <span className="sm:hidden">{!user ? "Unirme" : accountType === "creator" ? "Panel" : "Planes"}</span>
               </Link>
             </Button>
           )}
