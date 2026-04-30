@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { useNavigate, Link, useSearchParams, useLocation } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [params] = useSearchParams();
+  const location = useLocation();
   const intentParam = params.get("intent");
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
@@ -72,18 +73,30 @@ const Auth = () => {
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const skipRedirectRef = useRef(false);
 
+  // El "intent" decide visitante vs creadora.
+  // Prioridad: ruta (/registro/visitante o /registro/creadora) > query (?intent=) > sessionStorage.
   const intent: "visitor" | "creator" = useMemo(() => {
+    if (location.pathname.endsWith("/registro/creadora")) return "creator";
+    if (location.pathname.endsWith("/registro/visitante")) return "visitor";
     if (intentParam === "creator" || intentParam === "visitor") return intentParam;
     try {
       const v = sessionStorage.getItem("deseox.intent");
       if (v === "creator" || v === "visitor") return v;
     } catch {}
     return "visitor";
-  }, [intentParam]);
+  }, [intentParam, location.pathname]);
 
+  // Si entran por una ruta de registro específica, abrir directo el formulario de signup
   useEffect(() => {
-    if (intentParam === "creator" || intentParam === "visitor") setMode("signup");
-  }, [intentParam]);
+    if (
+      location.pathname.endsWith("/registro/creadora") ||
+      location.pathname.endsWith("/registro/visitante") ||
+      intentParam === "creator" ||
+      intentParam === "visitor"
+    ) {
+      setMode("signup");
+    }
+  }, [intentParam, location.pathname]);
 
   const age = useMemo(() => calculateAge(birthDate), [birthDate]);
   const ageValid = birthDate !== "" && age >= 18;
@@ -228,12 +241,14 @@ const Auth = () => {
         }
       }
 
-      // Upsert profile with birth date, age and account_type
+      // Upsert profile con birth_date/age. NUNCA enviamos account_type desde el cliente:
+      // el trigger handle_new_user ya lo fijó en el servidor a partir de la metadata
+      // (account_type) enviada en signInWithOtp. La regla protect_account_type ignoraría
+      // cualquier intento del cliente de cambiarlo.
       await supabase.from("profiles").upsert({
         id: data.user.id,
         birth_date: birthDate || null,
         age: age || null,
-        account_type: intent,
       });
 
       sessionStorage.removeItem("deseox.pendingSignup");

@@ -38,6 +38,9 @@ const App = () => (
             <Route path="/perfil/:id" element={<Profile />} />
             {/* Gateway visitante/creador */}
             <Route path="/registro" element={<Registro />} />
+            {/* Rutas separadas por tipo de cuenta — el tipo se fija en el servidor al crear el usuario */}
+            <Route path="/registro/visitante" element={<Auth />} />
+            <Route path="/registro/creadora" element={<Auth />} />
             {/* Dashboard del creador (antes /registro era el formulario) */}
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/editar-perfil" element={<Navigate to="/dashboard" replace />} />
