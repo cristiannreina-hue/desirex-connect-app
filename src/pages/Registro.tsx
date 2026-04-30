@@ -5,7 +5,6 @@ import { Footer } from "@/components/Footer";
 import { Eye, Camera, ArrowRight, ShieldCheck } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAccountType } from "@/hooks/useAccountType";
 
@@ -15,7 +14,6 @@ const Registro = () => {
   const { user, loading: authLoading } = useAuth();
   const { accountType, loading: accountTypeLoading } = useAccountType(user?.id);
   const [checkingProfile, setCheckingProfile] = useState(true);
-  const [savingChoice, setSavingChoice] = useState(false);
 
   useEffect(() => {
     document.title = "Únete a DeseoX";
@@ -33,43 +31,25 @@ const Registro = () => {
       return;
     }
 
+    // Si ya tiene cuenta, no debe ver el gateway: redirigir a su panel correspondiente.
     if (accountType === "creator") {
       navigate("/dashboard", { replace: true });
       return;
     }
-
     if (accountType === "visitor") {
       toast.info("Tu cuenta es de visitante");
-      navigate("/", { replace: true });
+      navigate("/cuenta", { replace: true });
       return;
     }
 
     setCheckingProfile(false);
   }, [accountType, accountTypeLoading, authLoading, navigate, user]);
 
-  const choose = async (type: "visitor" | "creator") => {
-    try {
-      sessionStorage.setItem("deseox.intent", type);
-    } catch {}
-
-    if (!user) {
-      navigate(`/auth?intent=${type}`);
-      return;
-    }
-
-    setSavingChoice(true);
-    const { error } = await supabase.from("profiles").upsert(
-      { id: user.id, account_type: type },
-      { onConflict: "id" },
-    );
-    setSavingChoice(false);
-
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-
-    navigate(type === "creator" ? "/dashboard" : "/cuenta");
+  // El tipo se decide enviando al usuario a una ruta de registro distinta.
+  // El servidor (trigger handle_new_user) leerá la metadata y fijará account_type.
+  const choose = (type: "visitor" | "creator") => {
+    try { sessionStorage.setItem("deseox.intent", type); } catch {}
+    navigate(type === "creator" ? "/registro/creadora" : "/registro/visitante");
   };
 
   if (authLoading || checkingProfile) {
