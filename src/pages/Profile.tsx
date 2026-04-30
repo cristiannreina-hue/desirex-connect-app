@@ -11,12 +11,12 @@ import { ExclusiveMedia } from "@/components/ExclusiveMedia";
 import { WatermarkOverlay } from "@/components/WatermarkOverlay";
 import { SeoNoIndex } from "@/components/SeoNoIndex";
 import { DEMO_PROFILES } from "@/data/profiles";
-import { CATEGORY_LABELS, SERVICE_LABELS, TIER_LABELS, type Profile as ProfileT, type Subscription } from "@/types/profile";
+import { CATEGORY_LABELS, SERVICE_LABELS, type Profile as ProfileT, type Subscription } from "@/types/profile";
 
-import { TIER_BADGE, daysRemaining, subStateColor } from "@/lib/tier";
+import { TIER_BADGE } from "@/lib/tier";
 import {
-  ArrowLeft, MapPin, Calendar, Ruler, Weight, Scissors, Activity,
-  MessageCircle, Send, Zap, Pencil, RefreshCw, Crown, Globe,
+  ArrowLeft, MapPin, Calendar, Scissors,
+  MessageCircle, Send, Zap, Globe,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { dbToProfile } from "@/lib/db-mappers";
