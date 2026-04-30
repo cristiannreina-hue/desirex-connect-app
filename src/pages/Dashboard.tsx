@@ -214,14 +214,12 @@ const Dashboard = () => {
       // Visitantes: solo nombre + 1 foto de perfil
       const photo = data.public_photos.slice(0, 1);
       payload = {
-        id: user.id,
         display_name: data.display_name || null,
         public_photos: photo,
         photos: photo,
       };
     } else {
       payload = {
-        id: user.id,
         display_name: data.display_name || null,
         nickname: data.nickname || null,
         hair_color: data.hair_color || null,
@@ -239,9 +237,12 @@ const Dashboard = () => {
         telegram: data.telegram || null,
       };
     }
-    // NOTA: nunca enviamos account_type. La promoción visitor → creator
-    // está bloqueada por el trigger protect_account_type a nivel servidor.
-    const { error } = await supabase.from("profiles").upsert(payload);
+    // IMPORTANTE: usamos UPDATE (no upsert) porque el perfil ya existe
+    // (lo crea el trigger handle_new_user). Si usáramos upsert, el INSERT
+    // path correría con account_type=DEFAULT('visitor') y el trigger
+    // enforce_visitor_profile_limits borraría todos los campos del creador.
+    // Nunca enviamos account_type — está protegido por protect_account_type.
+    const { error } = await supabase.from("profiles").update(payload).eq("id", user.id);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
     toast.success("Cambios guardados");
