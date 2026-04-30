@@ -59,6 +59,11 @@ const Auth = () => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Signup confirmation modal
+  const [signupModalOpen, setSignupModalOpen] = useState(false);
+  const [modalResending, setModalResending] = useState(false);
+  const [modalCooldown, setModalCooldown] = useState(0);
+
   // OTP state
   const [code, setCode] = useState<string[]>(["", "", "", "", "", ""]);
   const [verifying, setVerifying] = useState(false);
