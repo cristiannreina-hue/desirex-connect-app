@@ -643,6 +643,82 @@ const Auth = () => {
           </div>
         </div>
       </main>
+
+      {/* Modal de confirmación de registro */}
+      <Dialog
+        open={signupModalOpen}
+        onOpenChange={(open) => {
+          if (!open) handleModalClose();
+        }}
+      >
+        <DialogContent className="sm:max-w-md border-2 border-accent/60 bg-background/95 backdrop-blur-xl shadow-elevated">
+          <div className="flex flex-col items-center text-center pt-2">
+            <div className="relative mb-4">
+              <div
+                aria-hidden
+                className="absolute inset-0 rounded-full blur-2xl opacity-60"
+                style={{ background: "hsl(var(--accent))" }}
+              />
+              <div className="relative rounded-full bg-accent/10 p-5 ring-2 ring-accent/50 animate-in zoom-in-50 duration-500">
+                <MailCheck className="h-10 w-10 text-accent animate-pulse" />
+              </div>
+              <CheckCircle2 className="absolute -bottom-1 -right-1 h-6 w-6 text-accent bg-background rounded-full" />
+            </div>
+
+            <DialogHeader className="space-y-2">
+              <DialogTitle className="font-display text-2xl font-extrabold tracking-tight text-center">
+                ¡Registro casi listo!
+              </DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground text-center leading-relaxed px-2">
+                Hemos enviado un enlace de acceso seguro a{" "}
+                <span className="text-foreground font-semibold break-all">{email}</span>.
+                Por favor, revisa tu bandeja de entrada e inicia sesión desde allí
+                para activar tu perfil.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-5 w-full rounded-xl border border-accent/30 bg-accent/5 p-3">
+              <p className="text-xs text-muted-foreground">
+                ¿No recibiste el correo?{" "}
+                <button
+                  type="button"
+                  onClick={handleModalResend}
+                  disabled={modalCooldown > 0 || modalResending}
+                  className={cn(
+                    "inline-flex items-center gap-1 font-semibold transition-colors",
+                    modalCooldown > 0 || modalResending
+                      ? "text-muted-foreground/60 cursor-not-allowed"
+                      : "text-accent hover:underline",
+                  )}
+                >
+                  {modalResending ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <RotateCw className="h-3 w-3" />
+                  )}
+                  {modalCooldown > 0 ? `Reenviar en ${modalCooldown}s` : "Reenviar enlace"}
+                </button>
+              </p>
+            </div>
+
+            <p className="mt-3 text-[11px] text-muted-foreground/80">
+              Revisa también tu carpeta de spam.
+            </p>
+          </div>
+
+          <DialogFooter className="sm:justify-center mt-2">
+            <Button
+              variant="hero"
+              size="lg"
+              onClick={handleModalClose}
+              className="w-full rounded-full"
+            >
+              Entendido
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Footer />
     </div>
   );
