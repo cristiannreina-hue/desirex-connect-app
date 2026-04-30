@@ -91,11 +91,6 @@ const Dashboard = () => {
     ]).then(([{ data: p }, { data: sub }]) => {
       if (p) {
         const anyP = p as any;
-        if ((anyP.account_type ?? "visitor") === "visitor") {
-          toast.error("Esta función solo está disponible para perfiles verificados de creadores");
-          navigate("/", { replace: true });
-          return;
-        }
         setData({
           display_name: p.display_name ?? "",
           nickname: anyP.nickname ?? "",
@@ -117,7 +112,7 @@ const Dashboard = () => {
           exclusive_videos: anyP.exclusive_videos ?? [],
           whatsapp: p.whatsapp ?? "",
           telegram: p.telegram ?? "",
-          account_type: (anyP.account_type ?? "creator") as any,
+          account_type: (anyP.account_type ?? "visitor") as any,
           verification_status: p.verification_status ?? "unverified",
           is_verified: p.is_verified ?? false,
         });
