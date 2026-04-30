@@ -100,8 +100,8 @@ const Planes = () => {
       navigate("/cuenta");
       return;
     }
-    toast("Pronto disponible", {
-      description: "La activación de pagos con Wompi estará lista en la próxima entrega.",
+    toast("Planes pagos próximamente", {
+      description: "Estamos terminando la integración con Wompi. Mientras tanto, disfruta de tu plan Starter gratis (90 días).",
     });
   };
 
