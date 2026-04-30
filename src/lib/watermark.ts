@@ -6,6 +6,12 @@
  * proteger a Creadores y dificultar el robo de contenido.
  */
 
+import {
+  PUBLIC_IMAGE_MAX_SIDE,
+  EXCLUSIVE_IMAGE_MAX_SIDE,
+  IMAGE_JPEG_QUALITY,
+} from "@/lib/compress";
+
 const WATERMARK_TEXT = "DeseoX";
 const WATERMARK_BRAND = "deseo-x.com";
 
@@ -14,15 +20,21 @@ interface WatermarkOptions {
   fontSize?: number;
   /** Opacidad 0-1. Default 0.18 */
   opacity?: number;
-  /** Calidad JPEG 0-1. Default 0.92 */
+  /** Calidad JPEG 0-1. Default 0.82 (compresión equilibrada). */
   quality?: number;
+  /** Lado mayor máximo en px tras redimensionar. Default 2000. */
+  maxSide?: number;
 }
 
 export async function watermarkImage(
   file: File,
   options: WatermarkOptions = {},
 ): Promise<File> {
-  const { opacity = 0.18, quality = 0.92 } = options;
+  const {
+    opacity = 0.18,
+    quality = IMAGE_JPEG_QUALITY,
+    maxSide = EXCLUSIVE_IMAGE_MAX_SIDE,
+  } = options;
 
   // Solo procesamos imágenes raster
   if (!file.type.startsWith("image/")) return file;
@@ -32,14 +44,21 @@ export async function watermarkImage(
   const bitmap = await createImageBitmap(file).catch(() => null);
   if (!bitmap) return file;
 
+  // Redimensionar si excede el lado máximo (mantener aspecto)
+  const longest = Math.max(bitmap.width, bitmap.height);
+  const scale = longest > maxSide ? maxSide / longest : 1;
+  const targetW = Math.round(bitmap.width * scale);
+  const targetH = Math.round(bitmap.height * scale);
+
   const canvas = document.createElement("canvas");
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
+  canvas.width = targetW;
+  canvas.height = targetH;
   const ctx = canvas.getContext("2d");
   if (!ctx) return file;
 
-  // Dibuja la imagen original
-  ctx.drawImage(bitmap, 0, 0);
+  // Dibuja la imagen redimensionada
+  ctx.drawImage(bitmap, 0, 0, targetW, targetH);
+
 
   // Escala el tamaño del texto al tamaño de la imagen
   const baseFont = Math.max(
