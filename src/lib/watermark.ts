@@ -6,6 +6,12 @@
  * proteger a Creadores y dificultar el robo de contenido.
  */
 
+import {
+  PUBLIC_IMAGE_MAX_SIDE,
+  EXCLUSIVE_IMAGE_MAX_SIDE,
+  IMAGE_JPEG_QUALITY,
+} from "@/lib/compress";
+
 const WATERMARK_TEXT = "DeseoX";
 const WATERMARK_BRAND = "deseo-x.com";
 
@@ -14,15 +20,21 @@ interface WatermarkOptions {
   fontSize?: number;
   /** Opacidad 0-1. Default 0.18 */
   opacity?: number;
-  /** Calidad JPEG 0-1. Default 0.92 */
+  /** Calidad JPEG 0-1. Default 0.82 (compresión equilibrada). */
   quality?: number;
+  /** Lado mayor máximo en px tras redimensionar. Default 2000. */
+  maxSide?: number;
 }
 
 export async function watermarkImage(
   file: File,
   options: WatermarkOptions = {},
 ): Promise<File> {
-  const { opacity = 0.18, quality = 0.92 } = options;
+  const {
+    opacity = 0.18,
+    quality = IMAGE_JPEG_QUALITY,
+    maxSide = EXCLUSIVE_IMAGE_MAX_SIDE,
+  } = options;
 
   // Solo procesamos imágenes raster
   if (!file.type.startsWith("image/")) return file;
@@ -32,14 +44,21 @@ export async function watermarkImage(
   const bitmap = await createImageBitmap(file).catch(() => null);
   if (!bitmap) return file;
 
+  // Redimensionar si excede el lado máximo (mantener aspecto)
+  const longest = Math.max(bitmap.width, bitmap.height);
+  const scale = longest > maxSide ? maxSide / longest : 1;
+  const targetW = Math.round(bitmap.width * scale);
+  const targetH = Math.round(bitmap.height * scale);
+
   const canvas = document.createElement("canvas");
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
+  canvas.width = targetW;
+  canvas.height = targetH;
   const ctx = canvas.getContext("2d");
   if (!ctx) return file;
 
-  // Dibuja la imagen original
-  ctx.drawImage(bitmap, 0, 0);
+  // Dibuja la imagen redimensionada
+  ctx.drawImage(bitmap, 0, 0, targetW, targetH);
+
 
   // Escala el tamaño del texto al tamaño de la imagen
   const baseFont = Math.max(
@@ -95,20 +114,21 @@ export async function watermarkImage(
   ctx.fillText(stampText, textX, textY);
   ctx.restore();
 
-  // Determinar formato de salida (preferimos JPEG por tamaño, salvo PNG transparente)
-  const outputType = file.type === "image/png" ? "image/png" : "image/jpeg";
+  // Para fotos de perfil siempre convertimos a JPEG (mucho menos peso).
+  // El sello de marca de agua ya rellena el fondo, así que la transparencia
+  // del PNG no aporta valor en este contexto.
+  const outputType = "image/jpeg";
   const blob: Blob = await new Promise((resolve, reject) => {
     canvas.toBlob(
       (b) => (b ? resolve(b) : reject(new Error("canvas.toBlob failed"))),
       outputType,
-      outputType === "image/jpeg" ? quality : undefined,
+      quality,
     );
   });
 
-  // Conserva nombre original cambiando extensión si hace falta
-  const ext = outputType === "image/png" ? "png" : "jpg";
+  // Conserva nombre original cambiando extensión a .jpg
   const baseName = file.name.replace(/\.[^/.]+$/, "");
-  const newName = `${baseName}_wm.${ext}`;
+  const newName = `${baseName}_wm.jpg`;
 
   return new File([blob], newName, { type: outputType, lastModified: Date.now() });
 }
@@ -118,10 +138,13 @@ export async function watermarkImage(
  * (la protección visual se aplica con overlay en el reproductor).
  * Si es imagen, devuelve la versión marcada.
  */
-export async function watermarkFile(file: File): Promise<File> {
+export async function watermarkFile(
+  file: File,
+  options: WatermarkOptions = {},
+): Promise<File> {
   if (file.type.startsWith("image/")) {
     try {
-      return await watermarkImage(file);
+      return await watermarkImage(file, options);
     } catch (err) {
       console.warn("[watermark] fallo al marcar imagen, se sube original", err);
       return file;
@@ -129,3 +152,4 @@ export async function watermarkFile(file: File): Promise<File> {
   }
   return file;
 }
+

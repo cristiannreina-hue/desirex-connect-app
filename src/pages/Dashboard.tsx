@@ -19,6 +19,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { SeoNoIndex } from "@/components/SeoNoIndex";
 import { useI18n } from "@/lib/i18n";
 import { watermarkFile } from "@/lib/watermark";
+import {
+  validateVideo,
+  PUBLIC_IMAGE_MAX_SIDE,
+  EXCLUSIVE_IMAGE_MAX_SIDE,
+} from "@/lib/compress";
 import { WatermarkOverlay } from "@/components/WatermarkOverlay";
 
 interface FormState {
@@ -140,8 +145,12 @@ const Dashboard = () => {
     const remaining = publicPhotoLimit - data.public_photos.length;
     const picked = Array.from(files).slice(0, remaining);
     const uploaded: string[] = [];
+    let originalBytes = 0;
+    let finalBytes = 0;
     for (const original of picked) {
-      const file = await watermarkFile(original);
+      originalBytes += original.size;
+      const file = await watermarkFile(original, { maxSide: PUBLIC_IMAGE_MAX_SIDE });
+      finalBytes += file.size;
       const ext = file.name.split(".").pop() ?? "jpg";
       const path = `${user.id}/public-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const { error } = await supabase.storage.from("profile-photos").upload(path, file, { upsert: false });
@@ -151,7 +160,12 @@ const Dashboard = () => {
     }
     if (uploaded.length) {
       update("public_photos", [...data.public_photos, ...uploaded]);
-      toast.success(`${uploaded.length} foto(s) con marca de agua DeseoX subidas`);
+      const saved = Math.max(0, originalBytes - finalBytes);
+      const savedMB = (saved / (1024 * 1024)).toFixed(1);
+      toast.success(
+        `${uploaded.length} foto(s) optimizadas y subidas` +
+          (saved > 0 ? ` · ${savedMB} MB ahorrados` : ""),
+      );
     }
   };
 
@@ -160,8 +174,12 @@ const Dashboard = () => {
     const remaining = exclusivePhotoLimit - data.exclusive_photos.length;
     const picked = Array.from(files).slice(0, remaining);
     const uploaded: string[] = [];
+    let originalBytes = 0;
+    let finalBytes = 0;
     for (const original of picked) {
-      const file = await watermarkFile(original);
+      originalBytes += original.size;
+      const file = await watermarkFile(original, { maxSide: EXCLUSIVE_IMAGE_MAX_SIDE });
+      finalBytes += file.size;
       const ext = file.name.split(".").pop() ?? "jpg";
       const path = `${user.id}/photos/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const { error } = await supabase.storage.from("exclusive-media").upload(path, file, { upsert: false });
@@ -170,7 +188,12 @@ const Dashboard = () => {
     }
     if (uploaded.length) {
       update("exclusive_photos", [...data.exclusive_photos, ...uploaded]);
-      toast.success(`${uploaded.length} foto(s) exclusivas con marca DeseoX subidas`);
+      const saved = Math.max(0, originalBytes - finalBytes);
+      const savedMB = (saved / (1024 * 1024)).toFixed(1);
+      toast.success(
+        `${uploaded.length} foto(s) exclusivas optimizadas y subidas` +
+          (saved > 0 ? ` · ${savedMB} MB ahorrados` : ""),
+      );
     }
   };
 
@@ -179,7 +202,14 @@ const Dashboard = () => {
     const remaining = exclusiveVideoLimit - data.exclusive_videos.length;
     const picked = Array.from(files).slice(0, remaining);
     const uploaded: string[] = [];
+    let rejected = 0;
     for (const file of picked) {
+      const check = await validateVideo(file);
+      if (!check.ok) {
+        rejected++;
+        toast.error(check.reason ?? "Video no válido");
+        continue;
+      }
       const ext = file.name.split(".").pop() ?? "mp4";
       const path = `${user.id}/videos/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const { error } = await supabase.storage.from("exclusive-media").upload(path, file, { upsert: false });
@@ -188,7 +218,10 @@ const Dashboard = () => {
     }
     if (uploaded.length) {
       update("exclusive_videos", [...data.exclusive_videos, ...uploaded]);
-      toast.success(`${uploaded.length} video(s) subido(s) — la marca de agua se aplica al reproducirlos`);
+      toast.success(
+        `${uploaded.length} video(s) subido(s) — la marca de agua se aplica al reproducirlos` +
+          (rejected > 0 ? ` (${rejected} omitido(s))` : ""),
+      );
     }
   };
 
