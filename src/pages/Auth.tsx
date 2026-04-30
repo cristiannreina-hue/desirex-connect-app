@@ -169,7 +169,7 @@ const Auth = () => {
       email,
       options: {
         shouldCreateUser: true,
-        // No emailRedirectTo => no Magic Link link in email (only token shown)
+        emailRedirectTo: `${window.location.origin}/cuenta`,
         data: { birth_date: birthDate, account_type: intent },
       },
     });
