@@ -69,26 +69,15 @@ const Cuenta = () => {
   const completion = getCompletion(profile);
   const hasProfile = completion.done > 0;
   const isCreator = (accountType ?? profile?.account_type) === "creator";
-  
-  const profileCtaLabel = completion.percent === 0 ? "Crear mi perfil" : "Editar mi panel";
 
-  const handleProfileAction = async () => {
-    if (isCreator) {
-      navigate("/dashboard");
-      return;
-    }
+  const profileCtaLabel = isCreator
+    ? completion.percent === 0 ? "Crear mi perfil" : "Editar mi panel"
+    : "Actualizar mi información";
 
-    // Visitor: upgrade to creator in-place, then open the editor with prefilled data
-    setUpgrading(true);
-    const { error } = await supabase
-      .from("profiles")
-      .upsert({ id: user.id, account_type: "creator" }, { onConflict: "id" });
-    setUpgrading(false);
-
-    if (error) {
-      toast.error("No se pudo abrir tu panel. Intenta de nuevo.");
-      return;
-    }
+  const handleProfileAction = () => {
+    // El Dashboard adapta el formulario al rol (visitor → solo nombre + 1 foto;
+    // creator → todos los campos). El trigger protect_account_type bloquea
+    // promociones desde el cliente.
     navigate("/dashboard");
   };
 
