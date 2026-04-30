@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import {
-  ShieldCheck, LogOut, Sparkles, ArrowRight, Clock, CheckCircle2, Circle, Eye, EyeOff, Crown, Receipt,
+  ShieldCheck, LogOut, Sparkles, ArrowRight, Clock, Crown, Receipt, BadgeCheck, User as UserIcon,
 } from "lucide-react";
 import { TIER_LABELS } from "@/types/profile";
 import { getCompletion } from "@/lib/profile-completion";
@@ -85,101 +85,82 @@ const Cuenta = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="container flex-1 py-10 max-w-2xl mx-auto w-full space-y-6">
-        {/* Header cuenta */}
-        <div className="card-premium rounded-3xl p-6 sm:p-8">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-xs uppercase tracking-wider text-muted-foreground">Tu cuenta</p>
-              <h1 className="mt-1 font-display text-2xl sm:text-3xl font-extrabold tracking-tight inline-flex items-center gap-2 flex-wrap">
-                {profile?.display_name ?? user.email}
-                {isVerified && <VerifiedBadge size="md" showLabel />}
-              </h1>
-              <p className="mt-1 text-sm text-muted-foreground">{user.email}</p>
+        {/* Cabecera Élite: foto con anillo dorado + nombre + check sutil */}
+        <div className="card-glass rounded-3xl p-6 sm:p-8 backdrop-blur-xl">
+          <div className="flex items-center gap-5">
+            {/* Avatar con anillo dorado */}
+            <div className="relative shrink-0">
+              <div className="rounded-full p-[2px] bg-gradient-to-br from-gold via-accent to-gold shadow-glow-soft">
+                <div className="rounded-full bg-background p-[2px]">
+                  {profile?.photos?.[0] ? (
+                    <img
+                      src={profile.photos[0]}
+                      alt={profile?.display_name ?? "Avatar"}
+                      className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-secondary flex items-center justify-center">
+                      <UserIcon className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
+
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-display">
+                Tu cuenta
+              </p>
+              <h1 className="mt-0.5 font-display text-xl sm:text-2xl font-extrabold tracking-tight inline-flex items-center gap-1.5 flex-wrap">
+                <span className="truncate">{profile?.display_name ?? user.email}</span>
+                {isVerified && (
+                  <span
+                    title="Verificado por DeseoX"
+                    aria-label="Verificado"
+                    className="inline-flex items-center justify-center"
+                  >
+                    <BadgeCheck className="h-5 w-5 text-gold" strokeWidth={2.5} />
+                  </span>
+                )}
+              </h1>
+              <p className="mt-0.5 text-xs text-muted-foreground truncate">{user.email}</p>
+            </div>
+
             <Button
               variant="ghost"
               size="sm"
               onClick={() => signOut().then(() => navigate("/"))}
-              className="gap-1.5"
+              className="gap-1.5 shrink-0"
             >
-              <LogOut className="h-4 w-4" /> Salir
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline">Salir</span>
             </Button>
           </div>
-        </div>
 
-        {/* Banner perfil incompleto / publicado */}
-        {!profileLoading && (
-          <div
-            className={cn(
-              "card-glass rounded-3xl p-6",
-              !completion.isComplete && "ring-1 ring-accent/40",
-            )}
-          >
-            <div className="flex items-start gap-3">
-              <span
-                className={cn(
-                  "inline-flex h-10 w-10 items-center justify-center rounded-xl shrink-0 shadow-glow-soft",
-                  completion.isComplete
-                    ? "bg-success/20 text-success ring-1 ring-success/40"
-                    : "bg-gradient-accent text-accent-foreground",
+          {/* Barra de progreso minimalista */}
+          {!profileLoading && (
+            <div className="mt-6 space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-display font-semibold tracking-wide">
+                  Perfil {completion.percent}% completado
+                </span>
+                {completion.isComplete ? (
+                  <span className="text-success font-semibold">Publicado</span>
+                ) : (
+                  <span className="text-muted-foreground">{completion.done}/{completion.total}</span>
                 )}
-              >
-                {completion.isComplete ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="font-display font-bold">
-                  {completion.isComplete
-                    ? "¡Tu perfil está publicado!"
-                    : hasProfile
-                      ? "Completa tu perfil para que sea visible en la plataforma"
-                      : "Completa tu perfil para aparecer en la plataforma"}
-                </p>
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  {completion.isComplete
-                    ? "Cualquier visitante puede encontrarte en búsqueda y swipe."
-                    : "Solo los perfiles completos son visibles en listados, búsqueda y swipe."}
-                </p>
-
-                {/* Barra progreso */}
-                <div className="mt-4 space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold">{completion.percent}% completado</span>
-                    <span className="text-muted-foreground">
-                      {completion.done} / {completion.total}
-                    </span>
-                  </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
-                    <div
-                      className="h-full bg-gradient-primary transition-all duration-500"
-                      style={{ width: `${completion.percent}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Checklist */}
-                <ul className="mt-4 grid sm:grid-cols-2 gap-1.5">
-                  {completion.checks.map((c) => (
-                    <li
-                      key={c.key}
-                      className={cn(
-                        "inline-flex items-center gap-2 text-xs rounded-lg px-2 py-1.5",
-                        c.done ? "text-success" : "text-muted-foreground",
-                      )}
-                    >
-                      {c.done ? (
-                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
-                      ) : (
-                        <Circle className="h-3.5 w-3.5 shrink-0" />
-                      )}
-                      <span className={cn(c.done && "line-through opacity-70")}>{c.label}</span>
-                    </li>
-                  ))}
-                </ul>
-
+              </div>
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary/60">
+                <div
+                  className="h-full bg-gradient-to-r from-gold via-accent to-gold transition-all duration-700"
+                  style={{ width: `${completion.percent}%` }}
+                />
+              </div>
+              <div className="pt-3">
                 <Button
                   variant="hero"
                   size="sm"
-                  className="mt-5 rounded-full gap-1.5 w-full sm:w-auto"
+                  className="rounded-full gap-1.5 w-full sm:w-auto"
                   onClick={handleProfileAction}
                   disabled={upgrading}
                 >
@@ -188,63 +169,42 @@ const Cuenta = () => {
                 </Button>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* Verificación de identidad */}
+        {/* Verificación compacta — banner delgado */}
         {isVerified ? (
-          <div className="card-glass rounded-3xl p-6 ring-1 ring-success/40 bg-success/5">
-            <div className="flex items-center gap-3">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-success/20 text-success ring-1 ring-success/40 shadow-glow-soft shrink-0">
-                <ShieldCheck className="h-5 w-5" />
-              </span>
-              <div className="flex-1">
-                <p className="font-display font-bold inline-flex items-center gap-2">
-                  ✓ Cuenta Verificada
-                  <span className="inline-flex items-center gap-1 rounded-full bg-success/15 text-success ring-1 ring-success/40 px-2.5 py-0.5 text-[11px] font-semibold">
-                    Identidad confirmada
-                  </span>
-                </p>
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  Tu insignia dorada ya es visible en tu perfil público.
-                </p>
-              </div>
-            </div>
+          <div className="card-glass rounded-2xl px-4 py-3 ring-1 ring-gold/30 flex items-center gap-3">
+            <BadgeCheck className="h-4 w-4 text-gold shrink-0" strokeWidth={2.5} />
+            <p className="text-sm flex-1">
+              <span className="font-display font-semibold">Identidad confirmada</span>
+              <span className="text-muted-foreground"> · insignia dorada activa</span>
+            </p>
           </div>
         ) : status === "pending" ? (
-          <div className="card-glass rounded-3xl p-6 ring-1 ring-accent/40">
-            <div className="flex items-center gap-3">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent/20 text-accent ring-1 ring-accent/40 shadow-glow-soft shrink-0">
-                <Clock className="h-5 w-5 animate-pulse" />
-              </span>
-              <div className="flex-1">
-                <p className="font-display font-bold">Tu verificación está en proceso de revisión</p>
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  Tiempo estimado: 24-48 h. Te avisaremos en cuanto se apruebe.
-                </p>
-              </div>
-            </div>
+          <div className="card-glass rounded-2xl px-4 py-3 ring-1 ring-accent/30 flex items-center gap-3">
+            <Clock className="h-4 w-4 text-accent shrink-0 animate-pulse" />
+            <p className="text-sm flex-1">
+              <span className="font-display font-semibold">Verificación en revisión</span>
+              <span className="text-muted-foreground"> · 24-48 h</span>
+            </p>
           </div>
         ) : (
-          <div className="card-glass rounded-3xl p-6">
-            <div className="flex items-start gap-3">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow-soft shrink-0">
-                <ShieldCheck className="h-5 w-5" />
+          <div className="card-glass rounded-2xl px-4 py-3 flex items-center gap-3">
+            <ShieldCheck className="h-4 w-4 text-accent shrink-0" />
+            <p className="text-sm flex-1 min-w-0">
+              <span className="font-display font-semibold">
+                {status === "rejected" ? "Verificación rechazada" : "Verificar identidad"}
               </span>
-              <div className="flex-1">
-                <p className="font-display font-bold">Verificación de identidad</p>
-                <p className="text-sm text-muted-foreground">
-                  {status === "rejected"
-                    ? "Tu última solicitud fue rechazada. Vuelve a intentarlo con fotos más claras."
-                    : "Aumenta la confianza con la insignia ✓ Verificado."}
-                </p>
-              </div>
-              <Button asChild variant="hero" size="sm" className="rounded-full gap-1.5">
-                <Link to="/verificacion">
-                  Verificar <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </Button>
-            </div>
+              <span className="text-muted-foreground hidden sm:inline">
+                {status === "rejected" ? " · vuelve a intentarlo" : " · obtén la insignia ✓"}
+              </span>
+            </p>
+            <Button asChild variant="ghost" size="sm" className="rounded-full gap-1 h-8 text-accent hover:text-accent">
+              <Link to="/verificacion">
+                Verificar <ArrowRight className="h-3 w-3" />
+              </Link>
+            </Button>
           </div>
         )}
 
