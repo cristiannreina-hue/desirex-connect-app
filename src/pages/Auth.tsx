@@ -18,9 +18,18 @@ import {
   MailCheck,
   Loader2,
   RotateCw,
+  CheckCircle2,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 type Mode = "login" | "signup" | "forgot" | "otp";
 
