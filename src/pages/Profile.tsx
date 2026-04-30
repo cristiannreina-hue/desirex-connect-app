@@ -44,7 +44,8 @@ const Profile = () => {
     const isNumeric = /^\d+$/.test(id);
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 
-    const query = supabase.from("profiles").select("*");
+    // Solo perfiles de creadoras son visibles públicamente.
+    const query = supabase.from("profiles").select("*").eq("account_type", "creator");
     const filtered = isUuid
       ? query.eq("id", id)
       : isNumeric ? query.eq("user_number" as never, Number(id) as never) : query.eq("id", id);
