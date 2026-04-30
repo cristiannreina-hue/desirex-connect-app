@@ -26,6 +26,7 @@ const Cuenta = () => {
   const [profileLoading, setProfileLoading] = useState(true);
   const [subs, setSubs] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
+  const [upgrading, setUpgrading] = useState(false);
 
   useEffect(() => { document.title = "Mi cuenta · DeseoX"; }, []);
 
