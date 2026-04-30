@@ -232,8 +232,7 @@ const Profile = () => {
             </div>
 
             {/* Mini-stats bajo la foto */}
-            <div className="grid grid-cols-3 gap-2">
-              <MiniStat icon={<Eye className="h-4 w-4" />} value={`${profile.viewCount ?? 0}`} label="Vistas" />
+            <div className="grid grid-cols-2 gap-2">
               <MiniStat icon={<Star className="h-4 w-4" />} value={(profile.ratingAvg ?? 0).toFixed(1)} label={`${profile.ratingCount ?? 0} reseñas`} />
               <MiniStat icon={<Zap className="h-4 w-4" />} value="Rápida" label="Respuesta" />
             </div>
@@ -320,17 +319,6 @@ const Profile = () => {
               </p>
             </section>
 
-            {/* Ficha técnica */}
-            <div className="card-glass rounded-2xl p-4">
-              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
-                <Heart className="h-3.5 w-3.5 text-accent" /> Ficha
-              </p>
-              <div className="grid sm:grid-cols-3 gap-2">
-                <SidebarStat icon={<Calendar className="h-4 w-4" />} label="Edad" value={`${profile.age} años`} />
-                {profile.hairColor && <SidebarStat icon={<Scissors className="h-4 w-4" />} label="Cabello" value={profile.hairColor} />}
-                <SidebarStat icon={<MapPin className="h-4 w-4" />} label="Ubicación" value={profile.city} />
-              </div>
-            </div>
 
             {/* Servicios */}
             {profile.services.length > 0 && (
