@@ -100,9 +100,13 @@ const Planes = () => {
       navigate("/cuenta");
       return;
     }
-    toast("Planes pagos próximamente", {
-      description: "Estamos terminando la integración con Wompi. Mientras tanto, disfruta de tu plan Starter gratis (90 días).",
+    // Redirigir a Wompi con referencia userId|tier para identificar el pago
+    const reference = `${user.id}|${plan.tier}`;
+    const url = `https://checkout.wompi.co/l/test_VPOS_uN1xtS?reference=${encodeURIComponent(reference)}`;
+    toast.success("Te redirigimos a Wompi para completar tu pago…", {
+      description: "Tu plan se activará apenas confirmemos el pago. Si tarda, escríbenos.",
     });
+    setTimeout(() => { window.location.href = url; }, 800);
   };
 
   return (
@@ -198,15 +202,10 @@ const PlanCard = ({ plan, onSelect }: { plan: PlanDef; onSelect: () => void }) =
       {plan.price === 0 ? (
         <p className="font-display text-3xl font-extrabold">Gratis <span className="text-sm font-medium text-muted-foreground">/ 90 días</span></p>
       ) : (
-        <>
-          <p className="font-display text-3xl font-extrabold">
-            {formatCOP(plan.price)}
-            <span className="text-sm font-medium text-muted-foreground"> / mes</span>
-          </p>
-          <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-accent/10 ring-1 ring-accent/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
-            Próximamente
-          </span>
-        </>
+        <p className="font-display text-3xl font-extrabold">
+          {formatCOP(plan.price)}
+          <span className="text-sm font-medium text-muted-foreground"> / mes</span>
+        </p>
       )}
     </div>
 
@@ -225,7 +224,7 @@ const PlanCard = ({ plan, onSelect }: { plan: PlanDef; onSelect: () => void }) =
       size="lg"
       className={cn("mt-6 rounded-full w-full", plan.highlight && "btn-shine border-0")}
     >
-      {plan.tier === "starter" ? "Empezar gratis" : "Notificarme"}
+      {plan.tier === "starter" ? "Empezar gratis" : "Pagar con Wompi"}
     </Button>
   </div>
 );
