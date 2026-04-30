@@ -219,8 +219,9 @@ const Index = () => {
   );
 
   /* === Secciones regionales nacionales === */
+  // Destacados en Bogotá: ordenado por tier (Boost+ tiene posición preferente en su ciudad)
   const bogotaTop = useMemo(
-    () => [...visible].filter((p) => p.city === "Bogotá").slice(0, 8),
+    () => [...visible].filter((p) => p.city === "Bogotá").sort(sortByTier).slice(0, 8),
     [visible],
   );
   const costaTop = useMemo(
