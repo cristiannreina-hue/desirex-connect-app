@@ -72,11 +72,11 @@ export const Header = () => {
             </Button>
           )}
           {(!user || accountType !== null) && (
-            <Button asChild variant="hero" size="sm" className="gap-2 rounded-full btn-shine" disabled={upgrading}>
-              <Link to={creatorCtaHref} onClick={handleCreatorCta}>
+            <Button asChild variant="hero" size="sm" className="gap-2 rounded-full btn-shine">
+              <Link to={creatorCtaHref}>
                 <Sparkles className="h-4 w-4" />
                 <span className="hidden sm:inline">{creatorCtaLabel}</span>
-                <span className="sm:hidden">{!user ? "Unirme" : accountType === "creator" ? "Panel" : "Crear"}</span>
+                <span className="sm:hidden">{!user ? "Unirme" : accountType === "creator" ? "Panel" : "Planes"}</span>
               </Link>
             </Button>
           )}
