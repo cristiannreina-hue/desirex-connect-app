@@ -363,7 +363,6 @@ const Profile = () => {
             )}
           </div>
         </div>
-        </div>
 
         {/* Contenido exclusivo (paywall con signed URLs) */}
         <ExclusiveMedia
