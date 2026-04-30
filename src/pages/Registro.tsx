@@ -81,7 +81,7 @@ const Registro = () => {
         <div className="grid md:grid-cols-2 gap-5">
           <button
             onClick={() => choose("visitor")}
-            disabled={savingChoice}
+            type="button"
             className="group card-premium rounded-3xl p-7 text-left transition-all hover:scale-[1.01] hover:shadow-glow-soft"
           >
             <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary text-foreground ring-1 ring-border mb-4">
@@ -98,7 +98,7 @@ const Registro = () => {
 
           <button
             onClick={() => choose("creator")}
-            disabled={savingChoice}
+            type="button"
             className="group card-premium rounded-3xl p-7 text-left transition-all hover:scale-[1.01] hover:shadow-glow-soft ring-2 ring-accent/40"
           >
             <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-primary text-primary-foreground shadow-glow-soft mb-4">
