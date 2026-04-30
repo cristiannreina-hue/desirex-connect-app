@@ -47,6 +47,7 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [birthDate, setBirthDate] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // OTP state
@@ -244,6 +245,8 @@ const Auth = () => {
         if (!birthDate) throw new Error("La fecha de nacimiento es obligatoria");
         if (age < 18)
           throw new Error("Debes ser mayor de 18 años para acceder a esta plataforma");
+        if (!acceptedTerms)
+          throw new Error("Debes aceptar los Términos y Condiciones para continuar");
 
         await sendOtp();
 
@@ -280,7 +283,7 @@ const Auth = () => {
   const submitDisabled =
     loading ||
     (mode === "signup" &&
-      (!ageValid || password.length < 6 || password !== confirmPassword));
+      (!ageValid || password.length < 6 || password !== confirmPassword || !acceptedTerms));
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -497,6 +500,29 @@ const Auth = () => {
                             Debes ser mayor de 18 años para acceder a esta plataforma
                           </p>
                         )}
+                      </div>
+
+                      <div className="flex items-start gap-2.5 rounded-xl border border-border/60 bg-background/40 p-3">
+                        <input
+                          id="acceptTerms"
+                          type="checkbox"
+                          checked={acceptedTerms}
+                          onChange={(e) => setAcceptedTerms(e.target.checked)}
+                          className="mt-0.5 h-4 w-4 rounded border-border accent-[hsl(var(--accent))] cursor-pointer"
+                          required
+                        />
+                        <label htmlFor="acceptTerms" className="text-xs text-muted-foreground leading-relaxed cursor-pointer select-none">
+                          He leído y acepto los{" "}
+                          <Link
+                            to="/legal/terminos"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-accent font-semibold hover:underline"
+                          >
+                            Términos y Condiciones
+                          </Link>{" "}
+                          de DeseoX.
+                        </label>
                       </div>
                     </>
                   )}
