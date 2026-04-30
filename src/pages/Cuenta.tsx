@@ -72,7 +72,7 @@ const Cuenta = () => {
 
   const profileCtaLabel = isCreator
     ? completion.percent === 0 ? "Crear mi perfil" : "Editar mi panel"
-    : "Actualizar mi información";
+    : "Editar nombre y foto";
 
   const handleProfileAction = () => {
     // El Dashboard adapta el formulario al rol (visitor → solo nombre + 1 foto;
