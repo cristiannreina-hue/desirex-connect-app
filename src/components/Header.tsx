@@ -65,15 +65,15 @@ export const Header = () => {
               <Link to="/auth">{t("nav.signin")}</Link>
             </Button>
           )}
-          {
+          {(!user || accountType === "creator") && (
             <Button asChild variant="hero" size="sm" className="gap-2 rounded-full btn-shine">
               <Link to={creatorCtaHref}>
                 <Sparkles className="h-4 w-4" />
                 <span className="hidden sm:inline">{user ? creatorCtaLabel : "Unirme a DeseoX"}</span>
-                <span className="sm:hidden">{user ? (accountType === "creator" ? "Panel" : "Crear") : "Unirme"}</span>
+                <span className="sm:hidden">{user ? "Panel" : "Unirme"}</span>
               </Link>
             </Button>
-          }
+          )}
         </div>
       </div>
     </header>
