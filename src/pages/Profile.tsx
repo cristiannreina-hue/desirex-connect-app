@@ -8,6 +8,7 @@ import { VerifiedBadge } from "@/components/VerifiedBadge";
 import { Stars } from "@/components/Stars";
 import { ProfileReviews } from "@/components/ProfileReviews";
 import { ExclusiveMedia } from "@/components/ExclusiveMedia";
+import { WatermarkOverlay } from "@/components/WatermarkOverlay";
 import { SeoNoIndex } from "@/components/SeoNoIndex";
 import { DEMO_PROFILES } from "@/data/profiles";
 import { CATEGORY_LABELS, SERVICE_LABELS, TIER_LABELS, type Profile as ProfileT, type Subscription } from "@/types/profile";
@@ -170,19 +171,21 @@ const Profile = () => {
           {/* Carrusel auto-fade */}
           <div className="space-y-3">
             <div className="relative aspect-[4/5] overflow-hidden rounded-3xl ring-1 ring-border bg-card shadow-card">
-              {photos.map((src, i) => (
-                <img
-                  key={`${src}-${i}`}
-                  src={src}
-                  alt={`${profile.name} ${i + 1}`}
-                  width={768}
-                  height={960}
-                  className={cn(
-                    "absolute inset-0 h-full w-full object-cover transition-opacity duration-1000",
-                    i === photoIdx ? "opacity-100" : "opacity-0",
-                  )}
-                />
-              ))}
+              <WatermarkOverlay size="lg" className="absolute inset-0 h-full w-full">
+                {photos.map((src, i) => (
+                  <img
+                    key={`${src}-${i}`}
+                    src={src}
+                    alt={`${profile.name} ${i + 1}`}
+                    width={768}
+                    height={960}
+                    className={cn(
+                      "absolute inset-0 h-full w-full object-cover transition-opacity duration-1000",
+                      i === photoIdx ? "opacity-100" : "opacity-0",
+                    )}
+                  />
+                ))}
+              </WatermarkOverlay>
               {photos.length > 1 && (
                 <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
                   {photos.map((_, i) => (

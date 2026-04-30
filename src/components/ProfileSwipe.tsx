@@ -6,6 +6,7 @@ import { formatCOP, minRate } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Heart, MapPin, X, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { WatermarkOverlay } from "./WatermarkOverlay";
 
 interface Props {
   profiles: Profile[];
@@ -69,12 +70,14 @@ export const ProfileSwipe = ({ profiles }: Props) => {
           aria-hidden
           className="absolute inset-0 rounded-3xl overflow-hidden ring-1 ring-border/60 scale-[0.94] opacity-70"
         >
-          <img
-            src={next.photos[0]}
-            alt=""
-            className="h-full w-full object-cover"
-            loading="lazy"
-          />
+          <WatermarkOverlay size="md" className="h-full w-full">
+            <img
+              src={next.photos[0]}
+              alt=""
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </WatermarkOverlay>
           <div className="absolute inset-0 overlay-bottom" />
         </div>
 
@@ -90,14 +93,16 @@ export const ProfileSwipe = ({ profiles }: Props) => {
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
         >
-          <img
-            src={profile.photos[0]}
-            alt={`${profile.name}, ${profile.city}`}
-            width={768}
-            height={1024}
-            className="h-full w-full object-cover pointer-events-none"
-            draggable={false}
-          />
+          <WatermarkOverlay size="lg" className="absolute inset-0 h-full w-full">
+            <img
+              src={profile.photos[0]}
+              alt={`${profile.name}, ${profile.city}`}
+              width={768}
+              height={1024}
+              className="h-full w-full object-cover pointer-events-none"
+              draggable={false}
+            />
+          </WatermarkOverlay>
           <div className="absolute inset-0 overlay-bottom pointer-events-none" />
 
           {/* badges */}

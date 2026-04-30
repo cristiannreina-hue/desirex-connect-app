@@ -6,6 +6,7 @@ import { VerifiedBadge } from "./VerifiedBadge";
 import { Stars } from "./Stars";
 import { TIER_BADGE } from "@/lib/tier";
 import { cn } from "@/lib/utils";
+import { WatermarkOverlay } from "./WatermarkOverlay";
 
 interface Props {
   profile: Profile;
@@ -73,21 +74,23 @@ export const ProfileCard = ({ profile, index = 0, popular }: Props) => {
         )}
 
         {/* Carrusel cross-fade en hover */}
-        {photos.map((src, i) => (
-          <img
-            key={`${src}-${i}`}
-            src={src}
-            alt={`${profile.name}, ${profile.city}`}
-            loading="lazy"
-            width={768}
-            height={960}
-            onLoad={i === 0 ? () => setLoaded(true) : undefined}
-            className={cn(
-              "absolute inset-0 h-full w-full object-cover photo-fade",
-              i === photoIdx ? "opacity-100 scale-100 group-hover:scale-110" : "opacity-0 scale-105",
-            )}
-          />
-        ))}
+        <WatermarkOverlay size="md" className="absolute inset-0 h-full w-full">
+          {photos.map((src, i) => (
+            <img
+              key={`${src}-${i}`}
+              src={src}
+              alt={`${profile.name}, ${profile.city}`}
+              loading="lazy"
+              width={768}
+              height={960}
+              onLoad={i === 0 ? () => setLoaded(true) : undefined}
+              className={cn(
+                "absolute inset-0 h-full w-full object-cover photo-fade",
+                i === photoIdx ? "opacity-100 scale-100 group-hover:scale-110" : "opacity-0 scale-105",
+              )}
+            />
+          ))}
+        </WatermarkOverlay>
 
         {/* Overlay sutil para legibilidad sobre la foto */}
         <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none" />
