@@ -20,6 +20,7 @@ import { AdminRewards } from "@/components/admin/AdminRewards";
 import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AdminNotifications } from "@/components/admin/AdminNotifications";
+import { AdminRecentSignups } from "@/components/admin/AdminRecentSignups";
 
 type Section =
   | "overview" | "verifications" | "profiles" | "users-clients"
@@ -147,6 +148,7 @@ const Admin = () => {
               {section === "overview" && (
                 <>
                   <AdminMetrics />
+                  <AdminRecentSignups />
                   <div className="grid lg:grid-cols-2 gap-4">
                     <div className="card-glass rounded-2xl p-5">
                       <h3 className="font-display font-bold mb-3 flex items-center gap-2">
