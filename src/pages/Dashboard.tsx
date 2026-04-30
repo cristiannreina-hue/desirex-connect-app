@@ -130,6 +130,8 @@ const Dashboard = () => {
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setData((d) => ({ ...d, [key]: value }));
 
+  const isVisitor = data.account_type === "visitor";
+  const publicPhotoLimit = isVisitor ? 1 : PUBLIC_PHOTO_LIMIT;
   const exclusivePhotoLimit = EXCLUSIVE_PHOTO_LIMIT_BY_TIER[tier] ?? 6;
   const exclusiveVideoLimit = EXCLUSIVE_VIDEO_LIMIT_BY_TIER[tier] ?? 2;
 
