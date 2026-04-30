@@ -133,12 +133,6 @@ const Profile = () => {
   const isOwner = user?.id === profile.id;
   const tier = profile.subscription?.tier;
   const tierMeta = tier ? TIER_BADGE[tier] : null;
-  const days = daysRemaining(profile.subscription?.expiresAt);
-  const subColor = subStateColor(profile.subscription?.status, profile.subscription?.expiresAt);
-  const subColorClass =
-    subColor === "green" ? "bg-[hsl(var(--online))]/10 text-[hsl(var(--online))] ring-[hsl(var(--online))]/30"
-      : subColor === "yellow" ? "bg-[hsl(var(--gold))]/10 text-[hsl(var(--gold))] ring-[hsl(var(--gold))]/40"
-        : "bg-destructive/10 text-destructive ring-destructive/40";
 
   const accessExclusive = isOwner || hasSubscription;
 
