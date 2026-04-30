@@ -100,9 +100,13 @@ const Planes = () => {
       navigate("/cuenta");
       return;
     }
-    toast("Planes pagos próximamente", {
-      description: "Estamos terminando la integración con Wompi. Mientras tanto, disfruta de tu plan Starter gratis (90 días).",
+    // Redirigir a Wompi con referencia userId|tier para identificar el pago
+    const reference = `${user.id}|${plan.tier}`;
+    const url = `https://checkout.wompi.co/l/test_VPOS_uN1xtS?reference=${encodeURIComponent(reference)}`;
+    toast.success("Te redirigimos a Wompi para completar tu pago…", {
+      description: "Tu plan se activará apenas confirmemos el pago. Si tarda, escríbenos.",
     });
+    setTimeout(() => { window.location.href = url; }, 800);
   };
 
   return (
