@@ -20,6 +20,7 @@ import type { Profile, Gender, Subscription } from "@/types/profile";
 import { GENDER_LABELS, TIER_RANK } from "@/types/profile";
 import { isVisible } from "@/lib/tier";
 import { isProfileComplete } from "@/lib/profile-completion";
+import { useAuth } from "@/hooks/useAuth";
 import heroCartagena from "@/assets/hero-cartagena.jpg";
 import heroPenol from "@/assets/hero-penol.jpg";
 import heroConcierge from "@/assets/hero-concierge.jpg";
