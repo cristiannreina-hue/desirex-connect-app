@@ -264,13 +264,8 @@ const Auth = () => {
 
         await sendOtp();
 
-        toast({
-          title: "Código enviado",
-          description: "Ingresa los 6 números que enviamos a tu correo.",
-        });
-        setCode(["", "", "", "", "", ""]);
-        setCooldown(RESEND_COOLDOWN);
-        setMode("otp");
+        setModalCooldown(RESEND_COOLDOWN);
+        setSignupModalOpen(true);
       } else if (mode === "login") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
