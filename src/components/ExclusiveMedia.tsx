@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Lock, Crown, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
+import { WatermarkOverlay } from "@/components/WatermarkOverlay";
 
 interface Props {
   profileId: string;
@@ -86,18 +87,28 @@ const Tile = ({
   return (
     <div className="relative aspect-square rounded-xl overflow-hidden ring-1 ring-border bg-secondary">
       {url ? (
-        type === "photo" ? (
-          <img src={url} alt="exclusive" className="h-full w-full object-cover" />
-        ) : (
-          <video src={url} className="h-full w-full object-cover" controls preload="metadata" />
-        )
+        <WatermarkOverlay size="sm" className="h-full w-full">
+          {type === "photo" ? (
+            <img src={url} alt="exclusive" className="h-full w-full object-cover" />
+          ) : (
+            <video
+              src={url}
+              className="h-full w-full object-cover"
+              controls
+              controlsList="nodownload"
+              disablePictureInPicture
+              onContextMenu={(e) => e.preventDefault()}
+              preload="metadata"
+            />
+          )}
+        </WatermarkOverlay>
       ) : (
         <div className={`h-full w-full ${locked ? "blur-2xl" : ""} bg-gradient-to-br from-secondary to-background flex items-center justify-center`}>
           {type === "video" && <Play className="h-7 w-7 text-foreground/40" />}
         </div>
       )}
       {locked && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-sm">
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/40 backdrop-blur-sm">
           <Lock className="h-6 w-6 text-foreground/80" />
         </div>
       )}
