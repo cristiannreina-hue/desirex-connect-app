@@ -88,12 +88,12 @@ export const Header = () => {
               <Link to="/auth">{t("nav.signin")}</Link>
             </Button>
           )}
-          {(!user || accountType === "creator") && (
-            <Button asChild variant="hero" size="sm" className="gap-2 rounded-full btn-shine">
-              <Link to={creatorCtaHref}>
+          {(!user || accountType !== "creator" ? accountType !== null || !user : true) && (
+            <Button asChild variant="hero" size="sm" className="gap-2 rounded-full btn-shine" disabled={upgrading}>
+              <Link to={creatorCtaHref} onClick={handleCreatorCta}>
                 <Sparkles className="h-4 w-4" />
-                <span className="hidden sm:inline">{user ? creatorCtaLabel : "Unirme a DeseoX"}</span>
-                <span className="sm:hidden">{user ? "Panel" : "Unirme"}</span>
+                <span className="hidden sm:inline">{creatorCtaLabel}</span>
+                <span className="sm:hidden">{!user ? "Unirme" : accountType === "creator" ? "Panel" : "Crear"}</span>
               </Link>
             </Button>
           )}
