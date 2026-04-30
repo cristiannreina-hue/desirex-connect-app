@@ -414,4 +414,19 @@ const SidebarStat = ({ icon, label, value }: { icon: React.ReactNode; label: str
   </div>
 );
 
+const MiniStat = ({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) => (
+  <div className="card-glass rounded-xl px-3 py-2.5 flex flex-col items-center gap-0.5 text-center">
+    <span className="text-accent">{icon}</span>
+    <p className="text-sm font-bold leading-none mt-1">{value}</p>
+    <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
+  </div>
+);
+
+const RateRow = ({ label, value }: { label: string; value: string }) => (
+  <div className="flex items-center justify-between border-b border-border/50 last:border-0 pb-1.5 last:pb-0">
+    <span className="text-muted-foreground text-xs">{label}</span>
+    <span className="font-bold text-accent">{value}</span>
+  </div>
+);
+
 export default Profile;
