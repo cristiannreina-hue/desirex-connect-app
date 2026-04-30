@@ -319,17 +319,6 @@ const Profile = () => {
               </p>
             </section>
 
-            {/* Ficha técnica */}
-            <div className="card-glass rounded-2xl p-4">
-              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
-                <Heart className="h-3.5 w-3.5 text-accent" /> Ficha
-              </p>
-              <div className="grid sm:grid-cols-3 gap-2">
-                <SidebarStat icon={<Calendar className="h-4 w-4" />} label="Edad" value={`${profile.age} años`} />
-                {profile.hairColor && <SidebarStat icon={<Scissors className="h-4 w-4" />} label="Cabello" value={profile.hairColor} />}
-                <SidebarStat icon={<MapPin className="h-4 w-4" />} label="Ubicación" value={profile.city} />
-              </div>
-            </div>
 
             {/* Servicios */}
             {profile.services.length > 0 && (
