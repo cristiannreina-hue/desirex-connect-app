@@ -292,7 +292,7 @@ const Cuenta = () => {
         )}
 
         {/* Historial de pagos */}
-        {payments.length > 0 && (
+        {isCreator && payments.length > 0 && (
           <div className="card-glass rounded-3xl p-6">
             <div className="flex items-center gap-3 mb-4">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-accent text-accent-foreground shadow-glow-soft shrink-0">
