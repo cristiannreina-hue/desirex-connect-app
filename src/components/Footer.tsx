@@ -1,5 +1,13 @@
+import { Link } from "react-router-dom";
 import { Logo } from "./Logo";
 import { ShieldCheck, Heart, MapPin, Lock } from "lucide-react";
+
+const legalLinks = [
+  { to: "/legal/terminos", label: "Términos y Condiciones" },
+  { to: "/legal/privacidad", label: "Privacidad y Habeas Data" },
+  { to: "/legal/cookies", label: "Política de Cookies" },
+  { to: "/legal/disclaimer", label: "Descargo de Responsabilidad" },
+];
 
 export const Footer = () => {
   return (
@@ -40,6 +48,21 @@ export const Footer = () => {
         <div className="md:text-right text-xs text-muted-foreground space-y-1">
           <p>© {new Date().getFullYear()} <span className="text-gradient font-semibold">DeseoX</span></p>
           <p className="opacity-70">DeseoX no presta servicios. Conecta personas adultas.</p>
+        </div>
+      </div>
+
+      {/* Enlaces legales */}
+      <div className="border-t border-border/60">
+        <div className="container py-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          {legalLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="text-xs text-muted-foreground hover:text-accent transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
       </div>
 
