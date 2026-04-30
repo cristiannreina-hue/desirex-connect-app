@@ -137,7 +137,7 @@ const Dashboard = () => {
 
   const onPublicPhotos = async (files: FileList | null) => {
     if (!files || !user) return;
-    const remaining = PUBLIC_PHOTO_LIMIT - data.public_photos.length;
+    const remaining = publicPhotoLimit - data.public_photos.length;
     const picked = Array.from(files).slice(0, remaining);
     const uploaded: string[] = [];
     for (const original of picked) {
