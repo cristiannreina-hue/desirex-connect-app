@@ -130,6 +130,19 @@ const Profile = () => {
   const waUrl = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(`Hola ${profile.name}, te contacto desde DeseoX 🔥`)}`;
   const tgUrl = `https://t.me/${profile.telegram}`;
 
+  const rates = profile.rates ?? {};
+  const hasAnyRate = !!(rates.short || rates.oneHour || rates.twoHours || rates.fullDay);
+  const fmtCop = (n?: number) => (n ? `$${n.toLocaleString("es-CO")}` : "—");
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    const shareData = { title: `${profile.name} · DeseoX`, text: `Mira el perfil de ${profile.name} en DeseoX`, url };
+    try {
+      if (navigator.share) await navigator.share(shareData);
+      else { await navigator.clipboard.writeText(url); }
+    } catch {}
+  };
+
   const isOwner = user?.id === profile.id;
   const tier = profile.subscription?.tier;
   const tierMeta = tier ? TIER_BADGE[tier] : null;
