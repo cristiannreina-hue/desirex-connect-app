@@ -231,15 +231,11 @@ const Profile = () => {
               )}
             </div>
 
-            {/* Mini-stats bajo la foto */}
-            <div className="grid grid-cols-2 gap-2">
-              <MiniStat icon={<Star className="h-4 w-4" />} value={(profile.ratingAvg ?? 0).toFixed(1)} label={`${profile.ratingCount ?? 0} reseñas`} />
-              <MiniStat icon={<Zap className="h-4 w-4" />} value="Rápida" label="Respuesta" />
-            </div>
           </div>
 
-          {/* Columna info */}
-          <div className="space-y-5">
+          {/* Columna info — bloque sólido administrativo */}
+          <div className="space-y-4 flex flex-col">
+            {/* Cabecera: tags + nombre + ubicación + estatus */}
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 {tierMeta && (
@@ -263,37 +259,43 @@ const Profile = () => {
                 <span>{profile.name}<span className="ml-2 text-foreground/70 font-semibold">{profile.age}</span></span>
                 {profile.verified && <VerifiedBadge size="lg" showLabel />}
               </h1>
-              <p className="mt-2 flex items-center gap-1.5 text-muted-foreground">
-                <MapPin className="h-4 w-4" /> {profile.city}{profile.workZone ? ` · ${profile.workZone}` : ""}, {profile.department}
-              </p>
+              <div className="mt-2 flex items-center flex-wrap gap-x-3 gap-y-1.5 text-sm">
+                <span className="flex items-center gap-1.5 text-muted-foreground">
+                  <MapPin className="h-4 w-4" /> {profile.city}{profile.workZone ? ` · ${profile.workZone}` : ""}, {profile.department}
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[hsl(var(--online))]/15 px-2.5 py-1 text-[11px] font-bold text-[hsl(var(--online))] ring-1 ring-[hsl(var(--online))]/30">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--online))] animate-pulse" /> Activa ahora
+                </span>
+              </div>
 
               {(profile.ratingCount ?? 0) > 0 && (
                 <div className="mt-3"><Stars value={profile.ratingAvg ?? 0} count={profile.ratingCount} size="md" /></div>
               )}
-
-              <div className="mt-5 grid sm:grid-cols-2 gap-3">
-                <Button asChild variant="whatsapp" size="xl" className="w-full rounded-full">
-                  <a href={waUrl} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="h-5 w-5" /> WhatsApp
-                  </a>
-                </Button>
-                {profile.telegram ? (
-                  <Button asChild variant="telegram" size="xl" className="w-full rounded-full">
-                    <a href={tgUrl} target="_blank" rel="noopener noreferrer">
-                      <Send className="h-5 w-5" /> Telegram
-                    </a>
-                  </Button>
-                ) : (
-                  <Button onClick={handleShare} variant="outline" size="xl" className="w-full rounded-full">
-                    <Share2 className="h-5 w-5" /> Compartir
-                  </Button>
-                )}
-              </div>
             </div>
 
-            {/* Descripción + traducción IA */}
-            <section className="card-glass rounded-2xl p-5">
-              <div className="flex items-center justify-between gap-3 mb-2">
+            {/* Botones de contacto — protagonismo total, una sola fila */}
+            <div className="grid grid-cols-2 gap-3">
+              <Button asChild variant="whatsapp" size="xl" className="w-full rounded-full">
+                <a href={waUrl} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="h-5 w-5" /> WhatsApp
+                </a>
+              </Button>
+              {profile.telegram ? (
+                <Button asChild variant="telegram" size="xl" className="w-full rounded-full">
+                  <a href={tgUrl} target="_blank" rel="noopener noreferrer">
+                    <Send className="h-5 w-5" /> Telegram
+                  </a>
+                </Button>
+              ) : (
+                <Button onClick={handleShare} variant="outline" size="xl" className="w-full rounded-full">
+                  <Share2 className="h-5 w-5" /> Compartir
+                </Button>
+              )}
+            </div>
+
+            {/* Sobre mí + widgets de confianza integrados — rellena espacio */}
+            <section className="card-glass rounded-2xl p-5 flex-1 flex flex-col">
+              <div className="flex items-center justify-between gap-3 mb-3">
                 <h2 className="font-display text-lg font-bold flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-accent" /> {t("profile.about")}
                 </h2>
@@ -312,13 +314,30 @@ const Profile = () => {
                   </button>
                 )}
               </div>
-              <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm">
+
+              {/* Mini-widgets de confianza integrados */}
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                <TrustWidget icon={<Zap className="h-3.5 w-3.5" />} label="Respuesta rápida" />
+                <TrustWidget icon={<span className="text-sm leading-none">✅</span>} label="Identidad verificada" />
+                <TrustWidget icon={<Sparkles className="h-3.5 w-3.5" />} label="Activa hoy" />
+              </div>
+
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm flex-1">
                 {showTranslated && translation
                   ? translation
                   : (profile.description || "Esta creadora aún no ha añadido una descripción.")}
               </p>
-            </section>
 
+              {(profile.ratingCount ?? 0) > 0 && (
+                <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground inline-flex items-center gap-1.5">
+                    <Star className="h-3.5 w-3.5 text-accent" />
+                    <span className="font-bold text-foreground">{(profile.ratingAvg ?? 0).toFixed(1)}</span>
+                    {profile.ratingCount} reseñas
+                  </span>
+                </div>
+              )}
+            </section>
 
             {/* Servicios */}
             {profile.services.length > 0 && (
