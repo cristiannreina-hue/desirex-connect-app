@@ -5,6 +5,7 @@ import { VerifiedBadge } from "./VerifiedBadge";
 import { Stars } from "./Stars";
 import { TIER_BADGE } from "@/lib/tier";
 import { cn } from "@/lib/utils";
+import { WatermarkOverlay } from "./WatermarkOverlay";
 
 interface Props {
   profile: Profile;
@@ -26,14 +27,16 @@ export const FeaturedProfileCard = ({ profile, active }: Props) => {
       )}
     >
       <div className="relative aspect-[4/5] overflow-hidden">
-        <img
-          src={profile.photos[0]}
-          alt={`${profile.name}, ${profile.city}`}
-          loading="lazy"
-          width={560}
-          height={700}
-          className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
-        />
+        <WatermarkOverlay size="md" className="absolute inset-0 h-full w-full">
+          <img
+            src={profile.photos[0]}
+            alt={`${profile.name}, ${profile.city}`}
+            loading="lazy"
+            width={560}
+            height={700}
+            className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
+          />
+        </WatermarkOverlay>
         <div className="absolute inset-0 overlay-bottom" />
 
         {/* Tier badge */}
