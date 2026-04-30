@@ -121,6 +121,37 @@ const Auth = () => {
     return () => clearTimeout(t);
   }, [cooldown]);
 
+  // Modal cooldown
+  useEffect(() => {
+    if (modalCooldown <= 0) return;
+    const t = setTimeout(() => setModalCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [modalCooldown]);
+
+  const handleModalResend = async () => {
+    if (modalCooldown > 0 || modalResending) return;
+    setModalResending(true);
+    try {
+      await sendOtp();
+      setModalCooldown(RESEND_COOLDOWN);
+      toast({ title: "Enlace reenviado", description: "Revisa tu correo nuevamente." });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setModalResending(false);
+    }
+  };
+
+  const handleModalClose = () => {
+    setSignupModalOpen(false);
+    // Limpiar formulario
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setBirthDate("");
+    setAcceptedTerms(false);
+  };
+
   // Auto-focus on first OTP input when entering OTP mode
   useEffect(() => {
     if (mode === "otp") {
