@@ -47,7 +47,11 @@ export function getCompletion(p: Partial<DBProfile> | null | undefined) {
   const total = checks.length;
   const percent = Math.round((done / total) * 100);
   const missing = checks.filter((c) => !c.done);
-  return { checks, done, total, percent, missing, isComplete: done === total };
+  // Visitantes: requieren 100% (sólo 2 checks). Creadoras: pueden publicar con ≥80%.
+  const isVisitor = (p as any)?.account_type === "visitor";
+  const threshold = isVisitor ? 100 : 80;
+  const isComplete = percent >= threshold;
+  return { checks, done, total, percent, missing, isComplete };
 }
 
 export function isProfileComplete(p: Partial<DBProfile> | null | undefined): boolean {
