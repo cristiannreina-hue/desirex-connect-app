@@ -68,26 +68,27 @@ const Cuenta = () => {
   const completion = getCompletion(profile);
   const hasProfile = completion.done > 0;
   const isCreator = (accountType ?? profile?.account_type) === "creator";
-  const isVisitor = (accountType ?? profile?.account_type) === "visitor";
-  const profileCtaLabel = isCreator
-    ? completion.isComplete
-      ? "Mi Panel"
-      : "Editar mis datos"
-    : "Crear mi perfil";
+  const [upgrading, setUpgrading] = useState(false);
+  const profileCtaLabel = completion.percent === 0 ? "Crear mi perfil" : "Editar mi panel";
 
-  const handleProfileAction = () => {
+  const handleProfileAction = async () => {
     if (isCreator) {
       navigate("/dashboard");
       return;
     }
 
-    if (isVisitor) {
-      toast.error("Tu cuenta es de visitante");
-      navigate("/", { replace: true });
+    // Visitor: upgrade to creator in-place, then open the editor with prefilled data
+    setUpgrading(true);
+    const { error } = await supabase
+      .from("profiles")
+      .upsert({ id: user.id, account_type: "creator" }, { onConflict: "id" });
+    setUpgrading(false);
+
+    if (error) {
+      toast.error("No se pudo abrir tu panel. Intenta de nuevo.");
       return;
     }
-
-    navigate("/registro");
+    navigate("/dashboard");
   };
 
   return (
@@ -190,8 +191,9 @@ const Cuenta = () => {
                   size="sm"
                   className="mt-5 rounded-full gap-1.5 w-full sm:w-auto"
                   onClick={handleProfileAction}
+                  disabled={upgrading}
                 >
-                  {isCreator || hasProfile ? profileCtaLabel : "Crear mi perfil"}
+                  {upgrading ? "Abriendo…" : profileCtaLabel}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </div>
