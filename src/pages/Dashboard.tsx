@@ -207,33 +207,47 @@ const Dashboard = () => {
 
   const save = async () => {
     if (!user) return;
-    if (data.age && parseInt(data.age) < 18) { toast.error("Debes ser mayor de 18 años"); return; }
     setSaving(true);
-    const payload: any = {
-      id: user.id,
-      display_name: data.display_name || null,
-      nickname: data.nickname || null,
-      age: data.age ? parseInt(data.age) : null,
-      birth_date: data.birth_date || null,
-      birth_place: data.birth_place || null,
-      height: data.height ? parseInt(data.height) : null,
-      weight: data.weight ? parseInt(data.weight) : null,
-      hair_color: data.hair_color || null,
-      measurements: data.measurements || null,
-      department: data.department || null,
-      city: data.city || null,
-      work_zone: data.work_zone || null,
-      category: data.category || null,
-      service_type: data.service_type || null,
-      description: data.description || null,
-      public_photos: data.public_photos,
-      exclusive_photos: data.exclusive_photos,
-      exclusive_videos: data.exclusive_videos,
-      photos: data.public_photos,
-      whatsapp: data.whatsapp || null,
-      telegram: data.telegram || null,
-      account_type: "creator",
-    };
+
+    let payload: any;
+    if (isVisitor) {
+      // Visitantes: solo nombre + 1 foto de perfil
+      const photo = data.public_photos.slice(0, 1);
+      payload = {
+        id: user.id,
+        display_name: data.display_name || null,
+        public_photos: photo,
+        photos: photo,
+      };
+    } else {
+      if (data.age && parseInt(data.age) < 18) { toast.error("Debes ser mayor de 18 años"); setSaving(false); return; }
+      payload = {
+        id: user.id,
+        display_name: data.display_name || null,
+        nickname: data.nickname || null,
+        age: data.age ? parseInt(data.age) : null,
+        birth_date: data.birth_date || null,
+        birth_place: data.birth_place || null,
+        height: data.height ? parseInt(data.height) : null,
+        weight: data.weight ? parseInt(data.weight) : null,
+        hair_color: data.hair_color || null,
+        measurements: data.measurements || null,
+        department: data.department || null,
+        city: data.city || null,
+        work_zone: data.work_zone || null,
+        category: data.category || null,
+        service_type: data.service_type || null,
+        description: data.description || null,
+        public_photos: data.public_photos,
+        exclusive_photos: data.exclusive_photos,
+        exclusive_videos: data.exclusive_videos,
+        photos: data.public_photos,
+        whatsapp: data.whatsapp || null,
+        telegram: data.telegram || null,
+      };
+    }
+    // NOTA: nunca enviamos account_type. La promoción visitor → creator
+    // está bloqueada por el trigger protect_account_type a nivel servidor.
     const { error } = await supabase.from("profiles").upsert(payload);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
