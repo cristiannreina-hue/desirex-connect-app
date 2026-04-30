@@ -501,6 +501,29 @@ const Auth = () => {
                           </p>
                         )}
                       </div>
+
+                      <div className="flex items-start gap-2.5 rounded-xl border border-border/60 bg-background/40 p-3">
+                        <input
+                          id="acceptTerms"
+                          type="checkbox"
+                          checked={acceptedTerms}
+                          onChange={(e) => setAcceptedTerms(e.target.checked)}
+                          className="mt-0.5 h-4 w-4 rounded border-border accent-[hsl(var(--accent))] cursor-pointer"
+                          required
+                        />
+                        <label htmlFor="acceptTerms" className="text-xs text-muted-foreground leading-relaxed cursor-pointer select-none">
+                          He leído y acepto los{" "}
+                          <Link
+                            to="/legal/terminos"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-accent font-semibold hover:underline"
+                          >
+                            Términos y Condiciones
+                          </Link>{" "}
+                          de DeseoX.
+                        </label>
+                      </div>
                     </>
                   )}
 
