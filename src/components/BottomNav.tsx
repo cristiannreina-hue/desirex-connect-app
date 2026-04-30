@@ -2,23 +2,34 @@ import { NavLink } from "react-router-dom";
 import { Home, Compass, Crown, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useAccountType } from "@/hooks/useAccountType";
 
-const items = [
+const allItems = [
   { to: "/", label: "Inicio", icon: Home, end: true },
   { to: "/explorar", label: "Explorar", icon: Compass, end: false },
-  { to: "/planes", label: "Planes", icon: Crown, end: false },
+  { to: "/planes", label: "Planes", icon: Crown, end: false, hideForVisitor: true },
   { to: "/cuenta", label: "Perfil", icon: User, end: false, requiresAuth: true },
 ];
 
 export const BottomNav = () => {
   const { user } = useAuth();
+  const { accountType } = useAccountType(user?.id);
+
+  // Visitantes no ven la opción de Planes (no aplica para ellos).
+  const items = allItems.filter(
+    (it) => !(it.hideForVisitor && accountType === "visitor"),
+  );
+
   return (
     <nav
       className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border/70 bg-background/85 backdrop-blur-xl"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Navegación inferior"
     >
-      <ul className="grid grid-cols-4">
+      <ul
+        className="grid"
+        style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
+      >
         {items.map(({ to, label, icon: Icon, end, requiresAuth }) => {
           const target = requiresAuth && !user ? "/auth" : to;
           return (
