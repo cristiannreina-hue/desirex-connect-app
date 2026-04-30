@@ -20,6 +20,7 @@ import type { Profile, Gender, Subscription } from "@/types/profile";
 import { GENDER_LABELS, TIER_RANK } from "@/types/profile";
 import { isVisible } from "@/lib/tier";
 import { isProfileComplete } from "@/lib/profile-completion";
+import { useAuth } from "@/hooks/useAuth";
 import heroCartagena from "@/assets/hero-cartagena.jpg";
 import heroPenol from "@/assets/hero-penol.jpg";
 import heroConcierge from "@/assets/hero-concierge.jpg";
@@ -72,6 +73,7 @@ const sortByTier = (a: Profile, b: Profile) => {
 };
 
 const Index = () => {
+  const { user } = useAuth();
   const [gender, setGender] = useState<Gender>("mujeres");
   const [realProfiles, setRealProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -313,12 +315,14 @@ const Index = () => {
               <Flame className="h-4 w-4" />
               Explorar perfiles
             </Button>
-            <Button asChild variant="outline" size="lg" className="rounded-full gap-2 btn-shine">
-              <a href="/registro">
-                <Sparkles className="h-4 w-4" />
-                Unirme a DeseoX
-              </a>
-            </Button>
+            {!user && (
+              <Button asChild variant="outline" size="lg" className="rounded-full gap-2 btn-shine">
+                <a href="/registro">
+                  <Sparkles className="h-4 w-4" />
+                  Unirme a DeseoX
+                </a>
+              </Button>
+            )}
           </div>
 
           {/* Escudo de confianza CEO */}
