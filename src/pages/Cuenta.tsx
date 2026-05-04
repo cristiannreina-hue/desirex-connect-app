@@ -37,6 +37,34 @@ const Cuenta = () => {
   const [payments, setPayments] = useState<any[]>([]);
   const [upgrading, setUpgrading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [pwOpen, setPwOpen] = useState(false);
+  const [pwSaving, setPwSaving] = useState(false);
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+
+  const handleChangePassword = async () => {
+    if (newPw.length < 6) {
+      toast.error("La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+    if (newPw !== confirmPw) {
+      toast.error("Las contraseñas no coinciden");
+      return;
+    }
+    setPwSaving(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPw });
+      if (error) throw error;
+      toast.success("Contraseña actualizada");
+      setPwOpen(false);
+      setNewPw("");
+      setConfirmPw("");
+    } catch (err: any) {
+      toast.error(err?.message ?? "No se pudo actualizar la contraseña");
+    } finally {
+      setPwSaving(false);
+    }
+  };
 
   const handleDeleteAccount = async () => {
     setDeleting(true);
