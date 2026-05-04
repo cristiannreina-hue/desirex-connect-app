@@ -83,6 +83,7 @@ const Index = () => {
   const [pingIdx, setPingIdx] = useState(0);
   const [quickFilter, setQuickFilter] = useState<"all" | "new" | "verified" | "nearby">("all");
   const [cityFilter, setCityFilter] = useState<string>("all");
+  const [zoneFilter, setZoneFilter] = useState<string>("all");
 
   /* Carga */
   useEffect(() => {
