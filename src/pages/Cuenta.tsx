@@ -184,7 +184,9 @@ const Cuenta = () => {
                   Perfil {completion.percent}% completado
                 </span>
                 {completion.isComplete ? (
-                  <span className="text-success font-semibold">Publicado</span>
+                  <span className="text-success font-semibold">Perfil completo</span>
+                ) : completion.message ? (
+                  <span className="text-accent font-semibold">{completion.message}</span>
                 ) : (
                   <span className="text-muted-foreground">{completion.done}/{completion.total}</span>
                 )}
