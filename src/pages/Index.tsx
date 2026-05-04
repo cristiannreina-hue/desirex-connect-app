@@ -41,8 +41,8 @@ const HERO_SLIDES = [
     alt: "Pareja en El Peñol al amanecer, paisaje colombiano premium",
   },
   {
-    title: "Verificación manual del CEO — 100% Real",
-    subtitle: "Cada perfil revisado uno a uno con cédula colombiana. Cero tolerancia con fraudes o menores.",
+    title: "Verificación Humana Certificada",
+    subtitle: "Cada perfil es validado individualmente mediante documento de identidad nacional. Cero tolerancia con fraudes o menores de edad.",
     bg: heroConcierge,
     alt: "Oficina concierge de lujo con escudo de verificación dorado",
   },
@@ -357,8 +357,8 @@ const Index = () => {
                 <ShieldCheck className="h-4 w-4" />
               </span>
               <div className="text-left leading-tight">
-                <div className="text-[11px] uppercase tracking-widest text-accent font-extrabold">Identidades Verificadas con Cédula</div>
-                <div className="text-[11px] text-muted-foreground">Seguridad 100% Colombiana 🇨🇴 · Cero tolerancia con fraude o menores</div>
+                <div className="text-[11px] uppercase tracking-widest text-accent font-extrabold">Identidades Verificadas</div>
+                <div className="text-[11px] text-muted-foreground">Validación con documento oficial nacional · Cero tolerancia con fraude o menores</div>
               </div>
             </div>
           </div>
