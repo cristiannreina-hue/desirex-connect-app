@@ -376,7 +376,7 @@ const Dashboard = () => {
                   <Lock className="h-3 w-3 inline mr-1 text-accent" />
                   Fotos exclusivas · {data.exclusive_photos.length}/{exclusivePhotoLimit}
                 </SubLabel>
-                <UploadBox icon={<Lock className="h-6 w-6 text-accent" />} accept="image/*" onChange={onExclusivePhotos} disabled={data.exclusive_photos.length >= exclusivePhotoLimit} hint={`Plan ${tier} · cupo ${exclusivePhotoLimit}`} />
+                <UploadBox icon={<Lock className="h-6 w-6 text-accent" />} accept="image/*" onChange={onExclusivePhotos} disabled={data.exclusive_photos.length >= exclusivePhotoLimit} hint={`Plan ${tier} · cupo ${exclusivePhotoLimit}`} confirm={{ title: "Contenido para Suscriptores", message: "Aquí se permite contenido sensual y desnudos artísticos. Sin embargo, por políticas de seguridad, no se deben mostrar directamente las partes íntimas. Asegúrate de mantener la estética premium de la plataforma.", button: "Continuar" }} />
                 {data.exclusive_photos.length > 0 && (
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {data.exclusive_photos.map((p, i) => <PrivateTile key={p} path={p} onRemove={() => removeExclPhoto(i)} />)}
