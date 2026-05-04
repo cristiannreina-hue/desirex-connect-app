@@ -1,6 +1,7 @@
 // Mapea filas de la tabla `profiles` (DB) al tipo `Profile` usado por la UI.
 
-import type { Profile, Category, ServiceType, Gender, Subscription } from "@/types/profile";
+import type { Profile, ServiceType, Gender, Subscription } from "@/types/profile";
+import { normalizeCategory } from "@/types/profile";
 import type { Tables } from "@/integrations/supabase/types";
 import { isProfileComplete } from "@/lib/profile-completion";
 
@@ -34,7 +35,7 @@ export function dbToProfile(p: Row, sub?: Subscription): Profile {
     department: p.department ?? "",
     city: p.city ?? "",
     workZone: anyP.work_zone ?? undefined,
-    category: (p.category as Category) ?? "femenino",
+    category: normalizeCategory(p.category),
     serviceType: (p.service_type as ServiceType) ?? "hetero",
     gender: (p.gender as Gender) ?? "mujeres",
     photos,

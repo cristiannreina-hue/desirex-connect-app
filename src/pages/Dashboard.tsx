@@ -9,8 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { COLOMBIA, DEPARTMENTS } from "@/data/colombia";
-import { CATEGORY_LABELS, SERVICE_LABELS, type Category, type ServiceType } from "@/types/profile";
+import { COLOMBIA, DEPARTMENTS, getCityZones } from "@/data/colombia";
+import { CATEGORY_LABELS, type Category } from "@/types/profile";
 import { ImagePlus, Save, X, ShieldCheck, Crown, Lock, Video, BadgeCheck, Clock, Camera, FileText, Ruler, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -40,7 +40,6 @@ interface FormState {
   city: string;
   work_zone: string;
   category: Category | "";
-  service_type: ServiceType | "";
   description: string;
   public_photos: string[];
   exclusive_photos: string[];
@@ -56,7 +55,7 @@ const empty: FormState = {
   display_name: "", nickname: "", age: "", birth_date: "", birth_place: "",
   height: "", weight: "", hair_color: "", measurements: "",
   department: "", city: "", work_zone: "",
-  category: "", service_type: "", description: "",
+  category: "", description: "",
   public_photos: [], exclusive_photos: [], exclusive_videos: [],
   whatsapp: "", telegram: "",
   account_type: "creator", verification_status: "unverified", is_verified: false,
@@ -109,8 +108,15 @@ const Dashboard = () => {
           department: p.department ?? "",
           city: p.city ?? "",
           work_zone: anyP.work_zone ?? "",
-          category: (p.category as Category) ?? "",
-          service_type: (p.service_type as ServiceType) ?? "",
+          category: ((): Category | "" => {
+            const c = p.category as string | null;
+            if (!c) return "";
+            if (c === "acompanante-femenino") return "femenino";
+            if (c === "acompanante-masculino") return "masculino";
+            if (c === "diverso") return "trans";
+            if (c === "femenino" || c === "masculino" || c === "trans") return c;
+            return "";
+          })(),
           description: p.description ?? "",
           public_photos: anyP.public_photos?.length ? anyP.public_photos : (p.photos ?? []).slice(0, PUBLIC_PHOTO_LIMIT),
           exclusive_photos: anyP.exclusive_photos ?? [],
@@ -260,7 +266,7 @@ const Dashboard = () => {
         city: data.city || null,
         work_zone: data.work_zone || null,
         category: data.category || null,
-        service_type: data.service_type || null,
+        service_type: null,
         description: data.description || null,
         public_photos: data.public_photos,
         exclusive_photos: data.exclusive_photos,
@@ -439,7 +445,7 @@ const Dashboard = () => {
                 </GlassField>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <GlassField label="Ciudad">
-                    <Select value={data.city} onValueChange={(v) => update("city", v)} disabled={!data.department}>
+                    <Select value={data.city} onValueChange={(v) => { update("city", v); update("work_zone", ""); }} disabled={!data.department}>
                       <SelectTrigger className="bg-white/[0.03] border-white/10 text-white rounded-2xl backdrop-blur-md focus:ring-accent/60"><SelectValue placeholder={data.department ? "Selecciona" : "Elige depto"} /></SelectTrigger>
                       <SelectContent className="max-h-72 bg-[#0A0A0A] border-white/10">
                         {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
@@ -447,21 +453,36 @@ const Dashboard = () => {
                     </Select>
                   </GlassField>
                   <GlassField label="Zona de trabajo">
-                    <GlassInput value={data.work_zone} onChange={(e) => update("work_zone", e.target.value)} placeholder="El Poblado, Norte..." />
+                    {getCityZones(data.city).length > 0 ? (
+                      <Select
+                        value={data.work_zone}
+                        onValueChange={(v) => update("work_zone", v)}
+                      >
+                        <SelectTrigger className="bg-white/[0.03] border-white/10 text-white rounded-2xl backdrop-blur-md focus:ring-accent/60">
+                          <SelectValue placeholder="Selecciona la zona" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-72 bg-[#0A0A0A] border-white/10">
+                          {getCityZones(data.city).map((z) => (
+                            <SelectItem key={z} value={z}>{z}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <GlassInput
+                        value={data.work_zone}
+                        onChange={(e) => update("work_zone", e.target.value)}
+                        placeholder="Ej. Norte, Centro..."
+                      />
+                    )}
                   </GlassField>
                 </div>
 
                 <div className="h-px bg-white/5 my-2" />
 
                 <SubLabel>Categoría</SubLabel>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   {(Object.entries(CATEGORY_LABELS) as [Category, string][]).map(([k, label]) => (
                     <Pill key={k} active={data.category === k} onClick={() => update("category", k)}>{label}</Pill>
-                  ))}
-                </div>
-                <div className="grid grid-cols-3 gap-2 mt-2">
-                  {(Object.entries(SERVICE_LABELS) as [ServiceType, string][]).map(([k, label]) => (
-                    <Pill key={k} active={data.service_type === k} onClick={() => update("service_type", k)}>{label}</Pill>
                   ))}
                 </div>
               </Block>

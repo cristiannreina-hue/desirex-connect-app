@@ -6,22 +6,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { COLOMBIA, DEPARTMENTS } from "@/data/colombia";
-import { CATEGORY_LABELS, SERVICE_LABELS, type Category, type ServiceType } from "@/types/profile";
-import { X, SlidersHorizontal, MapPin, Tag, Heart } from "lucide-react";
+import { COLOMBIA, DEPARTMENTS, getCityZones } from "@/data/colombia";
+import { CATEGORY_LABELS, type Category } from "@/types/profile";
+import { X, SlidersHorizontal, MapPin, Heart } from "lucide-react";
 
 export interface Filters {
   department: string;
   city: string;
+  zone: string;
   category: Category | "all";
-  serviceType: ServiceType | "all";
 }
 
 export const DEFAULT_FILTERS: Filters = {
   department: "all",
   city: "all",
+  zone: "all",
   category: "all",
-  serviceType: "all",
 };
 
 interface Props {
@@ -32,6 +32,7 @@ interface Props {
 export const ProfileFilters = ({ value, onChange }: Props) => {
   const cities =
     value.department !== "all" ? COLOMBIA[value.department] ?? [] : [];
+  const zones = value.city !== "all" ? getCityZones(value.city) : [];
 
   const update = (patch: Partial<Filters>) => onChange({ ...value, ...patch });
 
@@ -40,13 +41,14 @@ export const ProfileFilters = ({ value, onChange }: Props) => {
     activeChips.push({ key: "department", label: value.department, icon: <MapPin className="h-3 w-3" /> });
   if (value.city !== "all")
     activeChips.push({ key: "city", label: value.city, icon: <MapPin className="h-3 w-3" /> });
+  if (value.zone !== "all")
+    activeChips.push({ key: "zone", label: value.zone, icon: <MapPin className="h-3 w-3" /> });
   if (value.category !== "all")
     activeChips.push({ key: "category", label: CATEGORY_LABELS[value.category], icon: <Heart className="h-3 w-3" /> });
-  if (value.serviceType !== "all")
-    activeChips.push({ key: "serviceType", label: SERVICE_LABELS[value.serviceType], icon: <Tag className="h-3 w-3" /> });
 
   const clearOne = (key: keyof Filters) => {
-    if (key === "department") update({ department: "all", city: "all" });
+    if (key === "department") update({ department: "all", city: "all", zone: "all" });
+    else if (key === "city") update({ city: "all", zone: "all" });
     else update({ [key]: "all" } as Partial<Filters>);
   };
 
@@ -65,7 +67,7 @@ export const ProfileFilters = ({ value, onChange }: Props) => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
         <Select
           value={value.department}
-          onValueChange={(v) => update({ department: v, city: "all" })}
+          onValueChange={(v) => update({ department: v, city: "all", zone: "all" })}
         >
           <SelectTrigger className="bg-background/60 rounded-xl">
             <SelectValue placeholder="Departamento" />
@@ -80,7 +82,7 @@ export const ProfileFilters = ({ value, onChange }: Props) => {
 
         <Select
           value={value.city}
-          onValueChange={(v) => update({ city: v })}
+          onValueChange={(v) => update({ city: v, zone: "all" })}
           disabled={value.department === "all"}
         >
           <SelectTrigger className="bg-background/60 rounded-xl">
@@ -94,6 +96,22 @@ export const ProfileFilters = ({ value, onChange }: Props) => {
           </SelectContent>
         </Select>
 
+        <Select
+          value={value.zone}
+          onValueChange={(v) => update({ zone: v })}
+          disabled={zones.length === 0}
+        >
+          <SelectTrigger className="bg-background/60 rounded-xl">
+            <SelectValue placeholder={zones.length ? "Zona" : "Sin zonas"} />
+          </SelectTrigger>
+          <SelectContent className="max-h-72">
+            <SelectItem value="all">Todas las zonas</SelectItem>
+            {zones.map((z) => (
+              <SelectItem key={z} value={z}>{z}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
         <Select value={value.category} onValueChange={(v) => update({ category: v as Filters["category"] })}>
           <SelectTrigger className="bg-background/60 rounded-xl">
             <SelectValue placeholder="Categoría" />
@@ -101,18 +119,6 @@ export const ProfileFilters = ({ value, onChange }: Props) => {
           <SelectContent>
             <SelectItem value="all">Todas las categorías</SelectItem>
             {Object.entries(CATEGORY_LABELS).map(([k, label]) => (
-              <SelectItem key={k} value={k}>{label}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={value.serviceType} onValueChange={(v) => update({ serviceType: v as Filters["serviceType"] })}>
-          <SelectTrigger className="bg-background/60 rounded-xl">
-            <SelectValue placeholder="Tipo de servicio" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos los servicios</SelectItem>
-            {Object.entries(SERVICE_LABELS).map(([k, label]) => (
               <SelectItem key={k} value={k}>{label}</SelectItem>
             ))}
           </SelectContent>

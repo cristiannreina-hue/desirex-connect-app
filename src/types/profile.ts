@@ -1,13 +1,13 @@
 // Tipos centrales de DeseoX
 
-export type Category =
-  | "femenino"
-  | "masculino"
-  | "trans"
-  | "acompanante-masculino"
-  | "acompanante-femenino"
-  | "diverso";
+/**
+ * Categorías simplificadas (3 únicas opciones).
+ * Compatibilidad: los valores legacy ("acompanante-*", "diverso") se mapean
+ * automáticamente al cargar y nunca se vuelven a guardar.
+ */
+export type Category = "femenino" | "masculino" | "trans";
 
+/** Tipo de servicio (legacy — ya no se muestra en UI ni se filtra) */
 export type ServiceType = "hetero" | "gay" | "bisexual";
 
 /** Categoría de género para el directorio (tabs Mujeres / Hombres / Trans) */
@@ -56,8 +56,8 @@ export interface Profile {
   /** Compat: galería pública (3 fotos limpias) */
   photos: string[];
   publicPhotos?: string[];
-  exclusivePhotos?: string[]; // storage paths en bucket privado exclusive-media
-  exclusiveVideos?: string[]; // storage paths en bucket privado exclusive-media
+  exclusivePhotos?: string[];
+  exclusiveVideos?: string[];
   rates: Rates;
   description: string;
   services: string[];
@@ -72,15 +72,43 @@ export interface Profile {
   subscription?: Subscription;
 }
 
+/** Etiquetas visibles para las 3 categorías nuevas */
 export const CATEGORY_LABELS: Record<Category, string> = {
   femenino: "Femenino",
   masculino: "Masculino",
-  trans: "Trans",
-  "acompanante-masculino": "Acompañante masculino",
-  "acompanante-femenino": "Acompañante femenino",
-  diverso: "Diverso",
+  trans: "Trans / Travesti",
 };
 
+/**
+ * Normaliza categorías legacy al nuevo modelo de 3 opciones.
+ * - acompanante-femenino → femenino
+ * - acompanante-masculino → masculino
+ * - diverso → trans (mejor coincidencia humana del set anterior)
+ */
+export const normalizeCategory = (raw?: string | null): Category => {
+  switch (raw) {
+    case "femenino":
+    case "acompanante-femenino":
+      return "femenino";
+    case "masculino":
+    case "acompanante-masculino":
+      return "masculino";
+    case "trans":
+    case "diverso":
+      return "trans";
+    default:
+      return "femenino";
+  }
+};
+
+/** Mapea una categoría al tab de género del directorio */
+export const categoryToGender = (cat: Category): Gender => {
+  if (cat === "masculino") return "hombres";
+  if (cat === "trans") return "trans";
+  return "mujeres";
+};
+
+/** Legacy — ya no se muestra, se mantiene para compatibilidad de tipos */
 export const SERVICE_LABELS: Record<ServiceType, string> = {
   hetero: "Hetero",
   gay: "Gay",
@@ -90,8 +118,9 @@ export const SERVICE_LABELS: Record<ServiceType, string> = {
 export const GENDER_LABELS: Record<Gender, string> = {
   mujeres: "Mujeres",
   hombres: "Hombres",
-  trans: "Trans",
+  trans: "Trans / Travesti",
 };
+
 
 export const TIER_LABELS: Record<Tier, string> = {
   starter: "Starter",

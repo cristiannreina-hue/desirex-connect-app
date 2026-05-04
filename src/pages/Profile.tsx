@@ -11,7 +11,7 @@ import { ExclusiveMedia } from "@/components/ExclusiveMedia";
 import { WatermarkOverlay } from "@/components/WatermarkOverlay";
 import { SeoNoIndex } from "@/components/SeoNoIndex";
 import { DEMO_PROFILES } from "@/data/profiles";
-import { CATEGORY_LABELS, SERVICE_LABELS, type Profile as ProfileT, type Subscription } from "@/types/profile";
+import { CATEGORY_LABELS, type Profile as ProfileT, type Subscription } from "@/types/profile";
 
 import { TIER_BADGE } from "@/lib/tier";
 import {
@@ -245,9 +245,6 @@ const Profile = () => {
                 )}
                 <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium ring-1 ring-border">
                   {CATEGORY_LABELS[profile.category]}
-                </span>
-                <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium ring-1 ring-border">
-                  {SERVICE_LABELS[profile.serviceType]}
                 </span>
                 {profile.userNumber && (
                   <span className="rounded-full bg-background/80 px-3 py-1 text-xs font-mono font-bold text-accent ring-1 ring-accent/40">

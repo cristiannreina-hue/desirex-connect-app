@@ -25,3 +25,50 @@ export const COLOMBIA: Record<string, string[]> = {
 };
 
 export const DEPARTMENTS = Object.keys(COLOMBIA).sort();
+
+/**
+ * Zonas / localidades específicas para ciudades grandes.
+ * Se usan en el selector "Zona de trabajo" del perfil y en los filtros
+ * de la página principal cuando la ciudad seleccionada las tiene definidas.
+ */
+export const CITY_ZONES: Record<string, string[]> = {
+  "Bogotá": [
+    "Usaquén",
+    "Chapinero",
+    "Santa Fe",
+    "San Cristóbal",
+    "Usme",
+    "Tunjuelito",
+    "Bosa",
+    "Kennedy",
+    "Fontibón",
+    "Engativá",
+    "Suba",
+    "Barrios Unidos",
+    "Teusaquillo",
+    "Los Mártires",
+    "Antonio Nariño",
+    "Puente Aranda",
+    "La Candelaria",
+    "Rafael Uribe Uribe",
+    "Ciudad Bolívar",
+    "Sumapaz",
+    "Soacha",
+  ],
+  "Medellín": [
+    "El Poblado",
+    "Laureles",
+    "Belén",
+    "Guayabal",
+    "Aranjuez",
+    "Manrique",
+    "Robledo",
+    "Envigado",
+    "Itagüí",
+    "Sabaneta",
+    "Bello",
+  ],
+};
+
+export const getCityZones = (city?: string | null): string[] =>
+  (city && CITY_ZONES[city]) || [];

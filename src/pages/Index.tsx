@@ -17,7 +17,8 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { dbToProfile } from "@/lib/db-mappers";
 import type { Profile, Gender, Subscription } from "@/types/profile";
-import { GENDER_LABELS, TIER_RANK } from "@/types/profile";
+import { GENDER_LABELS, TIER_RANK, categoryToGender } from "@/types/profile";
+import { getCityZones } from "@/data/colombia";
 import { isVisible } from "@/lib/tier";
 import { isProfileComplete } from "@/lib/profile-completion";
 import { useAuth } from "@/hooks/useAuth";
@@ -82,6 +83,7 @@ const Index = () => {
   const [pingIdx, setPingIdx] = useState(0);
   const [quickFilter, setQuickFilter] = useState<"all" | "new" | "verified" | "nearby">("all");
   const [cityFilter, setCityFilter] = useState<string>("all");
+  const [zoneFilter, setZoneFilter] = useState<string>("all");
 
   /* Carga */
   useEffect(() => {
@@ -146,13 +148,15 @@ const Index = () => {
     const newCutoff = Date.now() - 1000 * 60 * 60 * 24 * 14; // 14 días
 
     return allProfiles
-      .filter((p) => p.gender === gender)
+      // Tab Mujeres/Hombres/Trans: matchea por gender O por categoría equivalente
+      .filter((p) => p.gender === gender || categoryToGender(p.category) === gender)
       .filter((p) => {
         if (!q) return true;
         const matchName = p.name.toLowerCase().includes(q);
         const matchId = p.userNumber ? String(p.userNumber).includes(q) : false;
         const matchCity = p.city.toLowerCase().includes(q);
-        return matchName || matchId || matchCity;
+        const matchZone = (p.workZone ?? "").toLowerCase().includes(q);
+        return matchName || matchId || matchCity || matchZone;
       })
       .filter((p) => {
         if (quickFilter === "verified") return p.verified;
@@ -164,8 +168,9 @@ const Index = () => {
         return true;
       })
       .filter((p) => (cityFilter === "all" ? true : p.city === cityFilter))
+      .filter((p) => (zoneFilter === "all" ? true : (p.workZone ?? "") === zoneFilter))
       .sort(sortByTier);
-  }, [allProfiles, gender, query, quickFilter, cityFilter]);
+  }, [allProfiles, gender, query, quickFilter, cityFilter, zoneFilter]);
 
   /* Secciones — fijadas/priorizadas según plan adquirido (ver /planes) */
   // VIP queda fijado arriba; el resto se ordena por vistas
@@ -605,7 +610,7 @@ const Index = () => {
                 return (
                   <button
                     key={c}
-                    onClick={() => setCityFilter(c)}
+                    onClick={() => { setCityFilter(c); setZoneFilter("all"); }}
                     className={cn(
                       "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 ring-1",
                       active
@@ -619,6 +624,34 @@ const Index = () => {
                 );
               })}
             </div>
+
+            {/* Selector de zonas/localidades cuando aplica (Bogotá, Medellín…) */}
+            {getCityZones(cityFilter).length > 0 && (
+              <div className="space-y-2">
+                <p className="text-[11px] uppercase tracking-widest text-muted-foreground font-bold">
+                  📍 Zonas de {cityFilter}
+                </p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {(["all", ...getCityZones(cityFilter)] as const).map((z) => {
+                    const active = zoneFilter === z;
+                    return (
+                      <button
+                        key={z}
+                        onClick={() => setZoneFilter(z)}
+                        className={cn(
+                          "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 ring-1",
+                          active
+                            ? "bg-accent text-accent-foreground ring-accent shadow-glow-soft"
+                            : "bg-secondary/40 text-muted-foreground ring-border hover:text-foreground hover:ring-accent/60",
+                        )}
+                      >
+                        {z === "all" ? "Todas las zonas" : z}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           {loading ? (
