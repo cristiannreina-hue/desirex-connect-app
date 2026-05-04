@@ -363,7 +363,7 @@ const Dashboard = () => {
               {/* 1 · IDENTIDAD VISUAL */}
               <Block icon={<Camera className="h-4 w-4" />} title="Identidad Visual" subtitle="Galería pública y contenido exclusivo">
                 <SubLabel>Fotos públicas · {data.public_photos.length}/{publicPhotoLimit}</SubLabel>
-                <UploadBox icon={<ImagePlus className="h-6 w-6 text-accent" />} accept="image/*" onChange={onPublicPhotos} disabled={data.public_photos.length >= publicPhotoLimit} hint="JPG / PNG · máximo 3" />
+                <UploadBox icon={<ImagePlus className="h-6 w-6 text-accent" />} accept="image/*" onChange={onPublicPhotos} disabled={data.public_photos.length >= publicPhotoLimit} hint="JPG / PNG · máximo 3" confirm={{ title: "Normas de Contenido Público", message: "En esta sección NO se permiten fotos con desnudos totales o partes íntimas expuestas. El incumplimiento de esta norma resultará en el bloqueo inmediato del perfil.", button: "Entendido y Acepto" }} />
                 {data.public_photos.length > 0 && (
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {data.public_photos.map((src, i) => <Tile key={i} url={src} onRemove={() => removePublic(i)} />)}
