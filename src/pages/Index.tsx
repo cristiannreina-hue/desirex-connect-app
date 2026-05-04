@@ -32,19 +32,19 @@ const HERO_SLIDES = [
     title: "Conexiones Reales en Colombia",
     subtitle: "La red de acompañamiento más segura y exclusiva del país.",
     bg: heroCartagena,
-    alt: "Pareja sonriente en una calle histórica de Cartagena al atardecer",
+    alt: "Editorial fine-art: figura femenina en vestido de seda en suite de lujo iluminada por velas",
   },
   {
     title: "Calidez auténtica, bienestar digital",
     subtitle: "Conexiones reales con personas verificadas en todo el territorio nacional.",
     bg: heroPenol,
-    alt: "Pareja en El Peñol al amanecer, paisaje colombiano premium",
+    alt: "Silueta editorial en vestido de gala sobre balcón con vista de ciudad al atardecer",
   },
   {
     title: "Verificación Humana Certificada",
     subtitle: "Cada perfil es validado individualmente mediante documento de identidad nacional. Cero tolerancia con fraudes o menores de edad.",
     bg: heroConcierge,
-    alt: "Oficina concierge de lujo con escudo de verificación dorado",
+    alt: "Detalle fine-art de mano elegante con joyería de oro sosteniendo copa de champaña en lounge art-decó",
   },
 ];
 
