@@ -453,21 +453,36 @@ const Dashboard = () => {
                     </Select>
                   </GlassField>
                   <GlassField label="Zona de trabajo">
-                    <GlassInput value={data.work_zone} onChange={(e) => update("work_zone", e.target.value)} placeholder="El Poblado, Norte..." />
+                    {getCityZones(data.city).length > 0 ? (
+                      <Select
+                        value={data.work_zone}
+                        onValueChange={(v) => update("work_zone", v)}
+                      >
+                        <SelectTrigger className="bg-white/[0.03] border-white/10 text-white rounded-2xl backdrop-blur-md focus:ring-accent/60">
+                          <SelectValue placeholder="Selecciona la zona" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-72 bg-[#0A0A0A] border-white/10">
+                          {getCityZones(data.city).map((z) => (
+                            <SelectItem key={z} value={z}>{z}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <GlassInput
+                        value={data.work_zone}
+                        onChange={(e) => update("work_zone", e.target.value)}
+                        placeholder="Ej. Norte, Centro..."
+                      />
+                    )}
                   </GlassField>
                 </div>
 
                 <div className="h-px bg-white/5 my-2" />
 
                 <SubLabel>Categoría</SubLabel>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   {(Object.entries(CATEGORY_LABELS) as [Category, string][]).map(([k, label]) => (
                     <Pill key={k} active={data.category === k} onClick={() => update("category", k)}>{label}</Pill>
-                  ))}
-                </div>
-                <div className="grid grid-cols-3 gap-2 mt-2">
-                  {(Object.entries(SERVICE_LABELS) as [ServiceType, string][]).map(([k, label]) => (
-                    <Pill key={k} active={data.service_type === k} onClick={() => update("service_type", k)}>{label}</Pill>
                   ))}
                 </div>
               </Block>
