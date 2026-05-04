@@ -67,11 +67,19 @@ export const AdminProfiles = () => {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`¿Eliminar el perfil de "${name}"? Esta acción no se puede deshacer.`)) return;
-    const { error } = await supabase.from("profiles").delete().eq("id", id);
-    if (error) return toast.error("No se pudo eliminar", { description: error.message });
-    toast.success("Perfil eliminado");
+    if (!confirm(`¿Eliminar la cuenta de "${name}"? Se borrará el perfil y el usuario por completo. Esta acción no se puede deshacer.`)) return;
+    // Optimista: quitar de la lista
     setRows((r) => r.filter((x) => x.id !== id));
+    const { data, error } = await supabase.functions.invoke("admin-delete-user", {
+      body: { target_user_id: id },
+    });
+    if (error || (data as any)?.error) {
+      toast.error("No se pudo eliminar", { description: error?.message || (data as any)?.error });
+      await load();
+      return;
+    }
+    toast.success("Cuenta eliminada");
+    await load();
   };
 
   return (
