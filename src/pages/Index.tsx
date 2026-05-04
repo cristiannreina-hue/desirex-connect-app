@@ -148,13 +148,15 @@ const Index = () => {
     const newCutoff = Date.now() - 1000 * 60 * 60 * 24 * 14; // 14 días
 
     return allProfiles
-      .filter((p) => p.gender === gender)
+      // Tab Mujeres/Hombres/Trans: matchea por gender O por categoría equivalente
+      .filter((p) => p.gender === gender || categoryToGender(p.category) === gender)
       .filter((p) => {
         if (!q) return true;
         const matchName = p.name.toLowerCase().includes(q);
         const matchId = p.userNumber ? String(p.userNumber).includes(q) : false;
         const matchCity = p.city.toLowerCase().includes(q);
-        return matchName || matchId || matchCity;
+        const matchZone = (p.workZone ?? "").toLowerCase().includes(q);
+        return matchName || matchId || matchCity || matchZone;
       })
       .filter((p) => {
         if (quickFilter === "verified") return p.verified;
@@ -166,8 +168,9 @@ const Index = () => {
         return true;
       })
       .filter((p) => (cityFilter === "all" ? true : p.city === cityFilter))
+      .filter((p) => (zoneFilter === "all" ? true : (p.workZone ?? "") === zoneFilter))
       .sort(sortByTier);
-  }, [allProfiles, gender, query, quickFilter, cityFilter]);
+  }, [allProfiles, gender, query, quickFilter, cityFilter, zoneFilter]);
 
   /* Secciones — fijadas/priorizadas según plan adquirido (ver /planes) */
   // VIP queda fijado arriba; el resto se ordena por vistas
