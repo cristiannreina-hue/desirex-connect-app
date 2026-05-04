@@ -605,8 +605,14 @@ const UploadBox = ({
 
   return (
     <>
-      <label
-        onClick={handleClick}
+      <div
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        onClick={() => {
+          if (disabled) return;
+          if (confirm) setOpen(true);
+          else openPicker();
+        }}
         className={cn(
           "flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed p-6 transition-all backdrop-blur-md",
           disabled
@@ -617,16 +623,16 @@ const UploadBox = ({
         {icon}
         <span className="text-sm text-white/80 font-medium">{disabled ? "Cupo alcanzado" : "Toca para subir"}</span>
         {hint && <span className="text-[11px] text-white/40">{hint}</span>}
-        <input
-          ref={inputRef}
-          type="file"
-          accept={accept}
-          multiple
-          className="hidden"
-          disabled={disabled}
-          onChange={(e) => onChange(e.target.files)}
-        />
-      </label>
+      </div>
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        multiple
+        className="hidden"
+        disabled={disabled}
+        onChange={(e) => { onChange(e.target.files); e.target.value = ""; }}
+      />
 
       {confirm && (
         <Dialog open={open} onOpenChange={setOpen}>
