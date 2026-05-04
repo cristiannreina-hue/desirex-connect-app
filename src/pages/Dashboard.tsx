@@ -266,7 +266,7 @@ const Dashboard = () => {
         city: data.city || null,
         work_zone: data.work_zone || null,
         category: data.category || null,
-        service_type: data.service_type || null,
+        service_type: null,
         description: data.description || null,
         public_photos: data.public_photos,
         exclusive_photos: data.exclusive_photos,
