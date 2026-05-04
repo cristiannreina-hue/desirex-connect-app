@@ -9,8 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { COLOMBIA, DEPARTMENTS } from "@/data/colombia";
-import { CATEGORY_LABELS, SERVICE_LABELS, type Category, type ServiceType } from "@/types/profile";
+import { COLOMBIA, DEPARTMENTS, getCityZones } from "@/data/colombia";
+import { CATEGORY_LABELS, type Category } from "@/types/profile";
 import { ImagePlus, Save, X, ShieldCheck, Crown, Lock, Video, BadgeCheck, Clock, Camera, FileText, Ruler, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
