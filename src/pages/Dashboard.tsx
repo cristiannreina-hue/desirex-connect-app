@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -362,7 +363,7 @@ const Dashboard = () => {
               {/* 1 · IDENTIDAD VISUAL */}
               <Block icon={<Camera className="h-4 w-4" />} title="Identidad Visual" subtitle="Galería pública y contenido exclusivo">
                 <SubLabel>Fotos públicas · {data.public_photos.length}/{publicPhotoLimit}</SubLabel>
-                <UploadBox icon={<ImagePlus className="h-6 w-6 text-accent" />} accept="image/*" onChange={onPublicPhotos} disabled={data.public_photos.length >= publicPhotoLimit} hint="JPG / PNG · máximo 3" />
+                <UploadBox icon={<ImagePlus className="h-6 w-6 text-accent" />} accept="image/*" onChange={onPublicPhotos} disabled={data.public_photos.length >= publicPhotoLimit} hint="JPG / PNG · máximo 3" confirm={{ title: "Normas de Contenido Público", message: "En esta sección NO se permiten fotos con desnudos totales o partes íntimas expuestas. El incumplimiento de esta norma resultará en el bloqueo inmediato del perfil.", button: "Entendido y Acepto" }} />
                 {data.public_photos.length > 0 && (
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {data.public_photos.map((src, i) => <Tile key={i} url={src} onRemove={() => removePublic(i)} />)}
@@ -375,7 +376,7 @@ const Dashboard = () => {
                   <Lock className="h-3 w-3 inline mr-1 text-accent" />
                   Fotos exclusivas · {data.exclusive_photos.length}/{exclusivePhotoLimit}
                 </SubLabel>
-                <UploadBox icon={<Lock className="h-6 w-6 text-accent" />} accept="image/*" onChange={onExclusivePhotos} disabled={data.exclusive_photos.length >= exclusivePhotoLimit} hint={`Plan ${tier} · cupo ${exclusivePhotoLimit}`} />
+                <UploadBox icon={<Lock className="h-6 w-6 text-accent" />} accept="image/*" onChange={onExclusivePhotos} disabled={data.exclusive_photos.length >= exclusivePhotoLimit} hint={`Plan ${tier} · cupo ${exclusivePhotoLimit}`} confirm={{ title: "Contenido para Suscriptores", message: "Aquí se permite contenido sensual y desnudos artísticos. Sin embargo, por políticas de seguridad, no se deben mostrar directamente las partes íntimas. Asegúrate de mantener la estética premium de la plataforma.", button: "Continuar" }} />
                 {data.exclusive_photos.length > 0 && (
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {data.exclusive_photos.map((p, i) => <PrivateTile key={p} path={p} onRemove={() => removeExclPhoto(i)} />)}
@@ -388,7 +389,7 @@ const Dashboard = () => {
                   <Video className="h-3 w-3 inline mr-1 text-accent" />
                   Videos exclusivos · {data.exclusive_videos.length}/{exclusiveVideoLimit}
                 </SubLabel>
-                <UploadBox icon={<Video className="h-6 w-6 text-accent" />} accept="video/*" onChange={onExclusiveVideos} disabled={data.exclusive_videos.length >= exclusiveVideoLimit} hint={`Cupo ${exclusiveVideoLimit} videos`} />
+                <UploadBox icon={<Video className="h-6 w-6 text-accent" />} accept="video/*" onChange={onExclusiveVideos} disabled={data.exclusive_videos.length >= exclusiveVideoLimit} hint={`Cupo ${exclusiveVideoLimit} videos`} confirm={{ title: "Contenido para Suscriptores", message: "Aquí se permite contenido sensual y desnudos artísticos. Sin embargo, por políticas de seguridad, no se deben mostrar directamente las partes íntimas. Asegúrate de mantener la estética premium de la plataforma.", button: "Continuar" }} />
                 {data.exclusive_videos.length > 0 && (
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {data.exclusive_videos.map((p, i) => <PrivateTile key={p} path={p} type="video" onRemove={() => removeExclVideo(i)} />)}
@@ -580,20 +581,80 @@ const Pill = ({ active, onClick, children }: { active: boolean; onClick: () => v
 );
 
 const UploadBox = ({
-  icon, accept, onChange, disabled, hint,
-}: { icon: React.ReactNode; accept: string; onChange: (f: FileList | null) => void; disabled?: boolean; hint?: string }) => (
-  <label className={cn(
-    "flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed p-6 transition-all backdrop-blur-md",
-    disabled
-      ? "border-white/10 bg-white/[0.02] opacity-50 cursor-not-allowed"
-      : "border-white/15 bg-white/[0.03] hover:border-accent/60 hover:bg-accent/[0.06] hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] cursor-pointer",
-  )}>
-    {icon}
-    <span className="text-sm text-white/80 font-medium">{disabled ? "Cupo alcanzado" : "Toca para subir"}</span>
-    {hint && <span className="text-[11px] text-white/40">{hint}</span>}
-    <input type="file" accept={accept} multiple className="hidden" disabled={disabled} onChange={(e) => onChange(e.target.files)} />
-  </label>
-);
+  icon, accept, onChange, disabled, hint, confirm,
+}: {
+  icon: React.ReactNode;
+  accept: string;
+  onChange: (f: FileList | null) => void;
+  disabled?: boolean;
+  hint?: string;
+  confirm?: { title: string; message: string; button: string };
+}) => {
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const [open, setOpen] = useState(false);
+
+  const openPicker = () => inputRef.current?.click();
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (disabled) return;
+    if (confirm) {
+      e.preventDefault();
+      setOpen(true);
+    }
+  };
+
+  return (
+    <>
+      <label
+        onClick={handleClick}
+        className={cn(
+          "flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed p-6 transition-all backdrop-blur-md",
+          disabled
+            ? "border-white/10 bg-white/[0.02] opacity-50 cursor-not-allowed"
+            : "border-white/15 bg-white/[0.03] hover:border-accent/60 hover:bg-accent/[0.06] hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] cursor-pointer",
+        )}
+      >
+        {icon}
+        <span className="text-sm text-white/80 font-medium">{disabled ? "Cupo alcanzado" : "Toca para subir"}</span>
+        {hint && <span className="text-[11px] text-white/40">{hint}</span>}
+        <input
+          ref={inputRef}
+          type="file"
+          accept={accept}
+          multiple
+          className="hidden"
+          disabled={disabled}
+          onChange={(e) => onChange(e.target.files)}
+        />
+      </label>
+
+      {confirm && (
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent className="bg-[#0A0A0A] border border-accent/40 shadow-[0_0_40px_rgba(255,122,0,0.25)] rounded-2xl text-white max-w-md">
+            <DialogHeader>
+              <DialogTitle className="font-display text-xl text-accent flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5" />
+                {confirm.title}
+              </DialogTitle>
+              <DialogDescription className="text-white/75 text-sm leading-relaxed pt-2">
+                {confirm.message}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="mt-2">
+              <Button
+                type="button"
+                onClick={() => { setOpen(false); setTimeout(openPicker, 50); }}
+                className="w-full bg-gradient-to-r from-[#FF7A00] to-[#FF9A40] text-black font-bold hover:opacity-90 rounded-2xl"
+              >
+                {confirm.button}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
+  );
+};
 
 const Tile = ({ url, onRemove }: { url: string; onRemove: () => void }) => (
   <div className="relative group">
