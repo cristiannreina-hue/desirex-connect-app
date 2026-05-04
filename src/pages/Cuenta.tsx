@@ -404,6 +404,68 @@ const Cuenta = () => {
           </div>
         )}
 
+        {/* Cambiar contraseña */}
+        <div className="card-glass rounded-3xl p-6">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-accent text-accent-foreground shadow-glow-soft shrink-0">
+              <KeyRound className="h-5 w-5" />
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className="font-display font-bold">Cambiar contraseña</p>
+              <p className="text-sm text-muted-foreground">
+                Actualiza tu contraseña de acceso cuando quieras.
+              </p>
+            </div>
+            <Dialog open={pwOpen} onOpenChange={setPwOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="rounded-full gap-1.5 shrink-0">
+                  <KeyRound className="h-3.5 w-3.5" /> Cambiar
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Nueva contraseña</DialogTitle>
+                  <DialogDescription>
+                    Ingresa tu nueva contraseña. Mínimo 6 caracteres.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-3 py-2">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="new-pw">Nueva contraseña</Label>
+                    <Input
+                      id="new-pw"
+                      type="password"
+                      value={newPw}
+                      onChange={(e) => setNewPw(e.target.value)}
+                      minLength={6}
+                      autoComplete="new-password"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="confirm-pw">Confirmar contraseña</Label>
+                    <Input
+                      id="confirm-pw"
+                      type="password"
+                      value={confirmPw}
+                      onChange={(e) => setConfirmPw(e.target.value)}
+                      minLength={6}
+                      autoComplete="new-password"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="ghost" onClick={() => setPwOpen(false)} disabled={pwSaving}>
+                    Cancelar
+                  </Button>
+                  <Button variant="hero" onClick={handleChangePassword} disabled={pwSaving}>
+                    {pwSaving ? "Guardando…" : "Actualizar"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+
         {/* Zona de peligro: eliminar cuenta */}
         <div className="card-glass rounded-3xl p-6 ring-1 ring-destructive/30">
           <div className="flex items-start gap-3">
