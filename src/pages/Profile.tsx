@@ -11,7 +11,7 @@ import { ExclusiveMedia } from "@/components/ExclusiveMedia";
 import { WatermarkOverlay } from "@/components/WatermarkOverlay";
 import { SeoNoIndex } from "@/components/SeoNoIndex";
 import { DEMO_PROFILES } from "@/data/profiles";
-import { CATEGORY_LABELS, SERVICE_LABELS, type Profile as ProfileT, type Subscription } from "@/types/profile";
+import { CATEGORY_LABELS, type Profile as ProfileT, type Subscription } from "@/types/profile";
 
 import { TIER_BADGE } from "@/lib/tier";
 import {
