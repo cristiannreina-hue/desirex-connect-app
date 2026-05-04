@@ -445,7 +445,7 @@ const Dashboard = () => {
                 </GlassField>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <GlassField label="Ciudad">
-                    <Select value={data.city} onValueChange={(v) => update("city", v)} disabled={!data.department}>
+                    <Select value={data.city} onValueChange={(v) => { update("city", v); update("work_zone", ""); }} disabled={!data.department}>
                       <SelectTrigger className="bg-white/[0.03] border-white/10 text-white rounded-2xl backdrop-blur-md focus:ring-accent/60"><SelectValue placeholder={data.department ? "Selecciona" : "Elige depto"} /></SelectTrigger>
                       <SelectContent className="max-h-72 bg-[#0A0A0A] border-white/10">
                         {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
