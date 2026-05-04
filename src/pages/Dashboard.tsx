@@ -55,7 +55,7 @@ const empty: FormState = {
   display_name: "", nickname: "", age: "", birth_date: "", birth_place: "",
   height: "", weight: "", hair_color: "", measurements: "",
   department: "", city: "", work_zone: "",
-  category: "", service_type: "", description: "",
+  category: "", description: "",
   public_photos: [], exclusive_photos: [], exclusive_videos: [],
   whatsapp: "", telegram: "",
   account_type: "creator", verification_status: "unverified", is_verified: false,
