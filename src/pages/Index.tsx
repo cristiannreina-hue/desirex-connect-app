@@ -610,7 +610,7 @@ const Index = () => {
                 return (
                   <button
                     key={c}
-                    onClick={() => setCityFilter(c)}
+                    onClick={() => { setCityFilter(c); setZoneFilter("all"); }}
                     className={cn(
                       "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-300 ring-1",
                       active
