@@ -1,6 +1,7 @@
 // Mapea filas de la tabla `profiles` (DB) al tipo `Profile` usado por la UI.
 
-import type { Profile, Category, ServiceType, Gender, Subscription } from "@/types/profile";
+import type { Profile, ServiceType, Gender, Subscription } from "@/types/profile";
+import { normalizeCategory } from "@/types/profile";
 import type { Tables } from "@/integrations/supabase/types";
 import { isProfileComplete } from "@/lib/profile-completion";
 
