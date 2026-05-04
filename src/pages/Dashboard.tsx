@@ -108,8 +108,15 @@ const Dashboard = () => {
           department: p.department ?? "",
           city: p.city ?? "",
           work_zone: anyP.work_zone ?? "",
-          category: (p.category as Category) ?? "",
-          service_type: (p.service_type as ServiceType) ?? "",
+          category: ((): Category | "" => {
+            const c = p.category as string | null;
+            if (!c) return "";
+            if (c === "acompanante-femenino") return "femenino";
+            if (c === "acompanante-masculino") return "masculino";
+            if (c === "diverso") return "trans";
+            if (c === "femenino" || c === "masculino" || c === "trans") return c;
+            return "";
+          })(),
           description: p.description ?? "",
           public_photos: anyP.public_photos?.length ? anyP.public_photos : (p.photos ?? []).slice(0, PUBLIC_PHOTO_LIMIT),
           exclusive_photos: anyP.exclusive_photos ?? [],
