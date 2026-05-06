@@ -96,6 +96,10 @@ const Profile = () => {
     if (profile) document.title = `${profile.name}, ${profile.age} · ${profile.city} · DeseoX`;
   }, [profile]);
 
+  useEffect(() => {
+    if (dbProfile?.id) void trackProfileView(dbProfile.id);
+  }, [dbProfile?.id]);
+
   const photos = profile?.photos ?? [];
 
   // Auto-rotación carrusel cada 5s con fade (key change anima)
