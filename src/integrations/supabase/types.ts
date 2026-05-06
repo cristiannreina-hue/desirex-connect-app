@@ -216,6 +216,7 @@ export type Database = {
           height: number | null
           id: string
           is_featured: boolean
+          is_public_visible: boolean
           is_suspended: boolean
           is_verified: boolean
           last_active_at: string
@@ -264,6 +265,7 @@ export type Database = {
           height?: number | null
           id: string
           is_featured?: boolean
+          is_public_visible?: boolean
           is_suspended?: boolean
           is_verified?: boolean
           last_active_at?: string
@@ -312,6 +314,7 @@ export type Database = {
           height?: number | null
           id?: string
           is_featured?: boolean
+          is_public_visible?: boolean
           is_suspended?: boolean
           is_verified?: boolean
           last_active_at?: string
