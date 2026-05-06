@@ -21,6 +21,7 @@ import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AdminNotifications } from "@/components/admin/AdminNotifications";
 import { AdminRecentSignups } from "@/components/admin/AdminRecentSignups";
+import { AdminTraffic } from "@/components/admin/AdminTraffic";
 
 type Section =
   | "overview" | "verifications" | "profiles" | "users-clients"
