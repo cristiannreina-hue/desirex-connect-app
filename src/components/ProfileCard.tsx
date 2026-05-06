@@ -171,7 +171,6 @@ export const ProfileCard = ({ profile, index = 0, popular }: Props) => {
         <div className="absolute inset-x-0 bottom-0 glass-overlay px-4 py-3 transition-all duration-500">
           <h3 className="font-display text-lg font-extrabold leading-tight tracking-tight">
             {profile.name}
-            <span className="ml-1 text-foreground/75 font-semibold">· {profile.age}</span>
           </h3>
           <div className="mt-1 flex items-center justify-between gap-2">
             <p className="flex items-center gap-1 text-xs text-foreground/90">

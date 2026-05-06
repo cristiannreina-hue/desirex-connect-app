@@ -131,7 +131,7 @@ export const ProfileSwipe = ({ profiles }: Props) => {
 
           <div className="absolute inset-x-0 bottom-0 p-5 pointer-events-none">
             <h3 className="font-display text-2xl font-bold leading-tight">
-              {profile.name} <span className="font-medium text-foreground/80">· {profile.age}</span>
+              {profile.name}
             </h3>
             <p className="mt-1 flex items-center gap-1.5 text-sm text-foreground/85">
               <MapPin className="h-4 w-4" /> {profile.city}, {profile.department}

@@ -93,7 +93,7 @@ const Profile = () => {
   const profile = dbProfile ?? demoProfile;
 
   useEffect(() => {
-    if (profile) document.title = `${profile.name}, ${profile.age} · ${profile.city} · DeseoX`;
+    if (profile) document.title = `${profile.name} · ${profile.city} · DeseoX`;
   }, [profile]);
 
   useEffect(() => {
@@ -282,7 +282,7 @@ const Profile = () => {
                 )}
               </div>
               <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight inline-flex items-center gap-3 flex-wrap">
-                <span>{profile.name}<span className="ml-2 text-foreground/70 font-semibold">{profile.age}</span></span>
+                <span>{profile.name}</span>
                 {profile.verified && <VerifiedBadge size="lg" showLabel />}
               </h1>
               <div className="mt-2 flex items-center flex-wrap gap-x-3 gap-y-1.5 text-sm">

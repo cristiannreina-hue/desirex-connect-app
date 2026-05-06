@@ -62,7 +62,6 @@ export const FeaturedProfileCard = ({ profile, active }: Props) => {
           <h3 className="font-display text-xl font-extrabold leading-tight inline-flex items-center gap-1.5 flex-wrap">
             <span>
               {profile.name}
-              <span className="ml-1 text-foreground/75 font-semibold">· {profile.age}</span>
             </span>
             {profile.verified && <VerifiedBadge size="sm" animated />}
           </h3>
