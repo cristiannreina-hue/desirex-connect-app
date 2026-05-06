@@ -149,15 +149,25 @@ const Profile = () => {
       text: `Mira el perfil de ${profile.name} en DeseoX`,
       url,
     };
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
+    const { toast } = await import("@/hooks/use-toast");
+    const copyFallback = async () => {
+      try {
         await navigator.clipboard.writeText(url);
-        const { toast } = await import("@/hooks/use-toast");
-        toast({ title: "Enlace copiado", description: "Ya puedes compartir el perfil." });
+        toast({ title: "Enlace copiado", description: url });
+      } catch {
+        window.prompt("Copia el enlace del perfil:", url);
       }
-    } catch {}
+    };
+    try {
+      if (navigator.share && (!navigator.canShare || navigator.canShare(shareData))) {
+        await navigator.share(shareData);
+        return;
+      }
+      await copyFallback();
+    } catch (err: any) {
+      if (err?.name === "AbortError") return;
+      await copyFallback();
+    }
   };
 
   const isOwner = user?.id === profile.id;
