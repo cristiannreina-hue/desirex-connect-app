@@ -62,11 +62,11 @@ const EN: Dict = {
 
   "gateway.title": "How do you want to join DeseoX?",
   "gateway.subtitle": "Pick the account type that suits you best.",
-  "gateway.visitor.title": "I want to explore and connect",
-  "gateway.visitor.desc": "Quick sign-up to browse profiles, leave reviews and subscribe to premium content.",
+  "gateway.visitor.title": "I want to explore profiles and access exclusive content",
+  "gateway.visitor.desc": "Free view-only account. Discover verified profiles, save favorites, leave reviews and unlock exclusive galleries from your creators.",
   "gateway.visitor.cta": "Create visitor account",
-  "gateway.creator.title": "I want to publish my content",
-  "gateway.creator.desc": "KYC verification with double selfie to publish your professional profile.",
+  "gateway.creator.title": "I want to publish my profile and manage my listings",
+  "gateway.creator.desc": "Build a KYC-verified professional profile, post photos and videos, manage your rates and get direct contacts on WhatsApp and Telegram.",
   "gateway.creator.cta": "Create creator account",
 
   "philosophy.tag": "DeseoX Philosophy",
