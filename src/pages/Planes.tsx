@@ -76,7 +76,7 @@ const PLANS: PlanDef[] = [
       "Fijado primero en 'Top de la semana' y 'Destacados'",
       "Badge 💎 VIP brillante",
       "Aparece primero en TODA la búsqueda",
-      "Hasta 48 fotos exclusivas + 20 videos",
+      "10 fotos públicas + 10 fotos privadas + 5 videos",
       "Hasta 15x más visualizaciones",
     ],
   },
