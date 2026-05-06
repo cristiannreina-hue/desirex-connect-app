@@ -142,11 +142,21 @@ const Profile = () => {
   const fmtCop = (n?: number) => (n ? `$${n.toLocaleString("es-CO")}` : "—");
 
   const handleShare = async () => {
-    const url = window.location.href;
-    const shareData = { title: `${profile.name} · DeseoX`, text: `Mira el perfil de ${profile.name} en DeseoX`, url };
+    const slug = profile.userNumber ?? profile.id;
+    const url = `${window.location.origin}/perfil/${slug}`;
+    const shareData = {
+      title: `${profile.name} · DeseoX`,
+      text: `Mira el perfil de ${profile.name} en DeseoX`,
+      url,
+    };
     try {
-      if (navigator.share) await navigator.share(shareData);
-      else { await navigator.clipboard.writeText(url); }
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(url);
+        const { toast } = await import("@/hooks/use-toast");
+        toast({ title: "Enlace copiado", description: "Ya puedes compartir el perfil." });
+      }
     } catch {}
   };
 
