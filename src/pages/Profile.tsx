@@ -93,7 +93,7 @@ const Profile = () => {
   const profile = dbProfile ?? demoProfile;
 
   useEffect(() => {
-    if (profile) document.title = `${profile.name}, ${profile.age} · ${profile.city} · DeseoX`;
+    if (profile) document.title = `${profile.name} · ${profile.city} · DeseoX`;
   }, [profile]);
 
   useEffect(() => {
