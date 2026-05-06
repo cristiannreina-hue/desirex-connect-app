@@ -22,6 +22,7 @@ import { getCityZones } from "@/data/colombia";
 import { isVisible } from "@/lib/tier";
 import { isProfileComplete } from "@/lib/profile-completion";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserCity } from "@/hooks/useUserCity";
 import heroCartagena from "@/assets/hero-cartagena.jpg";
 import heroPenol from "@/assets/hero-penol.jpg";
 import heroConcierge from "@/assets/hero-concierge.jpg";
