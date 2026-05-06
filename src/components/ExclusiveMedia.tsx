@@ -19,6 +19,8 @@ interface Resolved { path: string; url: string | null }
 
 export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, hasAccess }: Props) => {
   const { t } = useI18n();
+  const { user } = useAuth();
+  const location = useLocation();
   const [photos, setPhotos] = useState<Resolved[]>([]);
   const [videos, setVideos] = useState<Resolved[]>([]);
   const [loading, setLoading] = useState(false);
