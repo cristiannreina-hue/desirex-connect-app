@@ -393,8 +393,8 @@ const Dashboard = () => {
               {/* Banner KYC persistente */}
               <VerifiedBanner status={data.verification_status} verified={data.is_verified} />
 
-              {/* Estadísticas de Alcance */}
-              {user?.id && <ReachStats profileId={user.id} />}
+              {/* Estadísticas de Alcance — solo planes pagos activos */}
+              {user?.id && subActive && (tier === "boost" || tier === "elite" || tier === "vip") && <ReachStats profileId={user.id} />}
 
 
               {/* 1 · IDENTIDAD VISUAL */}
