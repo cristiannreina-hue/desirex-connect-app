@@ -61,7 +61,7 @@ const PLANS: PlanDef[] = [
       "Todo lo del plan Boost",
       "Aparece en 'Mejor valoradas' y 'En tendencia'",
       "Badge ⭐ Destacada visible",
-      "Hasta 24 fotos exclusivas + 10 videos",
+      "6 fotos públicas + 6 fotos privadas + 2 videos",
       "Hasta 7x más visualizaciones",
     ],
   },
