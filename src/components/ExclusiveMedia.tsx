@@ -26,18 +26,23 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
     if (!hasAccess) return;
     const all = [...exclusivePhotos, ...exclusiveVideos];
     if (all.length === 0) return;
+    let cancelled = false;
     setLoading(true);
-    supabase.functions
-      .invoke("exclusive-media-url", { body: { profileId, paths: all } })
-      .then(({ data, error }) => {
-        if (error || !data) { setLoading(false); return; }
-        const map = new Map<string, string | null>(
-          (data.urls ?? []).map((u: any) => [u.path, u.url ?? null]),
-        );
-        setPhotos(exclusivePhotos.map((p) => ({ path: p, url: map.get(p) ?? null })));
-        setVideos(exclusiveVideos.map((p) => ({ path: p, url: map.get(p) ?? null })));
-        setLoading(false);
-      });
+    (async () => {
+      const { data: sess } = await supabase.auth.getSession();
+      if (!sess?.session) { if (!cancelled) setLoading(false); return; }
+      const { data, error } = await supabase.functions
+        .invoke("exclusive-media-url", { body: { profileId, paths: all } });
+      if (cancelled) return;
+      if (error || !data) { setLoading(false); return; }
+      const map = new Map<string, string | null>(
+        (data.urls ?? []).map((u: any) => [u.path, u.url ?? null]),
+      );
+      setPhotos(exclusivePhotos.map((p) => ({ path: p, url: map.get(p) ?? null })));
+      setVideos(exclusiveVideos.map((p) => ({ path: p, url: map.get(p) ?? null })));
+      setLoading(false);
+    })();
+    return () => { cancelled = true; };
   }, [profileId, hasAccess, exclusivePhotos.join(","), exclusiveVideos.join(",")]);
 
   const total = exclusivePhotos.length + exclusiveVideos.length;
