@@ -143,6 +143,7 @@ const Dashboard = () => {
           verification_status: p.verification_status ?? "unverified",
           is_verified: p.is_verified ?? false,
         });
+        setPublicVisible(anyP.is_public_visible ?? true);
       }
       if (sub) {
         setTier(sub.tier as string);
