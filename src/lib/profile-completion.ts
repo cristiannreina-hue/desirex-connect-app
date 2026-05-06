@@ -66,7 +66,7 @@ export function getCompletionChecks(p: Partial<DBProfile> | null | undefined): C
     },
     {
       key: "visual",
-      label: `Contenido visual (mín. ${MIN_PUBLIC_PHOTOS} fotos públicas y 1 exclusiva)`,
+      label: `Contenido visual (mín. ${MIN_PUBLIC_PHOTOS} foto pública y ${MIN_EXCLUSIVE_PHOTOS} exclusiva)`,
       done: visualDone,
       weight: 30,
     },
