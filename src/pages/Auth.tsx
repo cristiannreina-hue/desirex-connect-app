@@ -52,6 +52,8 @@ const Auth = () => {
   const [params] = useSearchParams();
   const location = useLocation();
   const intentParam = params.get("intent");
+  const redirectParam = params.get("redirect");
+  const safeRedirect = redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//") ? redirectParam : null;
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
