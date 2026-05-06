@@ -16,12 +16,21 @@ Deno.serve(async (req) => {
     const ANON_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY")!;
 
     const auth = req.headers.get("Authorization") ?? "";
+    const token = auth.toLowerCase().startsWith("bearer ") ? auth.slice(7) : "";
     const userClient = createClient(SUPABASE_URL, ANON_KEY, {
       global: { headers: { Authorization: auth } },
     });
-    const { data: userData } = await userClient.auth.getUser();
-    const user = userData?.user;
-    if (!user) {
+
+    let userId: string | null = null;
+    if (token) {
+      const { data: claimsData } = await userClient.auth.getClaims(token);
+      userId = (claimsData?.claims?.sub as string | undefined) ?? null;
+      if (!userId) {
+        const { data: userData } = await userClient.auth.getUser();
+        userId = userData?.user?.id ?? null;
+      }
+    }
+    if (!userId) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -41,14 +50,14 @@ Deno.serve(async (req) => {
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
 
     // Si es el dueño, siempre dejar
-    let allowed = user.id === profileId;
+    let allowed = userId === profileId;
 
     if (!allowed) {
       // Las cuentas visitantes tienen acceso libre al contenido exclusivo de creadoras
       const { data: prof } = await admin
         .from("profiles")
         .select("account_type")
-        .eq("id", user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (prof?.account_type === "visitor") {
@@ -58,7 +67,7 @@ Deno.serve(async (req) => {
         const { data: sub } = await admin
           .from("subscriptions")
           .select("status, expires_at")
-          .eq("user_id", user.id)
+          .eq("user_id", userId)
           .in("status", ["trial", "active"])
           .gt("expires_at", new Date().toISOString())
           .order("expires_at", { ascending: false })
