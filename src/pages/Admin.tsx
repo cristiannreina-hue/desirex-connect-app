@@ -32,6 +32,7 @@ const NAV: { group: string; items: { id: Section; label: string; icon: any }[] }
     group: "Vista general",
     items: [
       { id: "overview", label: "Resumen general", icon: LayoutDashboard },
+      { id: "traffic", label: "Tráfico del sitio", icon: TrendingUp },
       { id: "verifications", label: "Validaciones pendientes", icon: BadgeCheck },
     ],
   },
