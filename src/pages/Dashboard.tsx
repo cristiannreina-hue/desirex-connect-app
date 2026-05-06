@@ -417,6 +417,43 @@ const Dashboard = () => {
               {/* Estadísticas de Alcance — solo planes pagos activos */}
               {user?.id && subActive && (tier === "boost" || tier === "elite" || tier === "vip") && <ReachStats profileId={user.id} />}
 
+              {/* Visibilidad pública */}
+              <div className="rounded-2xl border border-border bg-card p-4 flex items-center justify-between gap-4">
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className={cn("h-10 w-10 shrink-0 rounded-full flex items-center justify-center ring-1", publicVisible ? "bg-accent/10 text-accent ring-accent/30" : "bg-secondary text-muted-foreground ring-border")}>
+                    {publicVisible ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-semibold leading-tight">Perfil visible públicamente</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {publicVisible
+                        ? "Tu perfil aparece en la página principal y en las búsquedas."
+                        : "Tu perfil está oculto: nadie puede encontrarlo en la página principal."}
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={publicVisible}
+                  disabled={savingVisibility || !user}
+                  onCheckedChange={async (val) => {
+                    if (!user) return;
+                    setSavingVisibility(true);
+                    const prev = publicVisible;
+                    setPublicVisible(val);
+                    const { error } = await supabase
+                      .from("profiles")
+                      .update({ is_public_visible: val } as never)
+                      .eq("id", user.id);
+                    setSavingVisibility(false);
+                    if (error) {
+                      setPublicVisible(prev);
+                      toast.error("No se pudo actualizar la visibilidad");
+                    } else {
+                      toast.success(val ? "Perfil visible para todos" : "Perfil oculto del público");
+                    }
+                  }}
+                />
+              </div>
 
               {/* 1 · IDENTIDAD VISUAL */}
               <Block icon={<Camera className="h-4 w-4" />} title="Identidad Visual" subtitle="Galería pública y contenido exclusivo">
