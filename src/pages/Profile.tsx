@@ -25,6 +25,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAccountType } from "@/hooks/useAccountType";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { trackProfileView, trackContactClick } from "@/lib/analytics-track";
 
 const Profile = () => {
   const { id } = useParams();
