@@ -212,10 +212,11 @@ const Index = () => {
     [visible],
   );
   const topCity = useMemo(() => {
+    if (userCity && visible.some((p) => p.city === userCity)) return userCity;
     const counts: Record<string, number> = {};
     for (const p of visible) counts[p.city] = (counts[p.city] ?? 0) + 1;
     return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0];
-  }, [visible]);
+  }, [visible, userCity]);
   const nearby = useMemo(
     () => visible.filter((p) => p.city === topCity).slice(0, 6),
     [visible, topCity],
