@@ -132,7 +132,11 @@ const Dashboard = () => {
           is_verified: p.is_verified ?? false,
         });
       }
-      if (sub) setTier(sub.tier as string);
+      if (sub) {
+        setTier(sub.tier as string);
+        const active = (sub.status === "active" || sub.status === "trial") && new Date(sub.expires_at as string).getTime() > Date.now();
+        setSubActive(active);
+      }
       setLoading(false);
     });
   }, [user]);
