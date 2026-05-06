@@ -177,14 +177,25 @@ const Dashboard = () => {
     }
   };
 
+  // Cola para el "Pincel de Privacidad": primero editamos cada foto, luego subimos.
+  const [blurQueue, setBlurQueue] = useState<File[]>([]);
+  const [blurProcessed, setBlurProcessed] = useState<File[]>([]);
+
   const onExclusivePhotos = async (files: FileList | null) => {
     if (!files || !user) return;
     const remaining = exclusivePhotoLimit - data.exclusive_photos.length;
     const picked = Array.from(files).slice(0, remaining);
+    if (picked.length === 0) return;
+    setBlurProcessed([]);
+    setBlurQueue(picked);
+  };
+
+  const uploadExclusivePhotos = async (filesToUpload: File[]) => {
+    if (!user || filesToUpload.length === 0) return;
     const uploaded: string[] = [];
     let originalBytes = 0;
     let finalBytes = 0;
-    for (const original of picked) {
+    for (const original of filesToUpload) {
       originalBytes += original.size;
       const file = await watermarkFile(original, { maxSide: EXCLUSIVE_IMAGE_MAX_SIDE });
       finalBytes += file.size;
@@ -205,6 +216,21 @@ const Dashboard = () => {
     }
   };
 
+  const handleBlurConfirm = (edited: File) => {
+    const nextProcessed = [...blurProcessed, edited];
+    const nextQueue = blurQueue.slice(1);
+    setBlurProcessed(nextProcessed);
+    setBlurQueue(nextQueue);
+    if (nextQueue.length === 0) {
+      void uploadExclusivePhotos(nextProcessed);
+      setBlurProcessed([]);
+    }
+  };
+
+  const handleBlurCancel = () => {
+    setBlurQueue([]);
+    setBlurProcessed([]);
+  };
   const onExclusiveVideos = async (files: FileList | null) => {
     if (!files || !user) return;
     const remaining = exclusiveVideoLimit - data.exclusive_videos.length;
