@@ -168,6 +168,7 @@ const Admin = () => {
                   </div>
                 </>
               )}
+              {section === "traffic" && <AdminTraffic />}
               {section === "verifications" && <AdminVerifications />}
               {section === "profiles" && <AdminProfiles />}
               {section === "users-clients" && <AdminUsers filter="visitor" />}
