@@ -158,9 +158,17 @@ const Dashboard = () => {
     setData((d) => ({ ...d, [key]: value }));
 
   const isVisitor = data.account_type === "visitor";
-  const publicPhotoLimit = isVisitor ? 1 : PUBLIC_PHOTO_LIMIT;
-  const exclusivePhotoLimit = EXCLUSIVE_PHOTO_LIMIT_BY_TIER[tier] ?? 6;
-  const exclusiveVideoLimit = EXCLUSIVE_VIDEO_LIMIT_BY_TIER[tier] ?? 2;
+  // Si la creadora no tiene suscripción activa, aplica cupos gratis.
+  const effectiveTier = subActive ? tier : "starter";
+  const publicPhotoLimit = isVisitor
+    ? 1
+    : (subActive ? (PUBLIC_PHOTO_LIMIT_BY_TIER[effectiveTier] ?? FREE_PUBLIC_PHOTOS) : FREE_PUBLIC_PHOTOS);
+  const exclusivePhotoLimit = isVisitor
+    ? 0
+    : (subActive ? (EXCLUSIVE_PHOTO_LIMIT_BY_TIER[effectiveTier] ?? FREE_EXCLUSIVE_PHOTOS) : FREE_EXCLUSIVE_PHOTOS);
+  const exclusiveVideoLimit = isVisitor
+    ? 0
+    : (subActive ? (EXCLUSIVE_VIDEO_LIMIT_BY_TIER[effectiveTier] ?? FREE_EXCLUSIVE_VIDEOS) : FREE_EXCLUSIVE_VIDEOS);
 
   const onPublicPhotos = async (files: FileList | null) => {
     if (!files || !user) return;
