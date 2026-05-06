@@ -30,15 +30,20 @@ Deno.serve(async (req) => {
     const userClient = createClient(SUPABASE_URL, ANON_KEY, {
       global: { headers: { Authorization: authHeader } },
     });
-    const { data: userData, error: userErr } = await userClient.auth.getUser();
-    if (userErr || !userData?.user) {
+    const token = authHeader.slice(7);
+    let uid: string | null = null;
+    const { data: claimsData } = await userClient.auth.getClaims(token);
+    uid = (claimsData?.claims?.sub as string | undefined) ?? null;
+    if (!uid) {
+      const { data: userData } = await userClient.auth.getUser();
+      uid = userData?.user?.id ?? null;
+    }
+    if (!uid) {
       return new Response(JSON.stringify({ error: "Invalid session" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    const uid = userData.user.id;
 
     // Cliente admin para borrar definitivamente el usuario.
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
