@@ -50,14 +50,14 @@ Deno.serve(async (req) => {
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
 
     // Si es el dueño, siempre dejar
-    let allowed = user.id === profileId;
+    let allowed = userId === profileId;
 
     if (!allowed) {
       // Las cuentas visitantes tienen acceso libre al contenido exclusivo de creadoras
       const { data: prof } = await admin
         .from("profiles")
         .select("account_type")
-        .eq("id", user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (prof?.account_type === "visitor") {
@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
         const { data: sub } = await admin
           .from("subscriptions")
           .select("status, expires_at")
-          .eq("user_id", user.id)
+          .eq("user_id", userId)
           .in("status", ["trial", "active"])
           .gt("expires_at", new Date().toISOString())
           .order("expires_at", { ascending: false })
