@@ -14,12 +14,12 @@ const ES: Dict = {
 
   "gateway.title": "¿Cómo quieres unirte a DeseoX?",
   "gateway.subtitle": "Elige el tipo de cuenta que mejor se ajusta a ti.",
-  "gateway.visitor.title": "Quiero explorar y conectar",
-  "gateway.visitor.desc": "Registro simple para ver perfiles, comentar y suscribirte a contenido premium.",
+  "gateway.visitor.title": "Quiero explorar perfiles y acceder a contenido exclusivo",
+  "gateway.visitor.desc": "Cuenta gratuita solo para visualización. Descubre perfiles verificados, guarda favoritos, deja reseñas y desbloquea galerías exclusivas de tus creadoras.",
   "gateway.visitor.cta": "Crear cuenta de visitante",
-  "gateway.creator.title": "Quiero publicar mi contenido",
-  "gateway.creator.desc": "Verificación KYC con doble selfie para publicar tu perfil profesional.",
-  "gateway.creator.cta": "Crear cuenta de creador",
+  "gateway.creator.title": "Quiero publicar mi perfil y gestionar mis anuncios",
+  "gateway.creator.desc": "Crea tu perfil profesional verificado con KYC, publica fotos y videos, gestiona tus tarifas y recibe contactos directos por WhatsApp y Telegram.",
+  "gateway.creator.cta": "Crear cuenta de creadora",
 
   "philosophy.tag": "Filosofía DeseoX",
   "philosophy.title": "Calidez auténtica, conexiones reales",
