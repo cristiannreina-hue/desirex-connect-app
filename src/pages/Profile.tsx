@@ -143,7 +143,9 @@ const Profile = () => {
 
   const handleShare = async () => {
     const slug = profile.userNumber ?? profile.id;
-    const url = `${window.location.origin}/perfil/${slug}`;
+    const isLovablePreview = /lovable\.(app|dev)$/.test(window.location.hostname);
+    const origin = isLovablePreview ? "https://deseo-x.com" : window.location.origin;
+    const url = `${origin}/perfil/${slug}`;
     const shareData = {
       title: `${profile.name} · DeseoX`,
       text: `Mira el perfil de ${profile.name} en DeseoX`,
