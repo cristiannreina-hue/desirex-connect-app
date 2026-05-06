@@ -25,8 +25,15 @@ Deno.serve(async (req) => {
     const userClient = createClient(SUPABASE_URL, ANON_KEY, {
       global: { headers: { Authorization: authHeader } },
     });
-    const { data: userData, error: userErr } = await userClient.auth.getUser();
-    if (userErr || !userData?.user) {
+    const token = authHeader.slice(7);
+    let invokerId: string | null = null;
+    const { data: claimsData } = await userClient.auth.getClaims(token);
+    invokerId = (claimsData?.claims?.sub as string | undefined) ?? null;
+    if (!invokerId) {
+      const { data: userData } = await userClient.auth.getUser();
+      invokerId = userData?.user?.id ?? null;
+    }
+    if (!invokerId) {
       return new Response(JSON.stringify({ error: "Invalid session" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -38,7 +45,7 @@ Deno.serve(async (req) => {
     const { data: roleRow } = await admin
       .from("user_roles")
       .select("role")
-      .eq("user_id", userData.user.id)
+      .eq("user_id", invokerId)
       .eq("role", "admin")
       .maybeSingle();
     if (!roleRow) {
