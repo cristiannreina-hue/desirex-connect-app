@@ -48,7 +48,7 @@ export function getCompletionChecks(p: Partial<DBProfile> | null | undefined): C
     !!p?.category;
 
   const visualDone =
-    photos.length >= MIN_PUBLIC_PHOTOS && exclusivePhotos.length >= 1;
+    photos.length >= MIN_PUBLIC_PHOTOS && exclusivePhotos.length >= MIN_EXCLUSIVE_PHOTOS;
 
   const hasContact =
     !!((p?.whatsapp && p.whatsapp.length >= 8) || (p?.telegram && p.telegram.length >= 3));
