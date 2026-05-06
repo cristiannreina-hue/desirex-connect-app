@@ -125,9 +125,9 @@ const Auth = () => {
   // Redirect if already logged in (skip during OTP flow — we handle it manually)
   useEffect(() => {
     if (user && !skipRedirectRef.current && mode !== "otp") {
-      navigate("/cuenta", { replace: true });
+      navigate(safeRedirect ?? "/cuenta", { replace: true });
     }
-  }, [user, navigate, mode]);
+  }, [user, navigate, mode, safeRedirect]);
 
   // Cooldown
   useEffect(() => {
