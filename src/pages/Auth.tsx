@@ -18,15 +18,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { cn } from "@/lib/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
 
 type Mode = "login" | "signup" | "forgot";
 
@@ -99,8 +90,7 @@ const Auth = () => {
         ? "Iniciar sesión · DeseoX"
         : mode === "signup"
           ? "Crear cuenta · DeseoX"
-          : mode === "otp"
-            : "Recuperar contraseña · DeseoX";
+          : "Recuperar contraseña · DeseoX";
   }, [mode]);
 
   useEffect(() => {
@@ -190,24 +180,23 @@ const Auth = () => {
             style={{ background: "hsl(var(--accent))" }}
           />
           <div className="relative">
-            <>
-                <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 ring-1 ring-accent/40 px-3 py-1 text-xs text-accent font-medium mb-4">
-                  <ShieldCheck className="h-3.5 w-3.5" /> Acceso seguro · solo +18
-                </div>
-                <h1 className="font-display text-3xl font-extrabold tracking-tight">
-                  {mode === "login"
-                    ? "Bienvenido de nuevo"
-                    : mode === "signup"
-                      ? "Crea tu cuenta"
-                      : "Recuperar contraseña"}
-                </h1>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {mode === "login"
-                    ? "Inicia sesión para gestionar tu perfil."
-                    : mode === "signup"
-                      ? `Cuenta de ${intent === "creator" ? "creadora" : "visitante"} · te enviaremos un correo de verificación para activar el acceso.`
-                      : "Te enviaremos un enlace para restablecerla."}
-                </p>
+            <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 ring-1 ring-accent/40 px-3 py-1 text-xs text-accent font-medium mb-4">
+              <ShieldCheck className="h-3.5 w-3.5" /> Acceso seguro · solo +18
+            </div>
+            <h1 className="font-display text-3xl font-extrabold tracking-tight">
+              {mode === "login"
+                ? "Bienvenido de nuevo"
+                : mode === "signup"
+                  ? "Crea tu cuenta"
+                  : "Recuperar contraseña"}
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {mode === "login"
+                ? "Inicia sesión para gestionar tu perfil."
+                : mode === "signup"
+                  ? `Cuenta de ${intent === "creator" ? "creadora" : "visitante"} · te enviaremos un correo de verificación para activar el acceso.`
+                  : "Te enviaremos un enlace para restablecerla."}
+            </p>
 
                 <form onSubmit={submit} className="mt-6 space-y-4">
                   <div className="space-y-1.5">
@@ -388,7 +377,7 @@ const Auth = () => {
                     <Sparkles className="h-3 w-3" /> ¿Cómo funciona la verificación?
                   </Link>
                 </div>
-              </>
+            
           </div>
         </div>
       </main>
