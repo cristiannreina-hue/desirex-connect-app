@@ -52,6 +52,8 @@ const Auth = () => {
   const [params] = useSearchParams();
   const location = useLocation();
   const intentParam = params.get("intent");
+  const redirectParam = params.get("redirect");
+  const safeRedirect = redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//") ? redirectParam : null;
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -123,9 +125,9 @@ const Auth = () => {
   // Redirect if already logged in (skip during OTP flow — we handle it manually)
   useEffect(() => {
     if (user && !skipRedirectRef.current && mode !== "otp") {
-      navigate("/cuenta", { replace: true });
+      navigate(safeRedirect ?? "/cuenta", { replace: true });
     }
-  }, [user, navigate, mode]);
+  }, [user, navigate, mode, safeRedirect]);
 
   // Cooldown
   useEffect(() => {
@@ -256,7 +258,7 @@ const Auth = () => {
 
       toast({ title: "¡Cuenta verificada!", description: "Bienvenido a DeseoX." });
       // Redirección por rol: creador -> verificación de fotos, visitante -> home
-      navigate(intent === "creator" ? "/verificacion" : "/", { replace: true });
+      navigate(safeRedirect ?? (intent === "creator" ? "/verificacion" : "/"), { replace: true });
     } catch (err: any) {
       skipRedirectRef.current = false;
       toast({
@@ -316,7 +318,7 @@ const Auth = () => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast({ title: "Bienvenido de nuevo" });
-        navigate("/cuenta", { replace: true });
+        navigate(safeRedirect ?? "/cuenta", { replace: true });
       } else if (mode === "forgot") {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/reset-password`,

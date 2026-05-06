@@ -4,8 +4,9 @@ import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useAccountType } from "@/hooks/useAccountType";
 import type { Tier } from "@/types/profile";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -86,11 +87,27 @@ const formatCOP = (n: number) => new Intl.NumberFormat("es-CO", { style: "curren
 
 const Planes = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const { accountType, loading: accountTypeLoading } = useAccountType(user?.id);
 
   useEffect(() => {
     document.title = "Planes y suscripción · DeseoX";
   }, []);
+
+  // Los planes son exclusivos para creadoras. Visitantes y no autenticados se redirigen.
+  if (authLoading || (user && accountTypeLoading)) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="container flex-1 py-12 text-center text-muted-foreground">
+          Cargando…
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+  if (!user) return <Navigate to="/auth" replace />;
+  if (accountType === "visitor") return <Navigate to="/cuenta" replace />;
 
   const handleSelect = (plan: PlanDef) => {
     if (!user) {

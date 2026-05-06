@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Lock, Crown, Play } from "lucide-react";
+import { Lock, Crown, Play, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
 import { WatermarkOverlay } from "@/components/WatermarkOverlay";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Props {
   profileId: string;
@@ -18,6 +19,8 @@ interface Resolved { path: string; url: string | null }
 
 export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, hasAccess }: Props) => {
   const { t } = useI18n();
+  const { user } = useAuth();
+  const location = useLocation();
   const [photos, setPhotos] = useState<Resolved[]>([]);
   const [videos, setVideos] = useState<Resolved[]>([]);
   const [loading, setLoading] = useState(false);
@@ -74,11 +77,26 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
       </div>
 
       {!hasAccess && (
-        <div className="mt-4 card-premium rounded-2xl p-5 text-center">
-          <Lock className="h-7 w-7 text-accent mx-auto" />
-          <p className="mt-2 font-display font-bold">{t("profile.unlock")}</p>
-          <Button asChild variant="hero" className="mt-4 rounded-full">
-            <Link to="/planes">{t("profile.unlock")}</Link>
+        <div className="mt-4 card-premium rounded-2xl p-6 text-center">
+          <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/15 text-accent ring-1 ring-accent/40">
+            <Sparkles className="h-6 w-6" />
+          </div>
+          <p className="mt-3 font-display text-lg font-extrabold">
+            {user ? "Contenido exclusivo" : "Crea una cuenta de visitante para desbloquear este contenido exclusivo"}
+          </p>
+          {!user && (
+            <p className="mt-1 text-sm text-muted-foreground">
+              Es gratis y solo te toma un minuto. Apoya y conecta con tus creadoras favoritas.
+            </p>
+          )}
+          <Button asChild variant="hero" className="mt-5 rounded-full">
+            {user ? (
+              <Link to="/cuenta">Ir a mi cuenta</Link>
+            ) : (
+              <Link to={`/registro/visitante?redirect=${encodeURIComponent(location.pathname)}`}>
+                Regístrate para ver más
+              </Link>
+            )}
           </Button>
         </div>
       )}
