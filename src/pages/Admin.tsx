@@ -24,7 +24,7 @@ import { AdminRecentSignups } from "@/components/admin/AdminRecentSignups";
 import { AdminTraffic } from "@/components/admin/AdminTraffic";
 
 type Section =
-  | "overview" | "verifications" | "profiles" | "users-clients"
+  | "overview" | "traffic" | "verifications" | "profiles" | "users-clients"
   | "users-creators" | "subscriptions" | "payments" | "rewards" | "settings";
 
 const NAV: { group: string; items: { id: Section; label: string; icon: any }[] }[] = [
