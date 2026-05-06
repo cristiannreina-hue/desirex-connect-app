@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Shield, LayoutDashboard, BadgeCheck, Users, Crown, CreditCard,
-  Trophy, Settings, UserCog,
+  Trophy, Settings, UserCog, TrendingUp,
 } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import {
@@ -21,9 +21,10 @@ import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AdminNotifications } from "@/components/admin/AdminNotifications";
 import { AdminRecentSignups } from "@/components/admin/AdminRecentSignups";
+import { AdminTraffic } from "@/components/admin/AdminTraffic";
 
 type Section =
-  | "overview" | "verifications" | "profiles" | "users-clients"
+  | "overview" | "traffic" | "verifications" | "profiles" | "users-clients"
   | "users-creators" | "subscriptions" | "payments" | "rewards" | "settings";
 
 const NAV: { group: string; items: { id: Section; label: string; icon: any }[] }[] = [
@@ -31,6 +32,7 @@ const NAV: { group: string; items: { id: Section; label: string; icon: any }[] }
     group: "Vista general",
     items: [
       { id: "overview", label: "Resumen general", icon: LayoutDashboard },
+      { id: "traffic", label: "Tráfico del sitio", icon: TrendingUp },
       { id: "verifications", label: "Validaciones pendientes", icon: BadgeCheck },
     ],
   },
@@ -60,6 +62,7 @@ const NAV: { group: string; items: { id: Section; label: string; icon: any }[] }
 
 const TITLES: Record<Section, { title: string; subtitle: string }> = {
   overview: { title: "Resumen general", subtitle: "Métricas en tiempo real de la plataforma" },
+  traffic: { title: "Tráfico del sitio", subtitle: "Cuántas personas entran a la página" },
   verifications: { title: "Validaciones pendientes", subtitle: "Compara las selfies KYC y aprueba creadores" },
   profiles: { title: "Gestión de perfiles", subtitle: "Filtra, destaca, suspende o elimina perfiles" },
   "users-clients": { title: "Clientes", subtitle: "Usuarios registrados como exploradores" },
@@ -165,6 +168,7 @@ const Admin = () => {
                   </div>
                 </>
               )}
+              {section === "traffic" && <AdminTraffic />}
               {section === "verifications" && <AdminVerifications />}
               {section === "profiles" && <AdminProfiles />}
               {section === "users-clients" && <AdminUsers filter="visitor" />}
