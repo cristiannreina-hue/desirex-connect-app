@@ -15,7 +15,6 @@ import {
   ArrowRight,
   Calendar as CalendarIcon,
   AlertTriangle,
-  Loader2,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -98,6 +97,10 @@ const Auth = () => {
       navigate(safeRedirect ?? "/cuenta", { replace: true });
     }
   }, [user, navigate, mode, safeRedirect]);
+
+  const openAccountSelector = () => {
+    navigate(safeRedirect ? `/registro?redirect=${encodeURIComponent(safeRedirect)}` : "/registro");
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -197,6 +200,21 @@ const Auth = () => {
                   ? `Cuenta de ${intent === "creator" ? "creadora" : "visitante"} · te enviaremos un correo de verificación para activar el acceso.`
                   : "Te enviaremos un enlace para restablecerla."}
             </p>
+
+            {mode === "signup" && (
+              <div className="mt-4 rounded-2xl border border-border/60 bg-background/40 p-3">
+                <p className="text-xs text-muted-foreground">
+                  ¿Quieres registrarte con otro tipo de cuenta?{" "}
+                  <button
+                    type="button"
+                    onClick={openAccountSelector}
+                    className="font-semibold text-accent hover:underline"
+                  >
+                    Cambiar tipo de cuenta
+                  </button>
+                </p>
+              </div>
+            )}
 
                 <form onSubmit={submit} className="mt-6 space-y-4">
                   <div className="space-y-1.5">
@@ -341,7 +359,8 @@ const Auth = () => {
                     <>
                       ¿Aún no tienes cuenta?{" "}
                       <button
-                        onClick={() => setMode("signup")}
+                        type="button"
+                        onClick={openAccountSelector}
                         className="text-accent font-semibold hover:underline"
                       >
                         Crear cuenta
