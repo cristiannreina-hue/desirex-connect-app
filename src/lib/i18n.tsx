@@ -14,12 +14,12 @@ const ES: Dict = {
 
   "gateway.title": "¿Cómo quieres unirte a DeseoX?",
   "gateway.subtitle": "Elige el tipo de cuenta que mejor se ajusta a ti.",
-  "gateway.visitor.title": "Quiero explorar y conectar",
-  "gateway.visitor.desc": "Registro simple para ver perfiles, comentar y suscribirte a contenido premium.",
+  "gateway.visitor.title": "Quiero explorar perfiles y acceder a contenido exclusivo",
+  "gateway.visitor.desc": "Cuenta gratuita solo para visualización. Descubre perfiles verificados, guarda favoritos, deja reseñas y desbloquea galerías exclusivas de tus creadoras.",
   "gateway.visitor.cta": "Crear cuenta de visitante",
-  "gateway.creator.title": "Quiero publicar mi contenido",
-  "gateway.creator.desc": "Verificación KYC con doble selfie para publicar tu perfil profesional.",
-  "gateway.creator.cta": "Crear cuenta de creador",
+  "gateway.creator.title": "Quiero publicar mi perfil y gestionar mis anuncios",
+  "gateway.creator.desc": "Crea tu perfil profesional verificado con KYC, publica fotos y videos, gestiona tus tarifas y recibe contactos directos por WhatsApp y Telegram.",
+  "gateway.creator.cta": "Crear cuenta de creadora",
 
   "philosophy.tag": "Filosofía DeseoX",
   "philosophy.title": "Calidez auténtica, conexiones reales",
@@ -62,11 +62,11 @@ const EN: Dict = {
 
   "gateway.title": "How do you want to join DeseoX?",
   "gateway.subtitle": "Pick the account type that suits you best.",
-  "gateway.visitor.title": "I want to explore and connect",
-  "gateway.visitor.desc": "Quick sign-up to browse profiles, leave reviews and subscribe to premium content.",
+  "gateway.visitor.title": "I want to explore profiles and access exclusive content",
+  "gateway.visitor.desc": "Free view-only account. Discover verified profiles, save favorites, leave reviews and unlock exclusive galleries from your creators.",
   "gateway.visitor.cta": "Create visitor account",
-  "gateway.creator.title": "I want to publish my content",
-  "gateway.creator.desc": "KYC verification with double selfie to publish your professional profile.",
+  "gateway.creator.title": "I want to publish my profile and manage my listings",
+  "gateway.creator.desc": "Build a KYC-verified professional profile, post photos and videos, manage your rates and get direct contacts on WhatsApp and Telegram.",
   "gateway.creator.cta": "Create creator account",
 
   "philosophy.tag": "DeseoX Philosophy",
