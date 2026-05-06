@@ -64,13 +64,21 @@ const empty: FormState = {
   account_type: "creator", verification_status: "unverified", is_verified: false,
 };
 
-const PUBLIC_PHOTO_LIMIT = 3;
+// Cupos por plan (creadora). Sin suscripción activa = plan gratis.
+const FREE_PUBLIC_PHOTOS = 1;
+const FREE_EXCLUSIVE_PHOTOS = 1;
+const FREE_EXCLUSIVE_VIDEOS = 0;
+
+const PUBLIC_PHOTO_LIMIT_BY_TIER: Record<string, number> = {
+  starter: 1, boost: 3, elite: 6, vip: 10,
+};
 const EXCLUSIVE_PHOTO_LIMIT_BY_TIER: Record<string, number> = {
-  starter: 6, boost: 12, elite: 24, vip: 48,
+  starter: 1, boost: 3, elite: 6, vip: 10,
 };
 const EXCLUSIVE_VIDEO_LIMIT_BY_TIER: Record<string, number> = {
-  starter: 2, boost: 5, elite: 10, vip: 20,
+  starter: 0, boost: 1, elite: 2, vip: 5,
 };
+const PUBLIC_PHOTO_LIMIT = 10; // máximo histórico, usado solo para slicing inicial
 
 const Dashboard = () => {
   const navigate = useNavigate();
