@@ -93,7 +93,7 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
             {user ? (
               <Link to="/cuenta">Ir a mi cuenta</Link>
             ) : (
-              <Link to={`/registro/visitante?redirect=${encodeURIComponent(location.pathname)}`}>
+              <Link to={`/registro?redirect=${encodeURIComponent(location.pathname)}`}>
                 Regístrate para ver más
               </Link>
             )}
