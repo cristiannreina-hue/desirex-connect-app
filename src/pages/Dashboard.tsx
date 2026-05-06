@@ -78,6 +78,7 @@ const Dashboard = () => {
   const { t } = useI18n();
   const [data, setData] = useState<FormState>(empty);
   const [tier, setTier] = useState<string>("starter");
+  const [subActive, setSubActive] = useState<boolean>(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
