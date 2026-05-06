@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link, useSearchParams, useLocation } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -15,10 +15,7 @@ import {
   ArrowRight,
   Calendar as CalendarIcon,
   AlertTriangle,
-  MailCheck,
   Loader2,
-  RotateCw,
-  CheckCircle2,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
@@ -31,9 +28,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
-type Mode = "login" | "signup" | "forgot" | "otp";
-
-const RESEND_COOLDOWN = 60;
+type Mode = "login" | "signup" | "forgot";
 
 const calculateAge = (dob: string): number => {
   if (!dob) return 0;
@@ -61,19 +56,6 @@ const Auth = () => {
   const [birthDate, setBirthDate] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // Signup confirmation modal
-  const [signupModalOpen, setSignupModalOpen] = useState(false);
-  const [modalResending, setModalResending] = useState(false);
-  const [modalCooldown, setModalCooldown] = useState(0);
-
-  // OTP state
-  const [code, setCode] = useState<string[]>(["", "", "", "", "", ""]);
-  const [verifying, setVerifying] = useState(false);
-  const [resending, setResending] = useState(false);
-  const [cooldown, setCooldown] = useState(0);
-  const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
-  const skipRedirectRef = useRef(false);
 
   // El "intent" decide visitante vs creadora.
   // Prioridad: ruta (/registro/visitante o /registro/creadora) > query (?intent=) > sessionStorage.
@@ -118,182 +100,14 @@ const Auth = () => {
         : mode === "signup"
           ? "Crear cuenta · DeseoX"
           : mode === "otp"
-            ? "Verifica tu cuenta · DeseoX"
             : "Recuperar contraseña · DeseoX";
   }, [mode]);
 
-  // Redirect if already logged in (skip during OTP flow — we handle it manually)
   useEffect(() => {
-    if (user && !skipRedirectRef.current && mode !== "otp") {
+    if (user) {
       navigate(safeRedirect ?? "/cuenta", { replace: true });
     }
   }, [user, navigate, mode, safeRedirect]);
-
-  // Cooldown
-  useEffect(() => {
-    if (cooldown <= 0) return;
-    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
-    return () => clearTimeout(t);
-  }, [cooldown]);
-
-  // Modal cooldown
-  useEffect(() => {
-    if (modalCooldown <= 0) return;
-    const t = setTimeout(() => setModalCooldown((c) => c - 1), 1000);
-    return () => clearTimeout(t);
-  }, [modalCooldown]);
-
-  const handleModalResend = async () => {
-    if (modalCooldown > 0 || modalResending) return;
-    setModalResending(true);
-    try {
-      await sendOtp();
-      setModalCooldown(RESEND_COOLDOWN);
-      toast({ title: "Enlace reenviado", description: "Revisa tu correo nuevamente." });
-    } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
-    } finally {
-      setModalResending(false);
-    }
-  };
-
-  const handleModalClose = () => {
-    setSignupModalOpen(false);
-    // Limpiar formulario
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
-    setBirthDate("");
-    setAcceptedTerms(false);
-  };
-
-  // Auto-focus on first OTP input when entering OTP mode
-  useEffect(() => {
-    if (mode === "otp") {
-      setTimeout(() => inputsRef.current[0]?.focus(), 50);
-    }
-  }, [mode]);
-
-  const fullCode = useMemo(() => code.join(""), [code]);
-  const codeComplete = fullCode.length === 6 && /^\d{6}$/.test(fullCode);
-
-  const handleOtpChange = (index: number, value: string) => {
-    const digit = value.replace(/\D/g, "").slice(-1);
-    setCode((prev) => {
-      const next = [...prev];
-      next[index] = digit;
-      return next;
-    });
-    if (digit && index < 5) inputsRef.current[index + 1]?.focus();
-  };
-
-  const handleOtpKeyDown = (
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (e.key === "Backspace" && !code[index] && index > 0) {
-      inputsRef.current[index - 1]?.focus();
-    } else if (e.key === "ArrowLeft" && index > 0) {
-      inputsRef.current[index - 1]?.focus();
-    } else if (e.key === "ArrowRight" && index < 5) {
-      inputsRef.current[index + 1]?.focus();
-    }
-  };
-
-  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
-    if (!pasted) return;
-    e.preventDefault();
-    const arr = pasted.split("").concat(Array(6).fill("")).slice(0, 6);
-    setCode(arr);
-    const focusIndex = Math.min(pasted.length, 5);
-    inputsRef.current[focusIndex]?.focus();
-  };
-
-  const sendOtp = async () => {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: true,
-        emailRedirectTo: `${window.location.origin}/cuenta`,
-        data: { birth_date: birthDate, account_type: intent },
-      },
-    });
-    if (error) throw error;
-  };
-
-  const verifyOtp = async () => {
-    if (!codeComplete) return;
-    setVerifying(true);
-    skipRedirectRef.current = true;
-    try {
-      const { data, error } = await supabase.auth.verifyOtp({
-        email,
-        token: fullCode,
-        type: "email",
-      });
-      if (error) throw error;
-      if (!data.session || !data.user) throw new Error("No se pudo crear la sesión");
-
-      // Set the password chosen at registration
-      if (password) {
-        const { error: pwdError } = await supabase.auth.updateUser({ password });
-        if (pwdError && !pwdError.message.toLowerCase().includes("same")) {
-          console.warn("No se pudo establecer la contraseña:", pwdError.message);
-        }
-      }
-
-      // Upsert profile con birth_date/age. NUNCA enviamos account_type desde el cliente:
-      // el trigger handle_new_user ya lo fijó en el servidor a partir de la metadata
-      // (account_type) enviada en signInWithOtp. La regla protect_account_type ignoraría
-      // cualquier intento del cliente de cambiarlo.
-      await supabase.from("profiles").upsert({
-        id: data.user.id,
-        birth_date: birthDate || null,
-        age: age || null,
-      });
-
-      sessionStorage.removeItem("deseox.pendingSignup");
-      sessionStorage.removeItem("deseox.intent");
-
-      toast({ title: "¡Cuenta verificada!", description: "Bienvenido a DeseoX." });
-      // Redirección por rol: creador -> verificación de fotos, visitante -> home
-      navigate(safeRedirect ?? (intent === "creator" ? "/verificacion" : "/"), { replace: true });
-    } catch (err: any) {
-      skipRedirectRef.current = false;
-      toast({
-        title: "Código inválido",
-        description: err.message ?? "Verifica el código e inténtalo de nuevo.",
-        variant: "destructive",
-      });
-    } finally {
-      setVerifying(false);
-    }
-  };
-
-  const resendOtp = async () => {
-    if (cooldown > 0) return;
-    setResending(true);
-    try {
-      await sendOtp();
-      setCooldown(RESEND_COOLDOWN);
-      setCode(["", "", "", "", "", ""]);
-      inputsRef.current[0]?.focus();
-      toast({ title: "Código reenviado", description: "Revisa tu correo nuevamente." });
-    } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
-    } finally {
-      setResending(false);
-    }
-  };
-
-  // Auto-verify when 6 digits are entered
-  useEffect(() => {
-    if (mode === "otp" && codeComplete && !verifying) {
-      verifyOtp();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [codeComplete, mode]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -310,10 +124,33 @@ const Auth = () => {
         if (!acceptedTerms)
           throw new Error("Debes aceptar los Términos y Condiciones para continuar");
 
-        await sendOtp();
+        const redirectPath = safeRedirect ?? (intent === "creator" ? "/verificacion" : "/cuenta");
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}${redirectPath}`,
+            data: {
+              birth_date: birthDate,
+              account_type: intent,
+            },
+          },
+        });
+        if (error) throw error;
 
-        setModalCooldown(RESEND_COOLDOWN);
-        setSignupModalOpen(true);
+        sessionStorage.removeItem("deseox.pendingSignup");
+        sessionStorage.setItem("deseox.intent", intent);
+
+        toast({
+          title: "Registro exitoso",
+          description: "Por favor, revisa tu bandeja de entrada para verificar tu correo antes de acceder.",
+        });
+
+        setPassword("");
+        setConfirmPassword("");
+        setBirthDate("");
+        setAcceptedTerms(false);
+        setMode("login");
       } else if (mode === "login") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -353,111 +190,7 @@ const Auth = () => {
             style={{ background: "hsl(var(--accent))" }}
           />
           <div className="relative">
-            {mode === "otp" ? (
-              <>
-                <div className="flex justify-center mb-5">
-                  <div className="rounded-2xl bg-accent/10 p-4 ring-1 ring-accent/40">
-                    <MailCheck className="h-8 w-8 text-accent" />
-                  </div>
-                </div>
-                <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 ring-1 ring-accent/40 px-3 py-1 text-xs text-accent font-medium mb-3">
-                  <ShieldCheck className="h-3.5 w-3.5" /> Verificación segura
-                </div>
-                <h1 className="font-display text-3xl font-extrabold tracking-tight">
-                  Verifica tu cuenta
-                </h1>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Ingresa los 6 números que enviamos a{" "}
-                  <span className="text-foreground font-semibold break-all">{email}</span>.
-                </p>
-
-                <div
-                  className="mt-7 flex justify-center gap-2 sm:gap-3"
-                  onPaste={handleOtpPaste}
-                >
-                  {code.map((digit, i) => (
-                    <input
-                      key={i}
-                      ref={(el) => (inputsRef.current[i] = el)}
-                      type="text"
-                      inputMode="numeric"
-                      autoComplete="one-time-code"
-                      maxLength={1}
-                      value={digit}
-                      onChange={(e) => handleOtpChange(i, e.target.value)}
-                      onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                      disabled={verifying}
-                      className={cn(
-                        "h-14 w-11 sm:h-16 sm:w-12 rounded-xl text-center text-2xl font-bold",
-                        "bg-background/40 backdrop-blur-sm",
-                        "border border-border/70",
-                        "focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent",
-                        "transition-all",
-                        digit && "border-accent/60 bg-accent/5 text-accent",
-                      )}
-                    />
-                  ))}
-                </div>
-
-                <Button
-                  onClick={verifyOtp}
-                  variant="hero"
-                  size="lg"
-                  className="mt-7 w-full rounded-full gap-2"
-                  disabled={!codeComplete || verifying}
-                >
-                  {verifying ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" /> Verificando…
-                    </>
-                  ) : (
-                    <>
-                      <ShieldCheck className="h-4 w-4" /> Verificar código
-                    </>
-                  )}
-                </Button>
-
-                <div className="mt-5 text-center text-sm">
-                  <span className="text-muted-foreground">¿No recibiste el código? </span>
-                  <button
-                    type="button"
-                    onClick={resendOtp}
-                    disabled={cooldown > 0 || resending}
-                    className={cn(
-                      "inline-flex items-center gap-1.5 font-semibold transition-colors",
-                      cooldown > 0 || resending
-                        ? "text-muted-foreground/60 cursor-not-allowed"
-                        : "text-accent hover:underline",
-                    )}
-                  >
-                    {resending ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <RotateCw className="h-3.5 w-3.5" />
-                    )}
-                    {cooldown > 0 ? `Reenviar en ${cooldown}s` : "Reenviar código"}
-                  </button>
-                </div>
-
-                <p className="mt-6 text-center text-xs text-muted-foreground">
-                  Revisa tu carpeta de spam si no lo ves en tu bandeja.
-                </p>
-
-                <div className="mt-6 text-center">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMode("signup");
-                      setCode(["", "", "", "", "", ""]);
-                    }}
-                    className="text-xs text-accent hover:underline font-semibold"
-                  >
-                    ¿Te equivocaste de correo? Volver
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
+            <>
                 <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 ring-1 ring-accent/40 px-3 py-1 text-xs text-accent font-medium mb-4">
                   <ShieldCheck className="h-3.5 w-3.5" /> Acceso seguro · solo +18
                 </div>
@@ -472,7 +205,7 @@ const Auth = () => {
                   {mode === "login"
                     ? "Inicia sesión para gestionar tu perfil."
                     : mode === "signup"
-                      ? `Cuenta de ${intent === "creator" ? "creador" : "visitante"} · te enviaremos un código de 6 dígitos.`
+                      ? `Cuenta de ${intent === "creator" ? "creadora" : "visitante"} · te enviaremos un correo de verificación para activar el acceso.`
                       : "Te enviaremos un enlace para restablecerla."}
                 </p>
 
@@ -656,85 +389,9 @@ const Auth = () => {
                   </Link>
                 </div>
               </>
-            )}
           </div>
         </div>
       </main>
-
-      {/* Modal de confirmación de registro */}
-      <Dialog
-        open={signupModalOpen}
-        onOpenChange={(open) => {
-          if (!open) handleModalClose();
-        }}
-      >
-        <DialogContent className="sm:max-w-md border-2 border-accent/60 bg-background/95 backdrop-blur-xl shadow-elevated">
-          <div className="flex flex-col items-center text-center pt-2">
-            <div className="relative mb-4">
-              <div
-                aria-hidden
-                className="absolute inset-0 rounded-full blur-2xl opacity-60"
-                style={{ background: "hsl(var(--accent))" }}
-              />
-              <div className="relative rounded-full bg-accent/10 p-5 ring-2 ring-accent/50 animate-in zoom-in-50 duration-500">
-                <MailCheck className="h-10 w-10 text-accent animate-pulse" />
-              </div>
-              <CheckCircle2 className="absolute -bottom-1 -right-1 h-6 w-6 text-accent bg-background rounded-full" />
-            </div>
-
-            <DialogHeader className="space-y-2">
-              <DialogTitle className="font-display text-2xl font-extrabold tracking-tight text-center">
-                ¡Registro casi listo!
-              </DialogTitle>
-              <DialogDescription className="text-sm text-muted-foreground text-center leading-relaxed px-2">
-                Hemos enviado un enlace de acceso seguro a{" "}
-                <span className="text-foreground font-semibold break-all">{email}</span>.
-                Por favor, revisa tu bandeja de entrada e inicia sesión desde allí
-                para activar tu perfil.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="mt-5 w-full rounded-xl border border-accent/30 bg-accent/5 p-3">
-              <p className="text-xs text-muted-foreground">
-                ¿No recibiste el correo?{" "}
-                <button
-                  type="button"
-                  onClick={handleModalResend}
-                  disabled={modalCooldown > 0 || modalResending}
-                  className={cn(
-                    "inline-flex items-center gap-1 font-semibold transition-colors",
-                    modalCooldown > 0 || modalResending
-                      ? "text-muted-foreground/60 cursor-not-allowed"
-                      : "text-accent hover:underline",
-                  )}
-                >
-                  {modalResending ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : (
-                    <RotateCw className="h-3 w-3" />
-                  )}
-                  {modalCooldown > 0 ? `Reenviar en ${modalCooldown}s` : "Reenviar enlace"}
-                </button>
-              </p>
-            </div>
-
-            <p className="mt-3 text-[11px] text-muted-foreground/80">
-              Revisa también tu carpeta de spam.
-            </p>
-          </div>
-
-          <DialogFooter className="sm:justify-center mt-2">
-            <Button
-              variant="hero"
-              size="lg"
-              onClick={handleModalClose}
-              className="w-full rounded-full"
-            >
-              Entendido
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <Footer />
     </div>
