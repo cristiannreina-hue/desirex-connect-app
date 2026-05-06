@@ -91,7 +91,7 @@ const Index = () => {
 
     const fetchAll = async () => {
       const [{ data: profileRows }, { data: subRows }] = await Promise.all([
-        supabase.from("profiles").select("*").eq("account_type", "creator").order("updated_at", { ascending: false }).limit(200),
+        supabase.from("profiles").select("*").eq("account_type", "creator").eq("is_public_visible" as never, true as never).order("updated_at", { ascending: false }).limit(200),
         supabase.from("subscriptions").select("user_id, tier, status, expires_at"),
       ]);
 
