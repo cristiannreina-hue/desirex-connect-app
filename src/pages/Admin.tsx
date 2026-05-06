@@ -62,6 +62,7 @@ const NAV: { group: string; items: { id: Section; label: string; icon: any }[] }
 
 const TITLES: Record<Section, { title: string; subtitle: string }> = {
   overview: { title: "Resumen general", subtitle: "Métricas en tiempo real de la plataforma" },
+  traffic: { title: "Tráfico del sitio", subtitle: "Cuántas personas entran a la página" },
   verifications: { title: "Validaciones pendientes", subtitle: "Compara las selfies KYC y aprueba creadores" },
   profiles: { title: "Gestión de perfiles", subtitle: "Filtra, destaca, suspende o elimina perfiles" },
   "users-clients": { title: "Clientes", subtitle: "Usuarios registrados como exploradores" },
