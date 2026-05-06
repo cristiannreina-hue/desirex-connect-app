@@ -318,7 +318,7 @@ const Auth = () => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast({ title: "Bienvenido de nuevo" });
-        navigate("/cuenta", { replace: true });
+        navigate(safeRedirect ?? "/cuenta", { replace: true });
       } else if (mode === "forgot") {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/reset-password`,
