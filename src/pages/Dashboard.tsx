@@ -442,7 +442,7 @@ const Dashboard = () => {
                   <Video className="h-3 w-3 inline mr-1 text-accent" />
                   Videos exclusivos · {data.exclusive_videos.length}/{exclusiveVideoLimit}
                 </SubLabel>
-                <UploadBox icon={<Video className="h-6 w-6 text-accent" />} accept="video/*" onChange={onExclusiveVideos} disabled={data.exclusive_videos.length >= exclusiveVideoLimit} hint={`Cupo ${exclusiveVideoLimit} videos`} confirm={{ title: "Contenido para Suscriptores", message: "Aquí se permite contenido sensual y desnudos artísticos. Sin embargo, por políticas de seguridad, no se deben mostrar directamente las partes íntimas. Asegúrate de mantener la estética premium de la plataforma.", button: "Continuar" }} />
+                <UploadBox icon={<Video className="h-6 w-6 text-accent" />} accept="video/*" onChange={onExclusiveVideos} disabled={exclusiveVideoLimit === 0 || data.exclusive_videos.length >= exclusiveVideoLimit} hint={exclusiveVideoLimit === 0 ? "Disponible solo en planes Boost, Elite o VIP" : `Cupo ${exclusiveVideoLimit} videos`} confirm={{ title: "Contenido para Suscriptores", message: "Aquí se permite contenido sensual y desnudos artísticos. Sin embargo, por políticas de seguridad, no se deben mostrar directamente las partes íntimas. Asegúrate de mantener la estética premium de la plataforma.", button: "Continuar" }} />
                 {data.exclusive_videos.length > 0 && (
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {data.exclusive_videos.map((p, i) => <PrivateTile key={p} path={p} type="video" onRemove={() => removeExclVideo(i)} />)}
