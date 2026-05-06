@@ -28,6 +28,8 @@ import {
 import { WatermarkOverlay } from "@/components/WatermarkOverlay";
 import { BlurBrushEditor } from "@/components/BlurBrushEditor";
 import { ReachStats } from "@/components/dashboard/ReachStats";
+import { Switch } from "@/components/ui/switch";
+import { Eye, EyeOff } from "lucide-react";
 
 interface FormState {
   display_name: string;
