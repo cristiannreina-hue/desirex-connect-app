@@ -294,18 +294,17 @@ const Profile = () => {
                   <MessageCircle className="h-5 w-5" /> WhatsApp
                 </a>
               </Button>
-              {profile.telegram ? (
+              {profile.telegram && (
                 <Button asChild variant="telegram" size="xl" className="w-full rounded-full">
                   <a href={tgUrl} target="_blank" rel="noopener noreferrer" onClick={() => dbProfile?.id && trackContactClick(dbProfile.id, "telegram")}>
                     <Send className="h-5 w-5" /> Telegram
                   </a>
                 </Button>
-              ) : (
-                <Button onClick={handleShare} variant="outline" size="xl" className="w-full rounded-full">
-                  <Share2 className="h-5 w-5" /> Compartir
-                </Button>
               )}
             </div>
+            <Button onClick={handleShare} variant="outline" size="xl" className="w-full rounded-full">
+              <Share2 className="h-5 w-5" /> Compartir perfil
+            </Button>
 
             {/* Sobre mí + widgets de confianza integrados — rellena espacio */}
             <section className="card-glass rounded-2xl p-5 flex-1 flex flex-col">
