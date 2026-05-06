@@ -540,6 +540,13 @@ const Dashboard = () => {
         </div>
       </div>
 
+      <BlurBrushEditor
+        open={blurQueue.length > 0}
+        file={blurQueue[0] ?? null}
+        onCancel={handleBlurCancel}
+        onConfirm={handleBlurConfirm}
+      />
+
       <Footer />
     </div>
   );
