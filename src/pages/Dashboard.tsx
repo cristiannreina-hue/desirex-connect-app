@@ -64,13 +64,21 @@ const empty: FormState = {
   account_type: "creator", verification_status: "unverified", is_verified: false,
 };
 
-const PUBLIC_PHOTO_LIMIT = 3;
+// Cupos por plan (creadora). Sin suscripción activa = plan gratis.
+const FREE_PUBLIC_PHOTOS = 1;
+const FREE_EXCLUSIVE_PHOTOS = 1;
+const FREE_EXCLUSIVE_VIDEOS = 0;
+
+const PUBLIC_PHOTO_LIMIT_BY_TIER: Record<string, number> = {
+  starter: 1, boost: 3, elite: 6, vip: 10,
+};
 const EXCLUSIVE_PHOTO_LIMIT_BY_TIER: Record<string, number> = {
-  starter: 6, boost: 12, elite: 24, vip: 48,
+  starter: 1, boost: 3, elite: 6, vip: 10,
 };
 const EXCLUSIVE_VIDEO_LIMIT_BY_TIER: Record<string, number> = {
-  starter: 2, boost: 5, elite: 10, vip: 20,
+  starter: 0, boost: 1, elite: 2, vip: 5,
 };
+const PUBLIC_PHOTO_LIMIT = 10; // máximo histórico, usado solo para slicing inicial
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -150,9 +158,17 @@ const Dashboard = () => {
     setData((d) => ({ ...d, [key]: value }));
 
   const isVisitor = data.account_type === "visitor";
-  const publicPhotoLimit = isVisitor ? 1 : PUBLIC_PHOTO_LIMIT;
-  const exclusivePhotoLimit = EXCLUSIVE_PHOTO_LIMIT_BY_TIER[tier] ?? 6;
-  const exclusiveVideoLimit = EXCLUSIVE_VIDEO_LIMIT_BY_TIER[tier] ?? 2;
+  // Si la creadora no tiene suscripción activa, aplica cupos gratis.
+  const effectiveTier = subActive ? tier : "starter";
+  const publicPhotoLimit = isVisitor
+    ? 1
+    : (subActive ? (PUBLIC_PHOTO_LIMIT_BY_TIER[effectiveTier] ?? FREE_PUBLIC_PHOTOS) : FREE_PUBLIC_PHOTOS);
+  const exclusivePhotoLimit = isVisitor
+    ? 0
+    : (subActive ? (EXCLUSIVE_PHOTO_LIMIT_BY_TIER[effectiveTier] ?? FREE_EXCLUSIVE_PHOTOS) : FREE_EXCLUSIVE_PHOTOS);
+  const exclusiveVideoLimit = isVisitor
+    ? 0
+    : (subActive ? (EXCLUSIVE_VIDEO_LIMIT_BY_TIER[effectiveTier] ?? FREE_EXCLUSIVE_VIDEOS) : FREE_EXCLUSIVE_VIDEOS);
 
   const onPublicPhotos = async (files: FileList | null) => {
     if (!files || !user) return;
@@ -400,7 +416,7 @@ const Dashboard = () => {
               {/* 1 · IDENTIDAD VISUAL */}
               <Block icon={<Camera className="h-4 w-4" />} title="Identidad Visual" subtitle="Galería pública y contenido exclusivo">
                 <SubLabel>Fotos públicas · {data.public_photos.length}/{publicPhotoLimit}</SubLabel>
-                <UploadBox icon={<ImagePlus className="h-6 w-6 text-accent" />} accept="image/*" onChange={onPublicPhotos} disabled={data.public_photos.length >= publicPhotoLimit} hint="JPG / PNG · máximo 3" confirm={{ title: "Normas de Contenido Público", message: "En esta sección NO se permiten fotos con desnudos totales o partes íntimas expuestas. El incumplimiento de esta norma resultará en el bloqueo inmediato del perfil.", button: "Entendido y Acepto" }} />
+                <UploadBox icon={<ImagePlus className="h-6 w-6 text-accent" />} accept="image/*" onChange={onPublicPhotos} disabled={data.public_photos.length >= publicPhotoLimit} hint={`JPG / PNG · cupo ${publicPhotoLimit}${!subActive ? " (gratis · mejora tu plan para más)" : ""}`} confirm={{ title: "Normas de Contenido Público", message: "En esta sección NO se permiten fotos con desnudos totales o partes íntimas expuestas. El incumplimiento de esta norma resultará en el bloqueo inmediato del perfil.", button: "Entendido y Acepto" }} />
                 {data.public_photos.length > 0 && (
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {data.public_photos.map((src, i) => <Tile key={i} url={src} onRemove={() => removePublic(i)} />)}
@@ -413,7 +429,7 @@ const Dashboard = () => {
                   <Lock className="h-3 w-3 inline mr-1 text-accent" />
                   Fotos exclusivas · {data.exclusive_photos.length}/{exclusivePhotoLimit}
                 </SubLabel>
-                <UploadBox icon={<Lock className="h-6 w-6 text-accent" />} accept="image/*" onChange={onExclusivePhotos} disabled={data.exclusive_photos.length >= exclusivePhotoLimit} hint={`Plan ${tier} · cupo ${exclusivePhotoLimit}`} confirm={{ title: "Contenido para Suscriptores", message: "Aquí se permite contenido sensual y desnudos artísticos. Sin embargo, por políticas de seguridad, no se deben mostrar directamente las partes íntimas. Asegúrate de mantener la estética premium de la plataforma.", button: "Continuar" }} />
+                <UploadBox icon={<Lock className="h-6 w-6 text-accent" />} accept="image/*" onChange={onExclusivePhotos} disabled={data.exclusive_photos.length >= exclusivePhotoLimit} hint={subActive ? `Plan ${tier} · cupo ${exclusivePhotoLimit}` : `Gratis · cupo ${exclusivePhotoLimit} (mejora tu plan para más)`} confirm={{ title: "Contenido para Suscriptores", message: "Aquí se permite contenido sensual y desnudos artísticos. Sin embargo, por políticas de seguridad, no se deben mostrar directamente las partes íntimas. Asegúrate de mantener la estética premium de la plataforma.", button: "Continuar" }} />
                 {data.exclusive_photos.length > 0 && (
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {data.exclusive_photos.map((p, i) => <PrivateTile key={p} path={p} onRemove={() => removeExclPhoto(i)} />)}
@@ -426,7 +442,7 @@ const Dashboard = () => {
                   <Video className="h-3 w-3 inline mr-1 text-accent" />
                   Videos exclusivos · {data.exclusive_videos.length}/{exclusiveVideoLimit}
                 </SubLabel>
-                <UploadBox icon={<Video className="h-6 w-6 text-accent" />} accept="video/*" onChange={onExclusiveVideos} disabled={data.exclusive_videos.length >= exclusiveVideoLimit} hint={`Cupo ${exclusiveVideoLimit} videos`} confirm={{ title: "Contenido para Suscriptores", message: "Aquí se permite contenido sensual y desnudos artísticos. Sin embargo, por políticas de seguridad, no se deben mostrar directamente las partes íntimas. Asegúrate de mantener la estética premium de la plataforma.", button: "Continuar" }} />
+                <UploadBox icon={<Video className="h-6 w-6 text-accent" />} accept="video/*" onChange={onExclusiveVideos} disabled={exclusiveVideoLimit === 0 || data.exclusive_videos.length >= exclusiveVideoLimit} hint={exclusiveVideoLimit === 0 ? "Disponible solo en planes Boost, Elite o VIP" : `Cupo ${exclusiveVideoLimit} videos`} confirm={{ title: "Contenido para Suscriptores", message: "Aquí se permite contenido sensual y desnudos artísticos. Sin embargo, por políticas de seguridad, no se deben mostrar directamente las partes íntimas. Asegúrate de mantener la estética premium de la plataforma.", button: "Continuar" }} />
                 {data.exclusive_videos.length > 0 && (
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {data.exclusive_videos.map((p, i) => <PrivateTile key={p} path={p} type="video" onRemove={() => removeExclVideo(i)} />)}
