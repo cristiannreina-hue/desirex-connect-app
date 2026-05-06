@@ -45,7 +45,7 @@ const PLANS: PlanDef[] = [
       "Todo lo del plan Starter",
       "Posición preferente en tu ciudad",
       "Prioridad en 'Activos hoy'",
-      "Hasta 12 fotos exclusivas + 5 videos",
+      "3 fotos públicas + 3 fotos privadas + 1 video",
       "Estadísticas de Alcance (vistas y clics)",
       "Hasta 3x más visualizaciones",
     ],
