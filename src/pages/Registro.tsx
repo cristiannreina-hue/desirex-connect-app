@@ -36,23 +36,28 @@ const Registro = () => {
 
     // Si ya tiene cuenta, no debe ver el gateway: redirigir a su panel correspondiente.
     if (accountType === "creator") {
-      navigate("/dashboard", { replace: true });
+      navigate(safeRedirect ?? "/dashboard", { replace: true });
       return;
     }
     if (accountType === "visitor") {
-      toast.info("Tu cuenta es de visitante");
-      navigate("/cuenta", { replace: true });
+      if (safeRedirect) {
+        navigate(safeRedirect, { replace: true });
+      } else {
+        toast.info("Tu cuenta es de visitante");
+        navigate("/cuenta", { replace: true });
+      }
       return;
     }
 
     setCheckingProfile(false);
-  }, [accountType, accountTypeLoading, authLoading, navigate, user]);
+  }, [accountType, accountTypeLoading, authLoading, navigate, user, safeRedirect]);
 
   // El tipo se decide enviando al usuario a una ruta de registro distinta.
   // El servidor (trigger handle_new_user) leerá la metadata y fijará account_type.
   const choose = (type: "visitor" | "creator") => {
     try { sessionStorage.setItem("deseox.intent", type); } catch {}
-    navigate(type === "creator" ? "/registro/creadora" : "/registro/visitante");
+    const base = type === "creator" ? "/registro/creadora" : "/registro/visitante";
+    navigate(safeRedirect ? `${base}?redirect=${encodeURIComponent(safeRedirect)}` : base);
   };
 
   if (authLoading || checkingProfile) {
