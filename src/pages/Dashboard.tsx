@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { COLOMBIA, DEPARTMENTS, getCityZones } from "@/data/colombia";
 import { CATEGORY_LABELS, type Category } from "@/types/profile";
-import { ImagePlus, Save, X, ShieldCheck, Crown, Lock, Video, BadgeCheck, Clock, Camera, FileText, Ruler, Sparkles } from "lucide-react";
+import { ImagePlus, Save, X, ShieldCheck, Crown, Lock, Video, BadgeCheck, Clock, Camera, FileText, Ruler, Sparkles, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
