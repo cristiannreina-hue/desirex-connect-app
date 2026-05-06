@@ -258,7 +258,7 @@ const Auth = () => {
 
       toast({ title: "¡Cuenta verificada!", description: "Bienvenido a DeseoX." });
       // Redirección por rol: creador -> verificación de fotos, visitante -> home
-      navigate(intent === "creator" ? "/verificacion" : "/", { replace: true });
+      navigate(safeRedirect ?? (intent === "creator" ? "/verificacion" : "/"), { replace: true });
     } catch (err: any) {
       skipRedirectRef.current = false;
       toast({
