@@ -87,11 +87,27 @@ const formatCOP = (n: number) => new Intl.NumberFormat("es-CO", { style: "curren
 
 const Planes = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const { accountType, loading: accountTypeLoading } = useAccountType(user?.id);
 
   useEffect(() => {
     document.title = "Planes y suscripción · DeseoX";
   }, []);
+
+  // Los planes son exclusivos para creadoras. Visitantes y no autenticados se redirigen.
+  if (authLoading || (user && accountTypeLoading)) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="container flex-1 py-12 text-center text-muted-foreground">
+          Cargando…
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+  if (!user) return <Navigate to="/auth" replace />;
+  if (accountType === "visitor") return <Navigate to="/cuenta" replace />;
 
   const handleSelect = (plan: PlanDef) => {
     if (!user) {
