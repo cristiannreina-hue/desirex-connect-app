@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Shield, LayoutDashboard, BadgeCheck, Users, Crown, CreditCard,
-  Trophy, Settings, UserCog,
+  Trophy, Settings, UserCog, TrendingUp,
 } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import {
