@@ -32,7 +32,7 @@ const PLANS: PlanDef[] = [
       "Aparece en el grid general",
       "Contacto por WhatsApp directo",
       "Recibe reseñas de visitantes",
-      "Hasta 6 fotos exclusivas + 2 videos",
+      "1 foto pública + 1 foto privada (sin videos)",
     ],
   },
   {
