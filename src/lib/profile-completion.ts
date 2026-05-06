@@ -19,7 +19,9 @@ export interface CompletionCheck {
 }
 
 const MIN_DESCRIPTION = 40;
-const MIN_PUBLIC_PHOTOS = 3;
+// Mínimo alineado al plan más bajo (gratis): 1 foto pública + 1 foto exclusiva.
+const MIN_PUBLIC_PHOTOS = 1;
+const MIN_EXCLUSIVE_PHOTOS = 1;
 
 export function getCompletionChecks(p: Partial<DBProfile> | null | undefined): CompletionCheck[] {
   const anyP = (p ?? {}) as any;
@@ -46,7 +48,7 @@ export function getCompletionChecks(p: Partial<DBProfile> | null | undefined): C
     !!p?.category;
 
   const visualDone =
-    photos.length >= MIN_PUBLIC_PHOTOS && exclusivePhotos.length >= 1;
+    photos.length >= MIN_PUBLIC_PHOTOS && exclusivePhotos.length >= MIN_EXCLUSIVE_PHOTOS;
 
   const hasContact =
     !!((p?.whatsapp && p.whatsapp.length >= 8) || (p?.telegram && p.telegram.length >= 3));
@@ -64,7 +66,7 @@ export function getCompletionChecks(p: Partial<DBProfile> | null | undefined): C
     },
     {
       key: "visual",
-      label: `Contenido visual (mín. ${MIN_PUBLIC_PHOTOS} fotos públicas y 1 exclusiva)`,
+      label: `Contenido visual (mín. ${MIN_PUBLIC_PHOTOS} foto pública y ${MIN_EXCLUSIVE_PHOTOS} exclusiva)`,
       done: visualDone,
       weight: 30,
     },
