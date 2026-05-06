@@ -22,6 +22,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { dbToProfile } from "@/lib/db-mappers";
 import { isProfileComplete } from "@/lib/profile-completion";
 import { useAuth } from "@/hooks/useAuth";
+import { useAccountType } from "@/hooks/useAccountType";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 
@@ -30,6 +31,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t, lang } = useI18n();
+  const { accountType: visitorAccountType } = useAccountType(user?.id);
   const [dbProfile, setDbProfile] = useState<ProfileT | null>(null);
   const [loading, setLoading] = useState(true);
   const [photoIdx, setPhotoIdx] = useState(0);
@@ -147,7 +149,7 @@ const Profile = () => {
   const tier = profile.subscription?.tier;
   const tierMeta = tier ? TIER_BADGE[tier] : null;
 
-  const accessExclusive = isOwner || hasSubscription;
+  const accessExclusive = isOwner || hasSubscription || visitorAccountType === "visitor";
 
   const translate = async () => {
     if (!profile?.description) return;

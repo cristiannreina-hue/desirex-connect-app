@@ -44,17 +44,28 @@ Deno.serve(async (req) => {
     let allowed = user.id === profileId;
 
     if (!allowed) {
-      // Verificar suscripción activa del *visitante* (paywall a contenido exclusivo)
-      const { data: sub } = await admin
-        .from("subscriptions")
-        .select("status, expires_at")
-        .eq("user_id", user.id)
-        .in("status", ["trial", "active"])
-        .gt("expires_at", new Date().toISOString())
-        .order("expires_at", { ascending: false })
-        .limit(1)
+      // Las cuentas visitantes tienen acceso libre al contenido exclusivo de creadoras
+      const { data: prof } = await admin
+        .from("profiles")
+        .select("account_type")
+        .eq("id", user.id)
         .maybeSingle();
-      allowed = !!sub;
+
+      if (prof?.account_type === "visitor") {
+        allowed = true;
+      } else {
+        // Creadoras u otros: requieren suscripción activa
+        const { data: sub } = await admin
+          .from("subscriptions")
+          .select("status, expires_at")
+          .eq("user_id", user.id)
+          .in("status", ["trial", "active"])
+          .gt("expires_at", new Date().toISOString())
+          .order("expires_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        allowed = !!sub;
+      }
     }
 
     if (!allowed) {
