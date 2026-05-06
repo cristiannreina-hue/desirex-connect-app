@@ -27,6 +27,7 @@ import {
 } from "@/lib/compress";
 import { WatermarkOverlay } from "@/components/WatermarkOverlay";
 import { BlurBrushEditor } from "@/components/BlurBrushEditor";
+import { ReachStats } from "@/components/dashboard/ReachStats";
 
 interface FormState {
   display_name: string;
