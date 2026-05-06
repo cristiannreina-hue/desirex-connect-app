@@ -22,6 +22,7 @@ import { getCityZones } from "@/data/colombia";
 import { isVisible } from "@/lib/tier";
 import { isProfileComplete } from "@/lib/profile-completion";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserCity } from "@/hooks/useUserCity";
 import heroCartagena from "@/assets/hero-cartagena.jpg";
 import heroPenol from "@/assets/hero-penol.jpg";
 import heroConcierge from "@/assets/hero-concierge.jpg";
@@ -75,6 +76,7 @@ const sortByTier = (a: Profile, b: Profile) => {
 
 const Index = () => {
   const { user } = useAuth();
+  const { city: userCity } = useUserCity();
   const [gender, setGender] = useState<Gender>("mujeres");
   const [realProfiles, setRealProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -140,11 +142,12 @@ const Index = () => {
   /* Filtro por género (tab) + búsqueda + quick filter */
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase().replace(/^#/, "");
-    const baseCity = (() => {
+    const fallbackCity = (() => {
       const counts: Record<string, number> = {};
       for (const p of allProfiles) counts[p.city] = (counts[p.city] ?? 0) + 1;
       return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0];
     })();
+    const baseCity = userCity ?? fallbackCity;
     const newCutoff = Date.now() - 1000 * 60 * 60 * 24 * 14; // 14 días
 
     return allProfiles
@@ -170,7 +173,7 @@ const Index = () => {
       .filter((p) => (cityFilter === "all" ? true : p.city === cityFilter))
       .filter((p) => (zoneFilter === "all" ? true : (p.workZone ?? "") === zoneFilter))
       .sort(sortByTier);
-  }, [allProfiles, gender, query, quickFilter, cityFilter, zoneFilter]);
+  }, [allProfiles, gender, query, quickFilter, cityFilter, zoneFilter, userCity]);
 
   /* Secciones — fijadas/priorizadas según plan adquirido (ver /planes) */
   // VIP queda fijado arriba; el resto se ordena por vistas
@@ -209,10 +212,11 @@ const Index = () => {
     [visible],
   );
   const topCity = useMemo(() => {
+    if (userCity && visible.some((p) => p.city === userCity)) return userCity;
     const counts: Record<string, number> = {};
     for (const p of visible) counts[p.city] = (counts[p.city] ?? 0) + 1;
     return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0];
-  }, [visible]);
+  }, [visible, userCity]);
   const nearby = useMemo(
     () => visible.filter((p) => p.city === topCity).slice(0, 6),
     [visible, topCity],
