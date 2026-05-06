@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { COLOMBIA, DEPARTMENTS, getCityZones } from "@/data/colombia";
 import { CATEGORY_LABELS, type Category } from "@/types/profile";
-import { ImagePlus, Save, X, ShieldCheck, Crown, Lock, Video, BadgeCheck, Clock, Camera, FileText, Ruler, Sparkles } from "lucide-react";
+import { ImagePlus, Save, X, ShieldCheck, Crown, Lock, Video, BadgeCheck, Clock, Camera, FileText, Ruler, Sparkles, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -494,6 +494,20 @@ const Dashboard = () => {
 
               {/* 2 · NARRATIVA PROFESIONAL */}
               <Block icon={<FileText className="h-4 w-4" />} title="Narrativa Profesional" subtitle="Tu historia, tu voz">
+                <div
+                  role="note"
+                  className="flex gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/[0.06] p-3 text-xs text-amber-100/90 backdrop-blur-md"
+                >
+                  <AlertTriangle className="h-4 w-4 shrink-0 text-amber-300 mt-0.5" />
+                  <div className="space-y-1 leading-relaxed">
+                    <p className="font-semibold text-amber-200">Cuida tu redacción en el "Sobre mí"</p>
+                    <p>
+                      Evita lenguaje vulgar, palabras sexuales explícitas o términos ofensivos.
+                      Este tipo de contenido reduce la visibilidad de tu perfil en buscadores
+                      y puede afectar las vistas de toda la página. Usa un tono elegante y profesional.
+                    </p>
+                  </div>
+                </div>
                 <GlassField label={`Biografía · ${data.description.length}/500 (mín. 40)`}>
                   <Textarea
                     value={data.description}
