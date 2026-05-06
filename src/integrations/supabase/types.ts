@@ -583,6 +583,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _current_tier: { Args: { _uid: string }; Returns: string }
       approve_verification_and_purge: {
         Args: { _user_id: string }
         Returns: undefined
