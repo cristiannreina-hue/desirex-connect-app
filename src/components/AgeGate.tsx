@@ -9,12 +9,15 @@ export const AgeGate = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const verified = typeof window !== "undefined" && localStorage.getItem(STORAGE_KEY) === "1";
+    if (typeof window === "undefined") return;
+    // Limpia verificaciones antiguas persistidas en localStorage
+    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+    const verified = sessionStorage.getItem(STORAGE_KEY) === "1";
     if (!verified) setOpen(true);
   }, []);
 
   const accept = () => {
-    localStorage.setItem(STORAGE_KEY, "1");
+    sessionStorage.setItem(STORAGE_KEY, "1");
     setOpen(false);
   };
 
