@@ -26,6 +26,7 @@ import {
   EXCLUSIVE_IMAGE_MAX_SIDE,
 } from "@/lib/compress";
 import { WatermarkOverlay } from "@/components/WatermarkOverlay";
+import { BlurBrushEditor } from "@/components/BlurBrushEditor";
 
 interface FormState {
   display_name: string;
