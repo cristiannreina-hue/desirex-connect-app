@@ -11,6 +11,9 @@ import { useAccountType } from "@/hooks/useAccountType";
 const Registro = () => {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const redirectParam = params.get("redirect");
+  const safeRedirect = redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//") ? redirectParam : null;
   const { user, loading: authLoading } = useAuth();
   const { accountType, loading: accountTypeLoading } = useAccountType(user?.id);
   const [checkingProfile, setCheckingProfile] = useState(true);
