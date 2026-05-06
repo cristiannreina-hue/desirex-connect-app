@@ -377,7 +377,6 @@ const Auth = () => {
                     <Sparkles className="h-3 w-3" /> ¿Cómo funciona la verificación?
                   </Link>
                 </div>
-            
           </div>
         </div>
       </main>
