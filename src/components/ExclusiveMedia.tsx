@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Lock, Crown, Play } from "lucide-react";
+import { Lock, Crown, Play, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
 import { WatermarkOverlay } from "@/components/WatermarkOverlay";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Props {
   profileId: string;
