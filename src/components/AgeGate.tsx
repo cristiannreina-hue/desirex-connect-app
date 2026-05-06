@@ -3,23 +3,18 @@ import { Button } from "@/components/ui/button";
 import { ShieldAlert } from "lucide-react";
 import { Logo } from "./Logo";
 
-const STORAGE_KEY = "deseox_age_verified";
-
 export const AgeGate = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    // Limpia verificaciones antiguas persistidas en localStorage
-    try { localStorage.removeItem(STORAGE_KEY); } catch {}
-    const verified = sessionStorage.getItem(STORAGE_KEY) === "1";
-    if (!verified) setOpen(true);
+    // Limpiar cualquier verificación previa: el aviso debe mostrarse siempre.
+    try { localStorage.removeItem("deseox_age_verified"); } catch {}
+    try { sessionStorage.removeItem("deseox_age_verified"); } catch {}
+    setOpen(true);
   }, []);
 
-  const accept = () => {
-    sessionStorage.setItem(STORAGE_KEY, "1");
-    setOpen(false);
-  };
+  const accept = () => setOpen(false);
 
   const reject = () => {
     window.location.href = "https://www.google.com";
