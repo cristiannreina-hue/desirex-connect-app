@@ -26,6 +26,12 @@ import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
 
+const VisitTracker = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { void trackSiteVisit(pathname); }, [pathname]);
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <I18nProvider>
@@ -34,6 +40,7 @@ const App = () => (
         <Sonner theme="dark" richColors position="top-center" />
         <BrowserRouter>
           <AgeGate />
+          <VisitTracker />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/explorar" element={<Index />} />
