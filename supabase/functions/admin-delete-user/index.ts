@@ -1,5 +1,5 @@
 // Edge function: un admin elimina por completo una cuenta (auth + profile).
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.74.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
