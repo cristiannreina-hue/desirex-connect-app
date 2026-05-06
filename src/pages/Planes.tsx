@@ -46,6 +46,7 @@ const PLANS: PlanDef[] = [
       "Posición preferente en tu ciudad",
       "Prioridad en 'Activos hoy'",
       "Hasta 12 fotos exclusivas + 5 videos",
+      "Estadísticas de Alcance (vistas y clics)",
       "Hasta 3x más visualizaciones",
     ],
   },

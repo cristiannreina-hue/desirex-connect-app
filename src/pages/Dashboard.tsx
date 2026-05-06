@@ -78,6 +78,7 @@ const Dashboard = () => {
   const { t } = useI18n();
   const [data, setData] = useState<FormState>(empty);
   const [tier, setTier] = useState<string>("starter");
+  const [subActive, setSubActive] = useState<boolean>(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -131,7 +132,11 @@ const Dashboard = () => {
           is_verified: p.is_verified ?? false,
         });
       }
-      if (sub) setTier(sub.tier as string);
+      if (sub) {
+        setTier(sub.tier as string);
+        const active = (sub.status === "active" || sub.status === "trial") && new Date(sub.expires_at as string).getTime() > Date.now();
+        setSubActive(active);
+      }
       setLoading(false);
     });
   }, [user]);
@@ -388,8 +393,8 @@ const Dashboard = () => {
               {/* Banner KYC persistente */}
               <VerifiedBanner status={data.verification_status} verified={data.is_verified} />
 
-              {/* Estadísticas de Alcance */}
-              {user?.id && <ReachStats profileId={user.id} />}
+              {/* Estadísticas de Alcance — solo planes pagos activos */}
+              {user?.id && subActive && (tier === "boost" || tier === "elite" || tier === "vip") && <ReachStats profileId={user.id} />}
 
 
               {/* 1 · IDENTIDAD VISUAL */}
