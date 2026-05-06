@@ -216,186 +216,188 @@ const Auth = () => {
               </div>
             )}
 
-                <form onSubmit={submit} className="mt-6 space-y-4">
+            <form onSubmit={submit} className="mt-6 space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="tu@correo.com"
+                    className="bg-background/60 pl-10"
+                  />
+                </div>
+              </div>
+
+              {mode !== "forgot" && (
+                <div className="space-y-1.5">
+                  <Label htmlFor="password">Contraseña</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="password"
+                      type="password"
+                      required
+                      minLength={6}
+                      autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Mínimo 6 caracteres"
+                      className="bg-background/60 pl-10"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {mode === "signup" && (
+                <>
                   <div className="space-y-1.5">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        id="email"
-                        type="email"
+                        id="confirmPassword"
+                        type="password"
                         required
-                        autoComplete="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="tu@correo.com"
+                        minLength={6}
+                        autoComplete="new-password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Repite tu contraseña"
                         className="bg-background/60 pl-10"
                       />
                     </div>
                   </div>
 
-                  {mode !== "forgot" && (
-                    <div className="space-y-1.5">
-                      <Label htmlFor="password">Contraseña</Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="password"
-                          type="password"
-                          required
-                          minLength={6}
-                          autoComplete={mode === "signup" ? "new-password" : "current-password"}
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          placeholder="Mínimo 6 caracteres"
-                          className="bg-background/60 pl-10"
-                        />
-                      </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="birthDate">Fecha de nacimiento</Label>
+                    <div className="relative">
+                      <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="birthDate"
+                        type="date"
+                        required
+                        max={maxDob}
+                        value={birthDate}
+                        onChange={(e) => setBirthDate(e.target.value)}
+                        className="bg-background/60 pl-10"
+                      />
                     </div>
-                  )}
+                    {birthDate && ageValid && (
+                      <p className="text-xs text-muted-foreground">Edad: {age} años ✓</p>
+                    )}
+                    {ageError && (
+                      <p className="text-xs text-destructive inline-flex items-center gap-1.5">
+                        <AlertTriangle className="h-3.5 w-3.5" />
+                        Debes ser mayor de 18 años para acceder a esta plataforma
+                      </p>
+                    )}
+                  </div>
 
-                  {mode === "signup" && (
-                    <>
-                      <div className="space-y-1.5">
-                        <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            id="confirmPassword"
-                            type="password"
-                            required
-                            minLength={6}
-                            autoComplete="new-password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            placeholder="Repite tu contraseña"
-                            className="bg-background/60 pl-10"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <Label htmlFor="birthDate">Fecha de nacimiento</Label>
-                        <div className="relative">
-                          <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            id="birthDate"
-                            type="date"
-                            required
-                            max={maxDob}
-                            value={birthDate}
-                            onChange={(e) => setBirthDate(e.target.value)}
-                            className="bg-background/60 pl-10"
-                          />
-                        </div>
-                        {birthDate && ageValid && (
-                          <p className="text-xs text-muted-foreground">Edad: {age} años ✓</p>
-                        )}
-                        {ageError && (
-                          <p className="text-xs text-destructive inline-flex items-center gap-1.5">
-                            <AlertTriangle className="h-3.5 w-3.5" />
-                            Debes ser mayor de 18 años para acceder a esta plataforma
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="flex items-start gap-2.5 rounded-xl border border-border/60 bg-background/40 p-3">
-                        <input
-                          id="acceptTerms"
-                          type="checkbox"
-                          checked={acceptedTerms}
-                          onChange={(e) => setAcceptedTerms(e.target.checked)}
-                          className="mt-0.5 h-4 w-4 rounded border-border accent-[hsl(var(--accent))] cursor-pointer"
-                          required
-                        />
-                        <label htmlFor="acceptTerms" className="text-xs text-muted-foreground leading-relaxed cursor-pointer select-none">
-                          He leído y acepto los{" "}
-                          <Link
-                            to="/legal/terminos"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-accent font-semibold hover:underline"
-                          >
-                            Términos y Condiciones
-                          </Link>{" "}
-                          de DeseoX.
-                        </label>
-                      </div>
-                    </>
-                  )}
-
-                  {mode === "login" && (
-                    <div className="text-right">
-                      <button
-                        type="button"
-                        onClick={() => setMode("forgot")}
-                        className="text-xs text-accent hover:underline"
-                      >
-                        ¿Olvidaste tu contraseña?
-                      </button>
-                    </div>
-                  )}
-
-                  <Button
-                    type="submit"
-                    variant="hero"
-                    size="lg"
-                    className="w-full rounded-full gap-2"
-                    disabled={submitDisabled}
-                  >
-                    {loading
-                      ? "Procesando…"
-                      : mode === "login"
-                        ? "Iniciar sesión"
-                        : mode === "signup"
-                          ? "Registrarme"
-                          : "Enviar enlace"}
-                    {!loading && <ArrowRight className="h-4 w-4" />}
-                  </Button>
-                </form>
-
-                <p className="mt-6 text-center text-sm text-muted-foreground">
-                  {mode === "login" && (
-                    <>
-                      ¿Aún no tienes cuenta?{" "}
-                      <button
-                        type="button"
-                        onClick={openAccountSelector}
+                  <div className="flex items-start gap-2.5 rounded-xl border border-border/60 bg-background/40 p-3">
+                    <input
+                      id="acceptTerms"
+                      type="checkbox"
+                      checked={acceptedTerms}
+                      onChange={(e) => setAcceptedTerms(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 rounded border-border accent-[hsl(var(--accent))] cursor-pointer"
+                      required
+                    />
+                    <label htmlFor="acceptTerms" className="text-xs text-muted-foreground leading-relaxed cursor-pointer select-none">
+                      He leído y acepto los{" "}
+                      <Link
+                        to="/legal/terminos"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="text-accent font-semibold hover:underline"
                       >
-                        Crear cuenta
-                      </button>
-                    </>
-                  )}
-                  {mode === "signup" && (
-                    <>
-                      ¿Ya tienes cuenta?{" "}
-                      <button
-                        onClick={() => setMode("login")}
-                        className="text-accent font-semibold hover:underline"
-                      >
-                        Iniciar sesión
-                      </button>
-                    </>
-                  )}
-                  {mode === "forgot" && (
-                    <button
-                      onClick={() => setMode("login")}
-                      className="text-accent font-semibold hover:underline"
-                    >
-                      Volver a iniciar sesión
-                    </button>
-                  )}
-                </p>
+                        Términos y Condiciones
+                      </Link>{" "}
+                      de DeseoX.
+                    </label>
+                  </div>
+                </>
+              )}
 
-                <div className="mt-6 pt-6 border-t border-border/60 text-center">
-                  <Link
-                    to="/verificacion"
-                    className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-accent transition-colors"
+              {mode === "login" && (
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={() => setMode("forgot")}
+                    className="text-xs text-accent hover:underline"
                   >
-                    <Sparkles className="h-3 w-3" /> ¿Cómo funciona la verificación?
-                  </Link>
+                    ¿Olvidaste tu contraseña?
+                  </button>
                 </div>
+              )}
+
+              <Button
+                type="submit"
+                variant="hero"
+                size="lg"
+                className="w-full rounded-full gap-2"
+                disabled={submitDisabled}
+              >
+                {loading
+                  ? "Procesando…"
+                  : mode === "login"
+                    ? "Iniciar sesión"
+                    : mode === "signup"
+                      ? "Registrarme"
+                      : "Enviar enlace"}
+                {!loading && <ArrowRight className="h-4 w-4" />}
+              </Button>
+            </form>
+
+            <p className="mt-6 text-center text-sm text-muted-foreground">
+              {mode === "login" && (
+                <>
+                  ¿Aún no tienes cuenta?{" "}
+                  <button
+                    type="button"
+                    onClick={openAccountSelector}
+                    className="text-accent font-semibold hover:underline"
+                  >
+                    Crear cuenta
+                  </button>
+                </>
+              )}
+              {mode === "signup" && (
+                <>
+                  ¿Ya tienes cuenta?{" "}
+                  <button
+                    type="button"
+                    onClick={() => setMode("login")}
+                    className="text-accent font-semibold hover:underline"
+                  >
+                    Iniciar sesión
+                  </button>
+                </>
+              )}
+              {mode === "forgot" && (
+                <button
+                  type="button"
+                  onClick={() => setMode("login")}
+                  className="text-accent font-semibold hover:underline"
+                >
+                  Volver a iniciar sesión
+                </button>
+              )}
+            </p>
+
+            <div className="mt-6 pt-6 border-t border-border/60 text-center">
+              <Link
+                to="/verificacion"
+                className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-accent transition-colors"
+              >
+                <Sparkles className="h-3 w-3" /> ¿Cómo funciona la verificación?
+              </Link>
+            </div>
           </div>
         </div>
       </main>
