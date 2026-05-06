@@ -388,6 +388,10 @@ const Dashboard = () => {
               {/* Banner KYC persistente */}
               <VerifiedBanner status={data.verification_status} verified={data.is_verified} />
 
+              {/* Estadísticas de Alcance */}
+              {user?.id && <ReachStats profileId={user.id} />}
+
+
               {/* 1 · IDENTIDAD VISUAL */}
               <Block icon={<Camera className="h-4 w-4" />} title="Identidad Visual" subtitle="Galería pública y contenido exclusivo">
                 <SubLabel>Fotos públicas · {data.public_photos.length}/{publicPhotoLimit}</SubLabel>
