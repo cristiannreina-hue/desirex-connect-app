@@ -19,7 +19,9 @@ export interface CompletionCheck {
 }
 
 const MIN_DESCRIPTION = 40;
-const MIN_PUBLIC_PHOTOS = 3;
+// Mínimo alineado al plan más bajo (gratis): 1 foto pública + 1 foto exclusiva.
+const MIN_PUBLIC_PHOTOS = 1;
+const MIN_EXCLUSIVE_PHOTOS = 1;
 
 export function getCompletionChecks(p: Partial<DBProfile> | null | undefined): CompletionCheck[] {
   const anyP = (p ?? {}) as any;
