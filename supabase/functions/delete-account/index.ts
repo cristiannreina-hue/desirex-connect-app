@@ -1,7 +1,7 @@
 // Edge function: el usuario autenticado elimina su propia cuenta.
 // Usa el service role solo para borrar el registro de auth.users; los datos
 // asociados se limpian en cascada vía el trigger cleanup_profile_on_delete.
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.74.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
