@@ -27,6 +27,7 @@ import {
 } from "@/lib/compress";
 import { WatermarkOverlay } from "@/components/WatermarkOverlay";
 import { BlurBrushEditor } from "@/components/BlurBrushEditor";
+import { ReachStats } from "@/components/dashboard/ReachStats";
 
 interface FormState {
   display_name: string;
@@ -386,6 +387,10 @@ const Dashboard = () => {
             <>
               {/* Banner KYC persistente */}
               <VerifiedBanner status={data.verification_status} verified={data.is_verified} />
+
+              {/* Estadísticas de Alcance */}
+              {user?.id && <ReachStats profileId={user.id} />}
+
 
               {/* 1 · IDENTIDAD VISUAL */}
               <Block icon={<Camera className="h-4 w-4" />} title="Identidad Visual" subtitle="Galería pública y contenido exclusivo">

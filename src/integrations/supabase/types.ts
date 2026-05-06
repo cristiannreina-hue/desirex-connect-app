@@ -146,6 +146,57 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_contact_clicks: {
+        Row: {
+          channel: string
+          created_at: string
+          id: string
+          profile_id: string
+          viewer_fingerprint: string | null
+          viewer_id: string | null
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          id?: string
+          profile_id: string
+          viewer_fingerprint?: string | null
+          viewer_id?: string | null
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          id?: string
+          profile_id?: string
+          viewer_fingerprint?: string | null
+          viewer_id?: string | null
+        }
+        Relationships: []
+      }
+      profile_views: {
+        Row: {
+          created_at: string
+          id: string
+          profile_id: string
+          viewer_fingerprint: string | null
+          viewer_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profile_id: string
+          viewer_fingerprint?: string | null
+          viewer_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profile_id?: string
+          viewer_fingerprint?: string | null
+          viewer_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           account_type: string

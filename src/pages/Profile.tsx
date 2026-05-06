@@ -25,6 +25,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAccountType } from "@/hooks/useAccountType";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { trackProfileView, trackContactClick } from "@/lib/analytics-track";
 
 const Profile = () => {
   const { id } = useParams();
@@ -94,6 +95,10 @@ const Profile = () => {
   useEffect(() => {
     if (profile) document.title = `${profile.name}, ${profile.age} · ${profile.city} · DeseoX`;
   }, [profile]);
+
+  useEffect(() => {
+    if (dbProfile?.id) void trackProfileView(dbProfile.id);
+  }, [dbProfile?.id]);
 
   const photos = profile?.photos ?? [];
 
@@ -275,13 +280,13 @@ const Profile = () => {
             {/* Botones de contacto — protagonismo total, una sola fila */}
             <div className="grid grid-cols-2 gap-3">
               <Button asChild variant="whatsapp" size="xl" className="w-full rounded-full">
-                <a href={waUrl} target="_blank" rel="noopener noreferrer">
+                <a href={waUrl} target="_blank" rel="noopener noreferrer" onClick={() => dbProfile?.id && trackContactClick(dbProfile.id, "whatsapp")}>
                   <MessageCircle className="h-5 w-5" /> WhatsApp
                 </a>
               </Button>
               {profile.telegram ? (
                 <Button asChild variant="telegram" size="xl" className="w-full rounded-full">
-                  <a href={tgUrl} target="_blank" rel="noopener noreferrer">
+                  <a href={tgUrl} target="_blank" rel="noopener noreferrer" onClick={() => dbProfile?.id && trackContactClick(dbProfile.id, "telegram")}>
                     <Send className="h-5 w-5" /> Telegram
                   </a>
                 </Button>
