@@ -31,6 +31,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t, lang } = useI18n();
+  const { accountType: visitorAccountType } = useAccountType(user?.id);
   const [dbProfile, setDbProfile] = useState<ProfileT | null>(null);
   const [loading, setLoading] = useState(true);
   const [photoIdx, setPhotoIdx] = useState(0);
