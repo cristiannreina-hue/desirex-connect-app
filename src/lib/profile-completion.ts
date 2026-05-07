@@ -97,9 +97,9 @@ export function getCompletion(p: Partial<DBProfile> | null | undefined) {
   const verificationCheck = checks.find((c) => c.key === "verification");
   const awaitingVerification = !isVisitor && !!verificationCheck && !verificationCheck.done;
 
-  // Visitantes: requieren 100%. Creadoras: completo cuando llegan al 100%
-  // (los 3 primeros pilares + verificación). Sin verificación el tope es 90%.
-  const threshold = isVisitor ? 100 : 100;
+  // Visitantes: requieren 100%. Creadoras: temporalmente se publican con 90%
+  // (los 3 pilares humanos), sin requerir la verificación de identidad.
+  const threshold = isVisitor ? 100 : 90;
   const isComplete = percent >= threshold;
 
   // Mensaje contextual cuando faltan los pilares humanos vs. la verificación.
