@@ -14,7 +14,14 @@ interface VisitRow {
 
 const DAYS = 30;
 const fmtDay = (d: Date) => d.toLocaleDateString("es-CO", { day: "2-digit", month: "short" });
-const dayKey = (d: Date) => d.toISOString().slice(0, 10);
+// Clave por día en zona horaria LOCAL (evita desfases con UTC que hacían que
+// las visitas nocturnas se contaran en el día siguiente).
+const dayKey = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
 
 const HOUR_BANDS = [
   { label: "Mañana", range: "06–12h", from: 6, to: 12 },
@@ -44,12 +51,16 @@ export const AdminTraffic = () => {
   const stats = useMemo(() => {
     const total = rows.length;
     const unique = new Set<string>();
-    const today = new Set<string>();
+    const todayUniqueSet = new Set<string>();
     const todayKey = dayKey(new Date());
+    let todayViews = 0;
     rows.forEach((r) => {
       const id = r.visitor_id ?? `fp:${r.visitor_fingerprint ?? "anon"}`;
       unique.add(id);
-      if (dayKey(new Date(r.created_at)) === todayKey) today.add(id);
+      if (dayKey(new Date(r.created_at)) === todayKey) {
+        todayUniqueSet.add(id);
+        todayViews++;
+      }
     });
 
     const days: { day: string; visitas: number; date: Date }[] = [];
@@ -81,7 +92,8 @@ export const AdminTraffic = () => {
     return {
       total,
       unique: unique.size,
-      todayUnique: today.size,
+      todayUnique: todayUniqueSet.size,
+      todayViews,
       days,
       peakDay,
       hours,
@@ -94,9 +106,9 @@ export const AdminTraffic = () => {
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <Kpi icon={<Eye className="h-5 w-5" />} label="Visitas (30d)" value={loading ? "—" : stats.total.toLocaleString("es-CO")} />
-        <Kpi icon={<Users className="h-5 w-5" />} label="Visitantes únicos" value={loading ? "—" : stats.unique.toLocaleString("es-CO")} />
-        <Kpi icon={<TrendingUp className="h-5 w-5" />} label="Únicos hoy" value={loading ? "—" : stats.todayUnique.toLocaleString("es-CO")} />
+        <Kpi icon={<Eye className="h-5 w-5" />} label="Vistas de página (30d)" value={loading ? "—" : stats.total.toLocaleString("es-CO")} sub={loading ? "" : `Hoy: ${stats.todayViews.toLocaleString("es-CO")}`} />
+        <Kpi icon={<Users className="h-5 w-5" />} label="Visitantes únicos (30d)" value={loading ? "—" : stats.unique.toLocaleString("es-CO")} />
+        <Kpi icon={<TrendingUp className="h-5 w-5" />} label="Visitantes únicos hoy" value={loading ? "—" : stats.todayUnique.toLocaleString("es-CO")} sub={loading ? "" : `${stats.todayViews.toLocaleString("es-CO")} vistas hoy`} />
         <Kpi icon={<Flame className="h-5 w-5" />} label="Pico" value={loading ? "—" : stats.peakDay.day} sub={loading ? "" : `${stats.peakDay.visitas} visitas · ${String(stats.peakHour).padStart(2, "0")}:00`} />
       </div>
 
