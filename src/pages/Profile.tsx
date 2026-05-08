@@ -176,7 +176,7 @@ const Profile = () => {
   const tier = profile.subscription?.tier;
   const tierMeta = tier ? TIER_BADGE[tier] : null;
 
-  const accessExclusive = isOwner || hasSubscription || visitorAccountType === "visitor";
+  const accessExclusive = isOwner || hasSubscription;
 
   const translate = async () => {
     if (!profile?.description) return;
