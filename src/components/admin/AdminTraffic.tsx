@@ -14,7 +14,14 @@ interface VisitRow {
 
 const DAYS = 30;
 const fmtDay = (d: Date) => d.toLocaleDateString("es-CO", { day: "2-digit", month: "short" });
-const dayKey = (d: Date) => d.toISOString().slice(0, 10);
+// Clave por día en zona horaria LOCAL (evita desfases con UTC que hacían que
+// las visitas nocturnas se contaran en el día siguiente).
+const dayKey = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
 
 const HOUR_BANDS = [
   { label: "Mañana", range: "06–12h", from: 6, to: 12 },
