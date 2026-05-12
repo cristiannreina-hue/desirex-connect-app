@@ -11,7 +11,7 @@ import { DEMO_PROFILES } from "@/data/profiles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Flame, Search, X, MapPin, Sparkles, Crown, ChevronRight, Star, TrendingUp, ShieldCheck, BadgeCheck,
+  Flame, Search, X, MapPin, Sparkles, Crown, ChevronRight, Star, TrendingUp, ShieldCheck, BadgeCheck, Package,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -83,7 +83,7 @@ const Index = () => {
   const [query, setQuery] = useState("");
   const [slideIdx, setSlideIdx] = useState(0);
   const [pingIdx, setPingIdx] = useState(0);
-  const [quickFilter, setQuickFilter] = useState<"all" | "new" | "verified" | "nearby">("all");
+  const [quickFilter, setQuickFilter] = useState<"all" | "new" | "verified" | "nearby" | "content">("all");
   const [cityFilter, setCityFilter] = useState<string>("all");
   const [zoneFilter, setZoneFilter] = useState<string>("all");
 
@@ -168,6 +168,7 @@ const Index = () => {
           return created ? new Date(created).getTime() > newCutoff : false;
         }
         if (quickFilter === "nearby") return baseCity ? p.city === baseCity : true;
+        if (quickFilter === "content") return p.serviceMode === "contenido";
         return true;
       })
       .filter((p) => (cityFilter === "all" ? true : p.city === cityFilter))
@@ -581,6 +582,7 @@ const Index = () => {
               { k: "all", label: "Todas", icon: <Sparkles className="h-3.5 w-3.5" /> },
               { k: "new", label: "Nuevas", icon: <Flame className="h-3.5 w-3.5" /> },
               { k: "verified", label: "Verificadas", icon: <BadgeCheck className="h-3.5 w-3.5" /> },
+              { k: "content", label: "Venta de contenido", icon: <Package className="h-3.5 w-3.5" /> },
               { k: "nearby", label: `Cerca de ti${topCity ? ` · ${topCity}` : ""}`, icon: <MapPin className="h-3.5 w-3.5" /> },
             ] as const).map((c) => {
               const active = quickFilter === c.k;
