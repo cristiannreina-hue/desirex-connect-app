@@ -77,7 +77,8 @@ const sortByTier = (a: Profile, b: Profile) => {
 const Index = () => {
   const { user } = useAuth();
   const { city: userCity } = useUserCity();
-  const [gender, setGender] = useState<Gender>("mujeres");
+  const [tab, setTab] = useState<Gender | "content">("mujeres");
+  const gender: Gender = tab === "content" ? "mujeres" : tab;
   const [realProfiles, setRealProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
