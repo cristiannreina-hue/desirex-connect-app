@@ -179,7 +179,7 @@ const Index = () => {
       .filter((p) => (cityFilter === "all" ? true : p.city === cityFilter))
       .filter((p) => (zoneFilter === "all" ? true : (p.workZone ?? "") === zoneFilter))
       .sort(sortByTier);
-  }, [allProfiles, gender, query, quickFilter, cityFilter, zoneFilter, userCity]);
+  }, [allProfiles, gender, tab, query, quickFilter, cityFilter, zoneFilter, userCity]);
 
   /* Secciones — fijadas/priorizadas según plan adquirido (ver /planes) */
   // VIP queda fijado arriba; el resto se ordena por vistas
