@@ -11,7 +11,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { COLOMBIA, DEPARTMENTS, getCityZones } from "@/data/colombia";
-import { CATEGORY_LABELS, type Category } from "@/types/profile";
+import { CATEGORY_LABELS, SERVICE_MODE_LABELS, type Category, type ServiceMode } from "@/types/profile";
 import { ImagePlus, Save, X, ShieldCheck, Crown, Lock, Video, BadgeCheck, Clock, Camera, FileText, Ruler, Sparkles, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
