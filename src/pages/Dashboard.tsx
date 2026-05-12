@@ -135,6 +135,7 @@ const Dashboard = () => {
             return "";
           })(),
           description: p.description ?? "",
+          service_mode: ((anyP.service_mode === "contenido" ? "contenido" : "presencial") as ServiceMode),
           public_photos: anyP.public_photos?.length ? anyP.public_photos : (p.photos ?? []).slice(0, PUBLIC_PHOTO_LIMIT),
           exclusive_photos: anyP.exclusive_photos ?? [],
           exclusive_videos: anyP.exclusive_videos ?? [],
