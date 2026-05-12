@@ -72,6 +72,7 @@ export interface Profile {
   whatsapp: string;
   telegram: string;
   accountType?: AccountType;
+  serviceMode?: ServiceMode;
   verified?: boolean;
   ratingAvg?: number;
   ratingCount?: number;
