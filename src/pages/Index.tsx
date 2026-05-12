@@ -83,7 +83,7 @@ const Index = () => {
   const [query, setQuery] = useState("");
   const [slideIdx, setSlideIdx] = useState(0);
   const [pingIdx, setPingIdx] = useState(0);
-  const [quickFilter, setQuickFilter] = useState<"all" | "new" | "verified" | "nearby">("all");
+  const [quickFilter, setQuickFilter] = useState<"all" | "new" | "verified" | "nearby" | "content">("all");
   const [cityFilter, setCityFilter] = useState<string>("all");
   const [zoneFilter, setZoneFilter] = useState<string>("all");
 
