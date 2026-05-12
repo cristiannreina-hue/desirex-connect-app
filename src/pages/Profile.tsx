@@ -134,7 +134,11 @@ const Profile = () => {
     );
   }
 
-  const waUrl = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(`Hola ${profile.name}, te contacto desde DeseoX 🔥`)}`;
+  const isContentMode = profile.serviceMode === "contenido";
+  const waMessage = isContentMode
+    ? `Hola ${profile.name}, vi tu catálogo en DeseoX y me interesa tu contenido 🔥`
+    : `Hola ${profile.name}, te contacto desde DeseoX 🔥`;
+  const waUrl = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(waMessage)}`;
   const tgUrl = `https://t.me/${profile.telegram}`;
 
   const rates = profile.rates ?? {};
