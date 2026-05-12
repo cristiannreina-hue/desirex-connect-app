@@ -152,8 +152,12 @@ const Index = () => {
     const newCutoff = Date.now() - 1000 * 60 * 60 * 24 * 14; // 14 días
 
     return allProfiles
-      // Tab Mujeres/Hombres/Trans: matchea por gender O por categoría equivalente
-      .filter((p) => p.gender === gender || categoryToGender(p.category) === gender)
+      // Tab principal: Mujeres/Hombres/Trans (por género o categoría) o Venta de Contenido (por modalidad)
+      .filter((p) =>
+        tab === "content"
+          ? p.serviceMode === "contenido"
+          : (p.gender === gender || categoryToGender(p.category) === gender),
+      )
       .filter((p) => {
         if (!q) return true;
         const matchName = p.name.toLowerCase().includes(q);
