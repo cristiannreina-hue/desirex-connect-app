@@ -45,6 +45,7 @@ interface FormState {
   city: string;
   work_zone: string;
   category: Category | "";
+  service_mode: ServiceMode;
   description: string;
   public_photos: string[];
   exclusive_photos: string[];
