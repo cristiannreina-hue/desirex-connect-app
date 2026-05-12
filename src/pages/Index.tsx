@@ -603,7 +603,6 @@ const Index = () => {
               { k: "all", label: "Todas", icon: <Sparkles className="h-3.5 w-3.5" /> },
               { k: "new", label: "Nuevas", icon: <Flame className="h-3.5 w-3.5" /> },
               { k: "verified", label: "Verificadas", icon: <BadgeCheck className="h-3.5 w-3.5" /> },
-              { k: "content", label: "Venta de contenido", icon: <Package className="h-3.5 w-3.5" /> },
               { k: "nearby", label: `Cerca de ti${topCity ? ` · ${topCity}` : ""}`, icon: <MapPin className="h-3.5 w-3.5" /> },
             ] as const).map((c) => {
               const active = quickFilter === c.k;
