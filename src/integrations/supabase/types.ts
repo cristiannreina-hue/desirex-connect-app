@@ -231,6 +231,7 @@ export type Database = {
           rate_two_hours: number | null
           rating_avg: number
           rating_count: number
+          service_mode: string
           service_type: string | null
           services: string[] | null
           telegram: string | null
@@ -280,6 +281,7 @@ export type Database = {
           rate_two_hours?: number | null
           rating_avg?: number
           rating_count?: number
+          service_mode?: string
           service_type?: string | null
           services?: string[] | null
           telegram?: string | null
@@ -329,6 +331,7 @@ export type Database = {
           rate_two_hours?: number | null
           rating_avg?: number
           rating_count?: number
+          service_mode?: string
           service_type?: string | null
           services?: string[] | null
           telegram?: string | null
