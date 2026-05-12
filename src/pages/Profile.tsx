@@ -279,6 +279,11 @@ const Profile = () => {
                 <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium ring-1 ring-border">
                   {CATEGORY_LABELS[profile.category]}
                 </span>
+                {isContentMode && (
+                  <span className="rounded-full bg-accent/15 px-3 py-1 text-xs font-bold text-accent ring-1 ring-accent/40">
+                    📦 Venta de contenido
+                  </span>
+                )}
                 {profile.userNumber && (
                   <span className="rounded-full bg-background/80 px-3 py-1 text-xs font-mono font-bold text-accent ring-1 ring-accent/40">
                     ID #{profile.userNumber}
