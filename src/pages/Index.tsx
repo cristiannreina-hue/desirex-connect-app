@@ -401,22 +401,38 @@ const Index = () => {
       {/* ================= TABS GÉNERO ================= */}
       <section className="border-b border-border/60 sticky top-16 z-30 bg-background/85 backdrop-blur-xl">
         <div className="container py-3 flex items-center justify-center">
-          <div className="inline-flex rounded-full bg-secondary/40 p-1 ring-1 ring-border/60">
-            {(Object.keys(GENDER_LABELS) as Gender[]).map((g) => (
-              <button
-                key={g}
-                onClick={() => setGender(g)}
-                aria-pressed={gender === g}
-                className={cn(
-                  "rounded-full px-5 py-1.5 text-sm font-semibold transition-all",
-                  gender === g
-                    ? "bg-accent text-accent-foreground shadow-glow-soft"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {GENDER_LABELS[g]}
-              </button>
-            ))}
+          <div className="inline-flex flex-wrap justify-center rounded-full bg-secondary/40 p-1 ring-1 ring-border/60">
+            {([
+              ...(Object.keys(GENDER_LABELS) as Gender[]).map((g) => ({ k: g, label: GENDER_LABELS[g] })),
+              { k: "content" as const, label: "Venta de Contenido" },
+            ]).map(({ k, label }) => {
+              const active = tab === k;
+              return (
+                <button
+                  key={k}
+                  onClick={() => {
+                    setTab(k as Gender | "content");
+                    if (k === "content") {
+                      // Al activar Venta de Contenido, limpiar filtros para mostrar solo esa categoría
+                      setQuickFilter("all");
+                      setCityFilter("all");
+                      setZoneFilter("all");
+                      setQuery("");
+                    }
+                  }}
+                  aria-pressed={active}
+                  className={cn(
+                    "rounded-full px-5 py-1.5 text-sm font-semibold transition-all whitespace-nowrap inline-flex items-center gap-1.5",
+                    active
+                      ? "bg-accent text-accent-foreground shadow-glow-soft"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  {k === "content" && <Package className="h-3.5 w-3.5" />}
+                  {label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
