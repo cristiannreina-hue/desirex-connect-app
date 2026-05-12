@@ -299,7 +299,8 @@ const Profile = () => {
                   <MapPin className="h-5 w-5 text-accent" /> {profile.city}{profile.workZone ? ` · ${profile.workZone}` : ""}, {profile.department}
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[hsl(var(--online))]/15 px-2.5 py-1 text-[11px] font-bold text-[hsl(var(--online))] ring-1 ring-[hsl(var(--online))]/30">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--online))] animate-pulse" /> Activa ahora
+                  <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--online))] animate-pulse" />
+                  {isContentMode ? "Catálogo disponible" : "Activa ahora"}
                 </span>
               </div>
 
