@@ -592,6 +592,26 @@ const Dashboard = () => {
 
                 <div className="h-px bg-white/5 my-2" />
 
+                <SubLabel>Modalidad del servicio</SubLabel>
+                <div className="grid grid-cols-2 gap-2">
+                  {(Object.entries(SERVICE_MODE_LABELS) as [ServiceMode, string][]).map(([k, label]) => (
+                    <Pill
+                      key={k}
+                      active={data.service_mode === k}
+                      onClick={() => update("service_mode", k)}
+                    >
+                      {label}
+                    </Pill>
+                  ))}
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  {data.service_mode === "contenido"
+                    ? "Catálogo y venta de contenido. WhatsApp/Telegram para negociación."
+                    : "Citas presenciales. WhatsApp/Telegram para coordinar."}
+                </p>
+
+                <div className="h-px bg-white/5 my-2" />
+
                 <SubLabel>Categoría</SubLabel>
                 <div className="grid grid-cols-3 gap-2">
                   {(Object.entries(CATEGORY_LABELS) as [Category, string][]).map(([k, label]) => (
