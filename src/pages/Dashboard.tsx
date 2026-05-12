@@ -324,6 +324,7 @@ const Dashboard = () => {
         work_zone: data.work_zone || null,
         category: data.category || null,
         service_type: null,
+        service_mode: data.service_mode,
         description: data.description || null,
         public_photos: data.public_photos,
         exclusive_photos: data.exclusive_photos,
