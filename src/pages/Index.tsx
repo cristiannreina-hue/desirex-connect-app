@@ -168,6 +168,7 @@ const Index = () => {
           return created ? new Date(created).getTime() > newCutoff : false;
         }
         if (quickFilter === "nearby") return baseCity ? p.city === baseCity : true;
+        if (quickFilter === "content") return p.serviceMode === "contenido";
         return true;
       })
       .filter((p) => (cityFilter === "all" ? true : p.city === cityFilter))
