@@ -53,6 +53,7 @@ export function dbToProfile(p: Row, sub?: Subscription): Profile {
     whatsapp: p.whatsapp ?? "",
     telegram: p.telegram ?? "",
     accountType: (anyP.account_type as any) ?? "visitor",
+    serviceMode: (anyP.service_mode as any) ?? "presencial",
     verified: p.is_verified ?? false,
     ratingAvg: p.rating_avg ?? 0,
     ratingCount: p.rating_count ?? 0,

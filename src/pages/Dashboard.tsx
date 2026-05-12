@@ -11,7 +11,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { COLOMBIA, DEPARTMENTS, getCityZones } from "@/data/colombia";
-import { CATEGORY_LABELS, type Category } from "@/types/profile";
+import { CATEGORY_LABELS, SERVICE_MODE_LABELS, type Category, type ServiceMode } from "@/types/profile";
 import { ImagePlus, Save, X, ShieldCheck, Crown, Lock, Video, BadgeCheck, Clock, Camera, FileText, Ruler, Sparkles, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -45,6 +45,7 @@ interface FormState {
   city: string;
   work_zone: string;
   category: Category | "";
+  service_mode: ServiceMode;
   description: string;
   public_photos: string[];
   exclusive_photos: string[];
@@ -60,7 +61,7 @@ const empty: FormState = {
   display_name: "", nickname: "", age: "", birth_date: "", birth_place: "",
   height: "", weight: "", hair_color: "", measurements: "",
   department: "", city: "", work_zone: "",
-  category: "", description: "",
+  category: "", service_mode: "presencial", description: "",
   public_photos: [], exclusive_photos: [], exclusive_videos: [],
   whatsapp: "", telegram: "",
   account_type: "creator", verification_status: "unverified", is_verified: false,
@@ -134,6 +135,7 @@ const Dashboard = () => {
             return "";
           })(),
           description: p.description ?? "",
+          service_mode: ((anyP.service_mode === "contenido" ? "contenido" : "presencial") as ServiceMode),
           public_photos: anyP.public_photos?.length ? anyP.public_photos : (p.photos ?? []).slice(0, PUBLIC_PHOTO_LIMIT),
           exclusive_photos: anyP.exclusive_photos ?? [],
           exclusive_videos: anyP.exclusive_videos ?? [],
@@ -322,6 +324,7 @@ const Dashboard = () => {
         work_zone: data.work_zone || null,
         category: data.category || null,
         service_type: null,
+        service_mode: data.service_mode,
         description: data.description || null,
         public_photos: data.public_photos,
         exclusive_photos: data.exclusive_photos,
@@ -586,6 +589,26 @@ const Dashboard = () => {
                     )}
                   </GlassField>
                 </div>
+
+                <div className="h-px bg-white/5 my-2" />
+
+                <SubLabel>Modalidad del servicio</SubLabel>
+                <div className="grid grid-cols-2 gap-2">
+                  {(Object.entries(SERVICE_MODE_LABELS) as [ServiceMode, string][]).map(([k, label]) => (
+                    <Pill
+                      key={k}
+                      active={data.service_mode === k}
+                      onClick={() => update("service_mode", k)}
+                    >
+                      {label}
+                    </Pill>
+                  ))}
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  {data.service_mode === "contenido"
+                    ? "Catálogo y venta de contenido. WhatsApp/Telegram para negociación."
+                    : "Citas presenciales. WhatsApp/Telegram para coordinar."}
+                </p>
 
                 <div className="h-px bg-white/5 my-2" />
 

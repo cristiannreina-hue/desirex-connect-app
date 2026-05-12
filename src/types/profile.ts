@@ -34,6 +34,14 @@ export interface Subscription {
 
 export type AccountType = "visitor" | "creator";
 
+/** Modalidad del servicio del creador */
+export type ServiceMode = "presencial" | "contenido";
+
+export const SERVICE_MODE_LABELS: Record<ServiceMode, string> = {
+  presencial: "Presencial / Citas",
+  contenido: "Venta de Contenido",
+};
+
 export interface Profile {
   id: string;
   userNumber?: number;
@@ -64,6 +72,7 @@ export interface Profile {
   whatsapp: string;
   telegram: string;
   accountType?: AccountType;
+  serviceMode?: ServiceMode;
   verified?: boolean;
   ratingAvg?: number;
   ratingCount?: number;

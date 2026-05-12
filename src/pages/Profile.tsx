@@ -134,7 +134,11 @@ const Profile = () => {
     );
   }
 
-  const waUrl = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(`Hola ${profile.name}, te contacto desde DeseoX 🔥`)}`;
+  const isContentMode = profile.serviceMode === "contenido";
+  const waMessage = isContentMode
+    ? `Hola ${profile.name}, vi tu catálogo en DeseoX y me interesa tu contenido 🔥`
+    : `Hola ${profile.name}, te contacto desde DeseoX 🔥`;
+  const waUrl = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(waMessage)}`;
   const tgUrl = `https://t.me/${profile.telegram}`;
 
   const rates = profile.rates ?? {};
@@ -275,6 +279,11 @@ const Profile = () => {
                 <span className="rounded-full bg-secondary px-3 py-1 text-xs font-medium ring-1 ring-border">
                   {CATEGORY_LABELS[profile.category]}
                 </span>
+                {isContentMode && (
+                  <span className="rounded-full bg-accent/15 px-3 py-1 text-xs font-bold text-accent ring-1 ring-accent/40">
+                    📦 Venta de contenido
+                  </span>
+                )}
                 {profile.userNumber && (
                   <span className="rounded-full bg-background/80 px-3 py-1 text-xs font-mono font-bold text-accent ring-1 ring-accent/40">
                     ID #{profile.userNumber}
@@ -290,7 +299,8 @@ const Profile = () => {
                   <MapPin className="h-5 w-5 text-accent" /> {profile.city}{profile.workZone ? ` · ${profile.workZone}` : ""}, {profile.department}
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[hsl(var(--online))]/15 px-2.5 py-1 text-[11px] font-bold text-[hsl(var(--online))] ring-1 ring-[hsl(var(--online))]/30">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--online))] animate-pulse" /> Activa ahora
+                  <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--online))] animate-pulse" />
+                  {isContentMode ? "Catálogo disponible" : "Activa ahora"}
                 </span>
               </div>
 
