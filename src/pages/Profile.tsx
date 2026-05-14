@@ -26,6 +26,8 @@ import { useAccountType } from "@/hooks/useAccountType";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { trackProfileView, trackContactClick } from "@/lib/analytics-track";
+import { usePreLaunchGate } from "@/hooks/usePreLaunchGate";
+import { PreLaunchModal } from "@/components/PreLaunchModal";
 
 const Profile = () => {
   const { id } = useParams();
