@@ -26,6 +26,7 @@ import { useUserCity } from "@/hooks/useUserCity";
 import heroCartagena from "@/assets/hero-cartagena.jpg";
 import heroPenol from "@/assets/hero-penol.jpg";
 import heroConcierge from "@/assets/hero-concierge.jpg";
+import { CountdownHero } from "@/components/CountdownHero";
 
 /* ============== Hero rotativo ============== */
 const HERO_SLIDES = [
