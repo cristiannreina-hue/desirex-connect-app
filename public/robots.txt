@@ -1,3 +1,5 @@
+Sitemap: https://deseo-x.com/sitemap.xml
+
 User-agent: *
 Allow: /$
 Allow: /index.html
