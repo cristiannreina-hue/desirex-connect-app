@@ -26,6 +26,7 @@ import { useUserCity } from "@/hooks/useUserCity";
 import heroCartagena from "@/assets/hero-cartagena.jpg";
 import heroPenol from "@/assets/hero-penol.jpg";
 import heroConcierge from "@/assets/hero-concierge.jpg";
+import { CountdownHero } from "@/components/CountdownHero";
 
 /* ============== Hero rotativo ============== */
 const HERO_SLIDES = [
@@ -314,10 +315,13 @@ const Index = () => {
         />
 
         <div className="container py-14 md:py-20 text-center relative">
+          {/* Countdown Pre-Lanzamiento */}
+          <CountdownHero />
+
           {/* Activity ping */}
           <span
             key={pingIdx}
-            className="inline-flex items-center gap-2 rounded-full card-glass px-3.5 py-1.5 text-xs animate-fade-in"
+            className="mt-4 inline-flex items-center gap-2 rounded-full card-glass px-3.5 py-1.5 text-xs animate-fade-in"
           >
             <span className="dot-online" />
             <span className="font-medium">{ACTIVITY_PINGS[pingIdx]}</span>

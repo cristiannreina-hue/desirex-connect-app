@@ -26,6 +26,8 @@ import { useAccountType } from "@/hooks/useAccountType";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { trackProfileView, trackContactClick } from "@/lib/analytics-track";
+import { usePreLaunchGate } from "@/hooks/usePreLaunchGate";
+import { PreLaunchModal } from "@/components/PreLaunchModal";
 
 const Profile = () => {
   const { id } = useParams();
@@ -140,6 +142,7 @@ const Profile = () => {
     : `Hola ${profile.name}, te contacto desde DeseoX 🔥`;
   const waUrl = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(waMessage)}`;
   const tgUrl = `https://t.me/${profile.telegram}`;
+  const gate = usePreLaunchGate();
 
   const rates = profile.rates ?? {};
   const hasAnyRate = !!(rates.short || rates.oneHour || rates.twoHours || rates.fullDay);
@@ -312,13 +315,29 @@ const Profile = () => {
             {/* Botones de contacto — protagonismo total, una sola fila */}
             <div className="grid grid-cols-2 gap-3">
               <Button asChild variant="whatsapp" size="xl" className="w-full rounded-full">
-                <a href={waUrl} target="_blank" rel="noopener noreferrer" onClick={() => dbProfile?.id && trackContactClick(dbProfile.id, "whatsapp")}>
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    if (gate.intercept(e)) return;
+                    if (dbProfile?.id) trackContactClick(dbProfile.id, "whatsapp");
+                  }}
+                >
                   <MessageCircle className="h-5 w-5" /> WhatsApp
                 </a>
               </Button>
               {profile.telegram && (
                 <Button asChild variant="telegram" size="xl" className="w-full rounded-full">
-                  <a href={tgUrl} target="_blank" rel="noopener noreferrer" onClick={() => dbProfile?.id && trackContactClick(dbProfile.id, "telegram")}>
+                  <a
+                    href={tgUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => {
+                      if (gate.intercept(e)) return;
+                      if (dbProfile?.id) trackContactClick(dbProfile.id, "telegram");
+                    }}
+                  >
                     <Send className="h-5 w-5" /> Telegram
                   </a>
                 </Button>
@@ -420,9 +439,12 @@ const Profile = () => {
         rel="noopener noreferrer"
         aria-label={`Contactar a ${profile.name} por WhatsApp`}
         className="fab-whatsapp"
+        onClick={(e) => gate.intercept(e)}
       >
         <MessageCircle className="h-7 w-7" />
       </a>
+
+      <PreLaunchModal open={gate.open} onOpenChange={gate.setOpen} source={`profile:${profile.id}`} />
 
       <Footer />
       <BottomNav />

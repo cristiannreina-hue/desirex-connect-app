@@ -30,6 +30,7 @@ import { BlurBrushEditor } from "@/components/BlurBrushEditor";
 import { ReachStats } from "@/components/dashboard/ReachStats";
 import { Switch } from "@/components/ui/switch";
 import { Eye, EyeOff } from "lucide-react";
+import { PreLaunchCreatorNotice } from "@/components/PreLaunchCreatorNotice";
 
 interface FormState {
   display_name: string;
@@ -416,6 +417,8 @@ const Dashboard = () => {
             <>
               {/* Banner KYC persistente */}
               <VerifiedBanner status={data.verification_status} verified={data.is_verified} />
+
+              <PreLaunchCreatorNotice />
 
               {/* Estadísticas de Alcance — solo planes pagos activos */}
               {user?.id && subActive && (tier === "boost" || tier === "elite" || tier === "vip") && <ReachStats profileId={user.id} />}
