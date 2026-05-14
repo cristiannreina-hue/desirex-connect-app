@@ -439,9 +439,12 @@ const Profile = () => {
         rel="noopener noreferrer"
         aria-label={`Contactar a ${profile.name} por WhatsApp`}
         className="fab-whatsapp"
+        onClick={(e) => gate.intercept(e)}
       >
         <MessageCircle className="h-7 w-7" />
       </a>
+
+      <PreLaunchModal open={gate.open} onOpenChange={gate.setOpen} source={`profile:${profile.id}`} />
 
       <Footer />
       <BottomNav />
