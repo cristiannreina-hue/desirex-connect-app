@@ -42,6 +42,7 @@ const Profile = () => {
   const [translation, setTranslation] = useState<string | null>(null);
   const [translating, setTranslating] = useState(false);
   const [showTranslated, setShowTranslated] = useState(false);
+  const gate = usePreLaunchGate();
 
   useEffect(() => {
     if (!id) { setLoading(false); return; }
@@ -142,7 +143,6 @@ const Profile = () => {
     : `Hola ${profile.name}, te contacto desde DeseoX 🔥`;
   const waUrl = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(waMessage)}`;
   const tgUrl = `https://t.me/${profile.telegram}`;
-  const gate = usePreLaunchGate();
 
   const rates = profile.rates ?? {};
   const hasAnyRate = !!(rates.short || rates.oneHour || rates.twoHours || rates.fullDay);
