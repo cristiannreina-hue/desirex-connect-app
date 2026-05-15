@@ -42,6 +42,7 @@ const Profile = () => {
   const [translation, setTranslation] = useState<string | null>(null);
   const [translating, setTranslating] = useState(false);
   const [showTranslated, setShowTranslated] = useState(false);
+  const gate = usePreLaunchGate();
 
   useEffect(() => {
     if (!id) { setLoading(false); return; }
