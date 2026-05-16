@@ -178,14 +178,27 @@ const Dashboard = () => {
     ? 0
     : (subActive ? (EXCLUSIVE_VIDEO_LIMIT_BY_TIER[effectiveTier] ?? FREE_EXCLUSIVE_VIDEOS) : FREE_EXCLUSIVE_VIDEOS);
 
+  // Cola para el "Pincel de Privacidad": primero editamos cada foto, luego subimos.
+  const [blurQueue, setBlurQueue] = useState<File[]>([]);
+  const [blurProcessed, setBlurProcessed] = useState<File[]>([]);
+  const [blurTarget, setBlurTarget] = useState<"public" | "exclusive" | null>(null);
+
   const onPublicPhotos = async (files: FileList | null) => {
     if (!files || !user) return;
     const remaining = publicPhotoLimit - data.public_photos.length;
     const picked = Array.from(files).slice(0, remaining);
+    if (picked.length === 0) return;
+    setBlurProcessed([]);
+    setBlurTarget("public");
+    setBlurQueue(picked);
+  };
+
+  const uploadPublicPhotos = async (filesToUpload: File[]) => {
+    if (!user || filesToUpload.length === 0) return;
     const uploaded: string[] = [];
     let originalBytes = 0;
     let finalBytes = 0;
-    for (const original of picked) {
+    for (const original of filesToUpload) {
       originalBytes += original.size;
       const file = await watermarkFile(original, { maxSide: PUBLIC_IMAGE_MAX_SIDE });
       finalBytes += file.size;
@@ -207,16 +220,13 @@ const Dashboard = () => {
     }
   };
 
-  // Cola para el "Pincel de Privacidad": primero editamos cada foto, luego subimos.
-  const [blurQueue, setBlurQueue] = useState<File[]>([]);
-  const [blurProcessed, setBlurProcessed] = useState<File[]>([]);
-
   const onExclusivePhotos = async (files: FileList | null) => {
     if (!files || !user) return;
     const remaining = exclusivePhotoLimit - data.exclusive_photos.length;
     const picked = Array.from(files).slice(0, remaining);
     if (picked.length === 0) return;
     setBlurProcessed([]);
+    setBlurTarget("exclusive");
     setBlurQueue(picked);
   };
 
@@ -252,14 +262,18 @@ const Dashboard = () => {
     setBlurProcessed(nextProcessed);
     setBlurQueue(nextQueue);
     if (nextQueue.length === 0) {
-      void uploadExclusivePhotos(nextProcessed);
+      const target = blurTarget;
       setBlurProcessed([]);
+      setBlurTarget(null);
+      if (target === "public") void uploadPublicPhotos(nextProcessed);
+      else if (target === "exclusive") void uploadExclusivePhotos(nextProcessed);
     }
   };
 
   const handleBlurCancel = () => {
     setBlurQueue([]);
     setBlurProcessed([]);
+    setBlurTarget(null);
   };
   const onExclusiveVideos = async (files: FileList | null) => {
     if (!files || !user) return;
