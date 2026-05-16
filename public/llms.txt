@@ -1,0 +1,20 @@
+# Deseo X
+
+> Plataforma colombiana de acompañantes y creadoras de contenido para adultos, con perfiles verificados, filtros por ciudad y categorías (Mujeres, Hombres, Venta de Contenido).
+
+Deseo X conecta visitantes con modelos verificadas en Colombia. Los perfiles incluyen fotos, reseñas, ubicación y contacto directo por WhatsApp/Telegram. Las creadoras gestionan su catálogo desde un panel propio.
+
+## Pages
+
+- [Inicio](/): Explora perfiles destacados y busca por ciudad o categoría.
+- [Planes](/planes): Planes de suscripción para creadoras.
+- [Registro](/registro): Alta de nuevas creadoras.
+- [Iniciar sesión](/auth): Acceso para usuarios y creadoras.
+- [Verificación](/verificacion): Proceso de verificación de identidad para modelos.
+
+## Legal
+
+- [Términos](/legal/terminos): Términos y condiciones de uso.
+- [Privacidad](/legal/privacidad): Política de privacidad.
+- [Cookies](/legal/cookies): Política de cookies.
+- [Aviso legal](/legal/disclaimer): Disclaimer y avisos legales.
