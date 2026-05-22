@@ -76,6 +76,7 @@ const App = () => (
             <Route path="/legal/disclaimer" element={<Disclaimer />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <FloatingAria />
         </BrowserRouter>
       </TooltipProvider>
     </I18nProvider>
