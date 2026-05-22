@@ -578,6 +578,61 @@ const Index = () => {
             </p>
           </div>
 
+          {/* Búsqueda con IA */}
+          <div className="card-glass rounded-2xl p-3 ring-1 ring-accent/30 bg-gradient-to-br from-accent/5 to-primary/5">
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const q = aiQuery.trim();
+                if (!q || aiLoading) return;
+                setAiLoading(true);
+                try {
+                  const knownCities = Array.from(new Set(allProfiles.map((p) => p.city))).sort();
+                  const { data, error } = await supabase.functions.invoke("ai-smart-search", {
+                    body: { query: q, cities: knownCities },
+                  });
+                  if (error) throw error;
+                  if ((data as any)?.error) throw new Error((data as any).error);
+                  const f = (data as any)?.filters ?? {};
+                  if (f.gender && ["mujeres", "hombres", "trans", "content"].includes(f.gender)) {
+                    setTab(f.gender);
+                  }
+                  setCityFilter(f.city && f.city !== "all" ? f.city : "all");
+                  setZoneFilter("all");
+                  setQuickFilter(f.quickFilter ?? "all");
+                  setQuery(f.keyword ?? "");
+                  toast.success("Filtros aplicados con IA ✨");
+                } catch (err: any) {
+                  toast.error(err?.message ?? "No se pudo procesar la búsqueda");
+                } finally {
+                  setAiLoading(false);
+                }
+              }}
+              className="relative"
+            >
+              <Wand2 className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-accent" />
+              <Input
+                type="text"
+                placeholder="Búsqueda con IA: «mujeres verificadas en Medellín cerca de El Poblado»"
+                value={aiQuery}
+                onChange={(e) => setAiQuery(e.target.value)}
+                maxLength={200}
+                disabled={aiLoading}
+                className="h-12 rounded-xl bg-background/60 pl-11 pr-28 text-base border-0"
+              />
+              <Button
+                type="submit"
+                size="sm"
+                variant="hero"
+                disabled={aiLoading || !aiQuery.trim()}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full gap-1.5"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                {aiLoading ? "Buscando…" : "Buscar"}
+              </Button>
+            </form>
+          </div>
+
           {/* Buscador */}
           <div className="card-glass rounded-2xl p-3">
             <div className="relative">
