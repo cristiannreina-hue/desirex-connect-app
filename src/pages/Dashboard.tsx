@@ -95,6 +95,7 @@ const Dashboard = () => {
   const [savingVisibility, setSavingVisibility] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [aiBioLoading, setAiBioLoading] = useState(false);
 
   useEffect(() => { document.title = "Panel de creador · DeseoX"; }, []);
 
