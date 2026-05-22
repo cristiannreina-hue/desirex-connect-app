@@ -88,6 +88,8 @@ const Index = () => {
   const [quickFilter, setQuickFilter] = useState<"all" | "new" | "verified" | "nearby">("all");
   const [cityFilter, setCityFilter] = useState<string>("all");
   const [zoneFilter, setZoneFilter] = useState<string>("all");
+  const [aiQuery, setAiQuery] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
 
   /* Carga */
   useEffect(() => {
