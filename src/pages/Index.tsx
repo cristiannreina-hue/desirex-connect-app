@@ -14,6 +14,7 @@ import {
   Flame, Search, X, MapPin, Sparkles, Crown, ChevronRight, Star, TrendingUp, ShieldCheck, BadgeCheck, Package, Wand2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { dbToProfile } from "@/lib/db-mappers";
 import type { Profile, Gender, Subscription } from "@/types/profile";
