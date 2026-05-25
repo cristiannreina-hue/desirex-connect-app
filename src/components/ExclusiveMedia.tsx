@@ -26,10 +26,11 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
   const [videos, setVideos] = useState<Resolved[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const canViewPhotos = exclusivePhotos.length > 0;
+  const canViewVideos = hasAccess;
 
   useEffect(() => {
-    if (!hasAccess) return;
-    const all = [...exclusivePhotos, ...exclusiveVideos];
+    const all = [...exclusivePhotos, ...(canViewVideos ? exclusiveVideos : [])];
     if (all.length === 0) return;
     let cancelled = false;
     setLoading(true);
@@ -68,9 +69,9 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
             <Tile
               key={`p-${p}`}
               type="photo"
-              url={hasAccess ? url : null}
-              locked={!hasAccess}
-              loading={loading && hasAccess}
+              url={canViewPhotos ? url : null}
+              locked={!canViewPhotos}
+              loading={loading && canViewPhotos}
               onOpenPhoto={setSelectedPhoto}
             />
           );
@@ -78,7 +79,7 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
         {exclusiveVideos.map((p) => {
           const url = videos.find((x) => x.path === p)?.url ?? null;
           return (
-            <Tile key={`v-${p}`} type="video" url={hasAccess ? url : null} locked={!hasAccess} loading={loading && hasAccess} />
+            <Tile key={`v-${p}`} type="video" url={canViewVideos ? url : null} locked={!canViewVideos} loading={loading && canViewVideos} />
           );
         })}
       </div>
@@ -100,7 +101,7 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
         </DialogContent>
       </Dialog>
 
-      {!hasAccess && (
+      {!canViewVideos && exclusiveVideos.length > 0 && (
         <div className="mt-4 card-premium rounded-2xl p-6 text-center">
           <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/15 text-accent ring-1 ring-accent/40">
             <Sparkles className="h-6 w-6" />
