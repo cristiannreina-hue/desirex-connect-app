@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Lock, Crown, Play, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n";
 import { WatermarkOverlay } from "@/components/WatermarkOverlay";
 import { useAuth } from "@/hooks/useAuth";
@@ -24,16 +25,16 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
   const [photos, setPhotos] = useState<Resolved[]>([]);
   const [videos, setVideos] = useState<Resolved[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const canViewPhotos = exclusivePhotos.length > 0;
+  const canViewVideos = hasAccess;
 
   useEffect(() => {
-    if (!hasAccess) return;
-    const all = [...exclusivePhotos, ...exclusiveVideos];
+    const all = [...exclusivePhotos, ...(canViewVideos ? exclusiveVideos : [])];
     if (all.length === 0) return;
     let cancelled = false;
     setLoading(true);
     (async () => {
-      const { data: sess } = await supabase.auth.getSession();
-      if (!sess?.session) { if (!cancelled) setLoading(false); return; }
       const { data, error } = await supabase.functions
         .invoke("exclusive-media-url", { body: { profileId, paths: all } });
       if (cancelled) return;
@@ -65,18 +66,42 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
         {exclusivePhotos.map((p, i) => {
           const url = photos.find((x) => x.path === p)?.url ?? null;
           return (
-            <Tile key={`p-${p}`} type="photo" url={hasAccess ? url : null} locked={!hasAccess} loading={loading && hasAccess} />
+            <Tile
+              key={`p-${p}`}
+              type="photo"
+              url={canViewPhotos ? url : null}
+              locked={!canViewPhotos}
+              loading={loading && canViewPhotos}
+              onOpenPhoto={setSelectedPhoto}
+            />
           );
         })}
         {exclusiveVideos.map((p) => {
           const url = videos.find((x) => x.path === p)?.url ?? null;
           return (
-            <Tile key={`v-${p}`} type="video" url={hasAccess ? url : null} locked={!hasAccess} loading={loading && hasAccess} />
+            <Tile key={`v-${p}`} type="video" url={canViewVideos ? url : null} locked={!canViewVideos} loading={loading && canViewVideos} />
           );
         })}
       </div>
 
-      {!hasAccess && (
+      <Dialog open={!!selectedPhoto} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
+        <DialogContent className="max-w-5xl border-border bg-background p-2 sm:p-3">
+          <DialogTitle className="sr-only">Foto exclusiva ampliada</DialogTitle>
+          {selectedPhoto && (
+            <div className="overflow-hidden rounded-md">
+              <WatermarkOverlay size="lg" className="w-full">
+                <img
+                  src={selectedPhoto}
+                  alt="Foto exclusiva ampliada"
+                  className="max-h-[85vh] w-full object-contain"
+                />
+              </WatermarkOverlay>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {!canViewVideos && exclusiveVideos.length > 0 && (
         <div className="mt-4 card-premium rounded-2xl p-6 text-center">
           <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/15 text-accent ring-1 ring-accent/40">
             <Sparkles className="h-6 w-6" />
@@ -105,15 +130,30 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
 };
 
 const Tile = ({
-  type, url, locked, loading,
-}: { type: "photo" | "video"; url: string | null; locked: boolean; loading: boolean }) => {
+  type, url, locked, loading, onOpenPhoto,
+}: {
+  type: "photo" | "video";
+  url: string | null;
+  locked: boolean;
+  loading: boolean;
+  onOpenPhoto?: (url: string) => void;
+}) => {
   return (
     <div className="relative aspect-square rounded-xl overflow-hidden ring-1 ring-border bg-secondary">
       {url ? (
-        <WatermarkOverlay size="sm" className="h-full w-full">
-          {type === "photo" ? (
-            <img src={url} alt="exclusive" className="h-full w-full object-cover" />
-          ) : (
+        type === "photo" ? (
+          <button
+            type="button"
+            onClick={() => onOpenPhoto?.(url)}
+            className="h-full w-full cursor-zoom-in"
+            aria-label="Ampliar foto exclusiva"
+          >
+            <WatermarkOverlay size="sm" className="h-full w-full">
+              <img src={url} alt="exclusive" className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" />
+            </WatermarkOverlay>
+          </button>
+        ) : (
+          <WatermarkOverlay size="sm" className="h-full w-full">
             <video
               src={url}
               className="h-full w-full object-cover"
@@ -123,8 +163,8 @@ const Tile = ({
               onContextMenu={(e) => e.preventDefault()}
               preload="metadata"
             />
-          )}
-        </WatermarkOverlay>
+          </WatermarkOverlay>
+        )
       ) : (
         <div className={`h-full w-full ${locked ? "blur-2xl" : ""} bg-gradient-to-br from-secondary to-background flex items-center justify-center`}>
           {type === "video" && <Play className="h-7 w-7 text-foreground/40" />}

@@ -30,13 +30,6 @@ Deno.serve(async (req) => {
         userId = userData?.user?.id ?? null;
       }
     }
-    if (!userId) {
-      return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const body = await req.json().catch(() => ({}));
     const paths: string[] = Array.isArray(body?.paths) ? body.paths : [];
     const profileId: string | undefined = body?.profileId;
@@ -49,10 +42,22 @@ Deno.serve(async (req) => {
 
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
 
-    // Si es el dueño, siempre dejar
-    let allowed = userId === profileId;
+    const { data: profileRow } = await admin
+      .from("profiles")
+      .select("exclusive_photos, exclusive_videos")
+      .eq("id", profileId)
+      .maybeSingle();
 
-    if (!allowed) {
+    const profileExclusivePhotos = new Set<string>(profileRow?.exclusive_photos ?? []);
+    const profileExclusiveVideos = new Set<string>(profileRow?.exclusive_videos ?? []);
+
+    // Fotos exclusivas públicas; videos siguen protegidos.
+    const publicPhotoPaths = paths.filter((p) => typeof p === "string" && p.startsWith(`${profileId}/`) && profileExclusivePhotos.has(p));
+
+    // Si es el dueño, siempre dejar
+    let allowed = !!userId && userId === profileId;
+
+    if (!allowed && userId) {
       // Las cuentas visitantes tienen acceso libre al contenido exclusivo de creadoras
       const { data: prof } = await admin
         .from("profiles")
@@ -77,15 +82,18 @@ Deno.serve(async (req) => {
       }
     }
 
-    if (!allowed) {
-      return new Response(JSON.stringify({ error: "subscription_required" }), {
-        status: 402,
+    // Validar que cada path pertenezca al profileId solicitado.
+    const gatedVideoPaths = allowed
+      ? paths.filter((p) => typeof p === "string" && p.startsWith(`${profileId}/`) && profileExclusiveVideos.has(p))
+      : [];
+    const safe = [...new Set([...publicPhotoPaths, ...gatedVideoPaths])];
+
+    if (!safe.length) {
+      return new Response(JSON.stringify({ error: allowed ? "no_media_available" : "subscription_required", urls: [] }), {
+        status: allowed ? 200 : 402,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    // Validar que cada path pertenezca al profileId solicitado
-    const safe = paths.filter((p) => typeof p === "string" && p.startsWith(`${profileId}/`));
 
     const urls = await Promise.all(
       safe.map(async (p) => {
