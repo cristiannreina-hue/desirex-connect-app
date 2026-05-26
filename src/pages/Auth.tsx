@@ -93,6 +93,8 @@ const mapAuthError = (msg?: string): string => {
   if (!msg) return "Ocurrió un error inesperado";
   const m = msg.toLowerCase();
   if (m.includes("invalid login")) return "Email o contraseña incorrectos";
+  if (m.includes("email logins are disabled") || m.includes("email provider is disabled") || m.includes("provider_disabled"))
+    return "El acceso con email está desactivado temporalmente. Lo estoy corrigiendo en la configuración.";
   if (m.includes("email not confirmed"))
     return "Debes verificar tu correo antes de iniciar sesión";
   if (m.includes("user already registered") || m.includes("already registered"))
@@ -243,7 +245,7 @@ const Auth = () => {
         toast({
           title: "Registro exitoso",
           description:
-            "Revisa tu bandeja de entrada (y la carpeta de spam) para verificar tu correo antes de acceder.",
+            "Tu cuenta fue creada y ya puedes iniciar sesión sin verificar el correo.",
         });
 
         setPassword("");
@@ -350,7 +352,7 @@ const Auth = () => {
               {mode === "login"
                 ? "Inicia sesión para gestionar tu perfil."
                 : mode === "signup"
-                  ? `Cuenta de ${intent === "creator" ? "creadora" : "visitante"} · te enviaremos un correo de verificación para activar el acceso.`
+                  ? `Cuenta de ${intent === "creator" ? "creadora" : "visitante"} · acceso inmediato después del registro.`
                   : "Te enviaremos un enlace para restablecerla."}
             </p>
 
