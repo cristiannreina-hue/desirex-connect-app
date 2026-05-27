@@ -9,3 +9,5 @@ project_id = "fzltwigszgqtqagjgaer"
     verify_jwt = true
   [functions.process-email-queue]
     verify_jwt = true
+  [functions.exclusive-media-url]
+    verify_jwt = false
