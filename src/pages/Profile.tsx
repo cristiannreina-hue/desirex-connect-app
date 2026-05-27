@@ -414,7 +414,7 @@ const Profile = () => {
           profileId={profile.id}
           exclusivePhotos={profile.exclusivePhotos ?? []}
           exclusiveVideos={profile.exclusiveVideos ?? []}
-          hasAccess={accessExclusive}
+          hasAccess={true}
         />
 
         {/* Reseñas — solo logueados pueden comentar (lo gestiona el componente) */}
