@@ -42,6 +42,7 @@ const Profile = () => {
   const [translation, setTranslation] = useState<string | null>(null);
   const [translating, setTranslating] = useState(false);
   const [showTranslated, setShowTranslated] = useState(false);
+  const [lightbox, setLightbox] = useState<string | null>(null);
   const gate = usePreLaunchGate();
 
   useEffect(() => {
@@ -223,8 +224,9 @@ const Profile = () => {
                     alt={`${profile.name} ${i + 1}`}
                     width={768}
                     height={960}
+                    onClick={() => setLightbox(src)}
                     className={cn(
-                      "absolute inset-0 h-full w-full object-cover transition-opacity duration-1000",
+                      "absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 cursor-zoom-in",
                       i === photoIdx ? "opacity-100" : "opacity-0",
                     )}
                   />
@@ -409,12 +411,13 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Contenido exclusivo (paywall con signed URLs) */}
+        {/* Contenido exclusivo (ahora público para todos) */}
         <ExclusiveMedia
           profileId={profile.id}
           exclusivePhotos={profile.exclusivePhotos ?? []}
           exclusiveVideos={profile.exclusiveVideos ?? []}
           hasAccess={true}
+          onPhotoClick={(url) => setLightbox(url)}
         />
 
         {/* Reseñas — solo logueados pueden comentar (lo gestiona el componente) */}
@@ -445,6 +448,20 @@ const Profile = () => {
       </a>
 
       <PreLaunchModal open={gate.open} onOpenChange={gate.setOpen} source={`profile:${profile.id}`} />
+
+      {lightbox && (
+        <div
+          onClick={() => setLightbox(null)}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-background/95 backdrop-blur-sm p-4 cursor-zoom-out animate-in fade-in"
+        >
+          <img
+            src={lightbox}
+            alt="Foto ampliada"
+            className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
 
       <Footer />
       <BottomNav />

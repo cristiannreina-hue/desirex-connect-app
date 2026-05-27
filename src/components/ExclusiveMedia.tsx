@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
 import { WatermarkOverlay } from "@/components/WatermarkOverlay";
 import { useAuth } from "@/hooks/useAuth";
+import { cn } from "@/lib/utils";
 
 interface Props {
   profileId: string;
@@ -13,11 +14,12 @@ interface Props {
   exclusiveVideos: string[];
   /** Si el visitante tiene suscripción activa (o es el dueño) */
   hasAccess: boolean;
+  onPhotoClick?: (url: string) => void;
 }
 
 interface Resolved { path: string; url: string | null }
 
-export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, hasAccess }: Props) => {
+export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, hasAccess, onPhotoClick }: Props) => {
   const { t } = useI18n();
   const { user } = useAuth();
   const location = useLocation();
@@ -59,10 +61,11 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-        {exclusivePhotos.map((p, i) => {
+        {exclusivePhotos.map((p) => {
           const url = photos.find((x) => x.path === p)?.url ?? null;
           return (
-            <Tile key={`p-${p}`} type="photo" url={hasAccess ? url : null} locked={!hasAccess} loading={loading && hasAccess} />
+            <Tile key={`p-${p}`} type="photo" url={hasAccess ? url : null} locked={!hasAccess} loading={loading && hasAccess}
+              onClick={url && onPhotoClick ? () => onPhotoClick(url) : undefined} />
           );
         })}
         {exclusiveVideos.map((p) => {
@@ -102,10 +105,10 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
 };
 
 const Tile = ({
-  type, url, locked, loading,
-}: { type: "photo" | "video"; url: string | null; locked: boolean; loading: boolean }) => {
+  type, url, locked, loading, onClick,
+}: { type: "photo" | "video"; url: string | null; locked: boolean; loading: boolean; onClick?: () => void }) => {
   return (
-    <div className="relative aspect-square rounded-xl overflow-hidden ring-1 ring-border bg-secondary">
+    <div onClick={onClick} className={cn("relative aspect-square rounded-xl overflow-hidden ring-1 ring-border bg-secondary", onClick && "cursor-zoom-in")}>
       {url ? (
         <WatermarkOverlay size="sm" className="h-full w-full">
           {type === "photo" ? (
