@@ -224,8 +224,9 @@ const Profile = () => {
                     alt={`${profile.name} ${i + 1}`}
                     width={768}
                     height={960}
+                    onClick={() => setLightbox(src)}
                     className={cn(
-                      "absolute inset-0 h-full w-full object-cover transition-opacity duration-1000",
+                      "absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 cursor-zoom-in",
                       i === photoIdx ? "opacity-100" : "opacity-0",
                     )}
                   />
