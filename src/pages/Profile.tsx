@@ -411,12 +411,13 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Contenido exclusivo (paywall con signed URLs) */}
+        {/* Contenido exclusivo (ahora público para todos) */}
         <ExclusiveMedia
           profileId={profile.id}
           exclusivePhotos={profile.exclusivePhotos ?? []}
           exclusiveVideos={profile.exclusiveVideos ?? []}
           hasAccess={true}
+          onPhotoClick={(url) => setLightbox(url)}
         />
 
         {/* Reseñas — solo logueados pueden comentar (lo gestiona el componente) */}
