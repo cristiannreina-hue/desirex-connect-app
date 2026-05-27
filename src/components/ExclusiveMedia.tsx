@@ -13,11 +13,12 @@ interface Props {
   exclusiveVideos: string[];
   /** Si el visitante tiene suscripción activa (o es el dueño) */
   hasAccess: boolean;
+  onPhotoClick?: (url: string) => void;
 }
 
 interface Resolved { path: string; url: string | null }
 
-export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, hasAccess }: Props) => {
+export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, hasAccess, onPhotoClick }: Props) => {
   const { t } = useI18n();
   const { user } = useAuth();
   const location = useLocation();
