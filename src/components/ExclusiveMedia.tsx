@@ -60,10 +60,11 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-        {exclusivePhotos.map((p, i) => {
+        {exclusivePhotos.map((p) => {
           const url = photos.find((x) => x.path === p)?.url ?? null;
           return (
-            <Tile key={`p-${p}`} type="photo" url={hasAccess ? url : null} locked={!hasAccess} loading={loading && hasAccess} />
+            <Tile key={`p-${p}`} type="photo" url={hasAccess ? url : null} locked={!hasAccess} loading={loading && hasAccess}
+              onClick={url && onPhotoClick ? () => onPhotoClick(url) : undefined} />
           );
         })}
         {exclusiveVideos.map((p) => {
