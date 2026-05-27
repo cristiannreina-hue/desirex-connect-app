@@ -104,10 +104,10 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
 };
 
 const Tile = ({
-  type, url, locked, loading,
-}: { type: "photo" | "video"; url: string | null; locked: boolean; loading: boolean }) => {
+  type, url, locked, loading, onClick,
+}: { type: "photo" | "video"; url: string | null; locked: boolean; loading: boolean; onClick?: () => void }) => {
   return (
-    <div className="relative aspect-square rounded-xl overflow-hidden ring-1 ring-border bg-secondary">
+    <div onClick={onClick} className={cn("relative aspect-square rounded-xl overflow-hidden ring-1 ring-border bg-secondary", onClick && "cursor-zoom-in")}>
       {url ? (
         <WatermarkOverlay size="sm" className="h-full w-full">
           {type === "photo" ? (
