@@ -26,14 +26,11 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!hasAccess) return;
     const all = [...exclusivePhotos, ...exclusiveVideos];
     if (all.length === 0) return;
     let cancelled = false;
     setLoading(true);
     (async () => {
-      const { data: sess } = await supabase.auth.getSession();
-      if (!sess?.session) { if (!cancelled) setLoading(false); return; }
       const { data, error } = await supabase.functions
         .invoke("exclusive-media-url", { body: { profileId, paths: all } });
       if (cancelled) return;
@@ -46,7 +43,7 @@ export const ExclusiveMedia = ({ profileId, exclusivePhotos, exclusiveVideos, ha
       setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [profileId, hasAccess, exclusivePhotos.join(","), exclusiveVideos.join(",")]);
+  }, [profileId, exclusivePhotos.join(","), exclusiveVideos.join(",")]);
 
   const total = exclusivePhotos.length + exclusiveVideos.length;
   if (total === 0) return null;
