@@ -449,6 +449,20 @@ const Profile = () => {
 
       <PreLaunchModal open={gate.open} onOpenChange={gate.setOpen} source={`profile:${profile.id}`} />
 
+      {lightbox && (
+        <div
+          onClick={() => setLightbox(null)}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-background/95 backdrop-blur-sm p-4 cursor-zoom-out animate-in fade-in"
+        >
+          <img
+            src={lightbox}
+            alt="Foto ampliada"
+            className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+
       <Footer />
       <BottomNav />
     </div>
