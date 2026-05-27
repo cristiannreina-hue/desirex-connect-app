@@ -9,11 +9,3 @@ project_id = "fzltwigszgqtqagjgaer"
     verify_jwt = true
   [functions.process-email-queue]
     verify_jwt = true
-  [functions.ai-bio-assistant]
-    verify_jwt = false
-  [functions.ai-help-chat]
-    verify_jwt = false
-  [functions.ai-smart-search]
-    verify_jwt = false
-  [functions.exclusive-media-url]
-    verify_jwt = false

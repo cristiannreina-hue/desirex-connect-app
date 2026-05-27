@@ -23,7 +23,6 @@ import Privacidad from "./pages/legal/Privacidad.tsx";
 import CookiesPage from "./pages/legal/Cookies.tsx";
 import Disclaimer from "./pages/legal/Disclaimer.tsx";
 import NotFound from "./pages/NotFound.tsx";
-import { HelpChatWidget } from "@/components/HelpChatWidget";
 
 const queryClient = new QueryClient();
 
@@ -31,14 +30,6 @@ const VisitTracker = () => {
   const { pathname } = useLocation();
   useEffect(() => { void trackSiteVisit(pathname); }, [pathname]);
   return null;
-};
-
-const FloatingAria = () => {
-  const { pathname } = useLocation();
-  const hidden = ["/admin", "/dashboard", "/auth", "/registro", "/verificar", "/reset-password"]
-    .some((p) => pathname.startsWith(p));
-  if (hidden) return null;
-  return <HelpChatWidget />;
 };
 
 const App = () => (
@@ -76,7 +67,6 @@ const App = () => (
             <Route path="/legal/disclaimer" element={<Disclaimer />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <FloatingAria />
         </BrowserRouter>
       </TooltipProvider>
     </I18nProvider>

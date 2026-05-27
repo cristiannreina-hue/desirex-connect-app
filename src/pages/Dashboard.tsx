@@ -95,7 +95,6 @@ const Dashboard = () => {
   const [savingVisibility, setSavingVisibility] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [aiBioLoading, setAiBioLoading] = useState(false);
 
   useEffect(() => { document.title = "Panel de creador · DeseoX"; }, []);
 
@@ -538,53 +537,6 @@ const Dashboard = () => {
                     placeholder="Cuéntale al mundo cómo eres, qué te apasiona, qué te hace única..."
                     className="bg-white/[0.03] border-white/10 text-white placeholder:text-white/30 rounded-2xl backdrop-blur-md focus-visible:ring-accent/60 focus-visible:border-accent/40 resize-none"
                   />
-                  <div className="mt-2 flex flex-wrap gap-2 items-center">
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      disabled={aiBioLoading}
-                      onClick={async () => {
-                        const hasText = data.description.trim().length >= 10;
-                        setAiBioLoading(true);
-                        try {
-                          const { data: res, error } = await supabase.functions.invoke("ai-bio-assistant", {
-                            body: {
-                              text: data.description,
-                              displayName: data.display_name,
-                              category: data.category,
-                              city: data.city,
-                              mode: hasText ? "improve" : "generate",
-                            },
-                          });
-                          if (error) throw error;
-                          if ((res as any)?.error) throw new Error((res as any).error);
-                          const bio = (res as any)?.bio;
-                          if (bio) {
-                            update("description", bio);
-                            toast.success(hasText ? "Biografía mejorada con IA" : "Biografía generada con IA");
-                          } else {
-                            toast.error("No se pudo generar la biografía");
-                          }
-                        } catch (e: any) {
-                          toast.error(e?.message ?? "Error de IA");
-                        } finally {
-                          setAiBioLoading(false);
-                        }
-                      }}
-                      className="gap-1.5 rounded-full"
-                    >
-                      <Sparkles className="h-3.5 w-3.5" />
-                      {aiBioLoading
-                        ? "Generando…"
-                        : data.description.trim().length >= 10
-                          ? "Mejorar con IA"
-                          : "Generar con IA"}
-                    </Button>
-                    <p className="text-[11px] text-white/40">
-                      La IA usa un tono elegante y elimina lenguaje vulgar.
-                    </p>
-                  </div>
                 </GlassField>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <GlassField label="WhatsApp (sin +)">
