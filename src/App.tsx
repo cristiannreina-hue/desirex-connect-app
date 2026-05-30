@@ -58,7 +58,7 @@ const App = () => (
             <Route path="/verificar" element={<VerifyOtp />} />
             <Route path="/verificacion" element={<Verificacion />} />
             <Route path="/cuenta" element={<Cuenta />} />
-            <Route path="/planes" element={<Planes />} />
+            <Route path="/planes" element={<Navigate to="/cuenta" replace />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/legal/terminos" element={<Terminos />} />
             <Route path="/legal/privacidad" element={<Privacidad />} />
