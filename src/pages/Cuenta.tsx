@@ -333,7 +333,7 @@ const Cuenta = () => {
             </div>
             {subs.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-4">
-                Aún no tienes suscripciones. <Link to="/planes" className="text-accent hover:underline">Ver planes</Link>
+                Aún no tienes suscripciones.
               </p>
             ) : (
               <ul className="space-y-2">
