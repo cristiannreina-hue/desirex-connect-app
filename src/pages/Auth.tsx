@@ -108,8 +108,8 @@ const Auth = () => {
     setLoading(true);
     try {
       if (mode === "signup") {
-        if (password.length < 6)
-          throw new Error("La contraseña debe tener al menos 6 caracteres");
+        const pwError = validatePassword(password);
+        if (pwError) throw new Error(pwError);
         if (password !== confirmPassword)
           throw new Error("Las contraseñas no coinciden");
         if (!birthDate) throw new Error("La fecha de nacimiento es obligatoria");
