@@ -115,7 +115,7 @@ const ResetPassword = () => {
                   id="confirm"
                   type="password"
                   required
-                  minLength={6}
+                  minLength={PASSWORD_MIN_LENGTH}
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   className="bg-background/60 pl-10"
