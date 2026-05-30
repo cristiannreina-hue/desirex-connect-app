@@ -16,7 +16,7 @@ import ResetPassword from "./pages/ResetPassword.tsx";
 import VerifyOtp from "./pages/VerifyOtp.tsx";
 import Verificacion from "./pages/Verificacion.tsx";
 import Cuenta from "./pages/Cuenta.tsx";
-import Planes from "./pages/Planes.tsx";
+
 import Admin from "./pages/Admin.tsx";
 import Terminos from "./pages/legal/Terminos.tsx";
 import Privacidad from "./pages/legal/Privacidad.tsx";
