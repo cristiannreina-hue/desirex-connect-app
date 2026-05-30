@@ -244,14 +244,31 @@ const Auth = () => {
                       id="password"
                       type="password"
                       required
-                      minLength={6}
+                      minLength={mode === "signup" ? PASSWORD_MIN_LENGTH : 6}
                       autoComplete={mode === "signup" ? "new-password" : "current-password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Mínimo 6 caracteres"
+                      placeholder={mode === "signup" ? `Mínimo ${PASSWORD_MIN_LENGTH} caracteres` : "Tu contraseña"}
                       className="bg-background/60 pl-10"
                     />
                   </div>
+                  {mode === "signup" && password.length > 0 && (() => {
+                    const { score, label } = passwordStrength(password);
+                    const colors = ["bg-destructive", "bg-destructive", "bg-yellow-500", "bg-green-500", "bg-emerald-500"];
+                    const err = validatePassword(password);
+                    return (
+                      <div className="space-y-1">
+                        <div className="flex gap-1">
+                          {[0, 1, 2, 3].map((i) => (
+                            <div key={i} className={`h-1 flex-1 rounded-full ${i < score ? colors[score] : "bg-muted"}`} />
+                          ))}
+                        </div>
+                        <p className={`text-xs ${err ? "text-muted-foreground" : "text-green-500"}`}>
+                          {err ?? `Fortaleza: ${label}`}
+                        </p>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
 
