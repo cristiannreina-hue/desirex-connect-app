@@ -16,7 +16,7 @@ import ResetPassword from "./pages/ResetPassword.tsx";
 import VerifyOtp from "./pages/VerifyOtp.tsx";
 import Verificacion from "./pages/Verificacion.tsx";
 import Cuenta from "./pages/Cuenta.tsx";
-import Planes from "./pages/Planes.tsx";
+
 import Admin from "./pages/Admin.tsx";
 import Terminos from "./pages/legal/Terminos.tsx";
 import Privacidad from "./pages/legal/Privacidad.tsx";
@@ -58,7 +58,7 @@ const App = () => (
             <Route path="/verificar" element={<VerifyOtp />} />
             <Route path="/verificacion" element={<Verificacion />} />
             <Route path="/cuenta" element={<Cuenta />} />
-            <Route path="/planes" element={<Planes />} />
+            <Route path="/planes" element={<Navigate to="/cuenta" replace />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/legal/terminos" element={<Terminos />} />
             <Route path="/legal/privacidad" element={<Privacidad />} />

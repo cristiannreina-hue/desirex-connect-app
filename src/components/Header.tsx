@@ -14,12 +14,11 @@ export const Header = () => {
   const { accountType } = useAccountType(user?.id);
 
   // Visitantes NO pueden auto-promoverse a creador desde el header.
-  // Si quieren ser creadores deben ir a /planes y contratar un plan.
   const creatorCtaHref = !user
     ? "/registro"
     : accountType === "creator"
       ? "/dashboard"
-      : "/planes";
+      : "/registro";
   const creatorCtaLabel = !user
     ? "Unirme a DeseoX"
     : accountType === "creator"
@@ -44,19 +43,6 @@ export const Header = () => {
           >
             <Compass className="h-4 w-4" /> {t("nav.explore")}
           </NavLink>
-          {accountType === "creator" && (
-            <NavLink
-              to="/planes"
-              className={({ isActive }) =>
-                cn(
-                  "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm transition-all",
-                  isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground",
-                )
-              }
-            >
-              <Crown className="h-4 w-4" /> {t("nav.plans")}
-            </NavLink>
-          )}
         </nav>
 
         <div className="flex items-center gap-2">
