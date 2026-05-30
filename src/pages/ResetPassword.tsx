@@ -31,8 +31,9 @@ const ResetPassword = () => {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) {
-      toast({ title: "Contraseña muy corta", description: "Mínimo 6 caracteres", variant: "destructive" });
+    const pwError = validatePassword(password);
+    if (pwError) {
+      toast({ title: "Contraseña insegura", description: pwError, variant: "destructive" });
       return;
     }
     if (password !== confirm) {
