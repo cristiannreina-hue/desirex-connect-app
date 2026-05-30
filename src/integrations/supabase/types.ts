@@ -628,7 +628,15 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      creator_subscriptions_public: {
+        Row: {
+          expires_at: string | null
+          status: Database["public"]["Enums"]["subscription_status"] | null
+          tier: Database["public"]["Enums"]["subscription_tier"] | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       _current_tier: { Args: { _uid: string }; Returns: string }
