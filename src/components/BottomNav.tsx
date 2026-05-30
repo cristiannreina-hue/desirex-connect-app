@@ -1,24 +1,18 @@
 import { NavLink } from "react-router-dom";
-import { Home, Compass, Crown, User } from "lucide-react";
+import { Home, Compass, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
-import { useAccountType } from "@/hooks/useAccountType";
 
 const allItems = [
   { to: "/", label: "Inicio", icon: Home, end: true },
   { to: "/explorar", label: "Explorar", icon: Compass, end: false },
-  { to: "/planes", label: "Planes", icon: Crown, end: false, creatorOnly: true },
   { to: "/cuenta", label: "Perfil", icon: User, end: false, requiresAuth: true },
 ];
 
 export const BottomNav = () => {
   const { user } = useAuth();
-  const { accountType } = useAccountType(user?.id);
 
-  // Solo las creadoras ven la opción de Planes (planes de suscripción para creadoras).
-  const items = allItems.filter(
-    (it) => !(it.creatorOnly && accountType !== "creator"),
-  );
+  const items = allItems;
 
   return (
     <nav
