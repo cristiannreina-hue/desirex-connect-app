@@ -119,7 +119,7 @@ const Auth = () => {
           throw new Error("Debes aceptar los Términos y Condiciones para continuar");
 
         const redirectPath = safeRedirect ?? (intent === "creator" ? "/verificacion" : "/cuenta");
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -130,7 +130,19 @@ const Auth = () => {
             },
           },
         });
-        if (error) throw error;
+        if (error) {
+          // Supabase devuelve este error cuando el correo ya está confirmado
+          if (/already registered|already exists|user.*exists/i.test(error.message)) {
+            throw new Error("Este correo ya está registrado. Inicia sesión o usa otro correo.");
+          }
+          throw error;
+        }
+        // Cuando la confirmación de email está activa, Supabase devuelve un usuario
+        // con `identities: []` si el correo ya existe (para no filtrar cuentas).
+        // Detectamos ese caso y avisamos al usuario.
+        if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+          throw new Error("Este correo ya está registrado. Inicia sesión o usa otro correo.");
+        }
 
         sessionStorage.removeItem("deseox.pendingSignup");
         sessionStorage.setItem("deseox.intent", intent);
