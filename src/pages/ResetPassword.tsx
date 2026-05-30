@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Lock, ShieldCheck } from "lucide-react";
+import { validatePassword, passwordStrength, PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -30,8 +31,9 @@ const ResetPassword = () => {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) {
-      toast({ title: "Contraseña muy corta", description: "Mínimo 6 caracteres", variant: "destructive" });
+    const pwError = validatePassword(password);
+    if (pwError) {
+      toast({ title: "Contraseña insegura", description: pwError, variant: "destructive" });
       return;
     }
     if (password !== confirm) {
@@ -80,12 +82,30 @@ const ResetPassword = () => {
                   id="password"
                   type="password"
                   required
-                  minLength={6}
+                  minLength={PASSWORD_MIN_LENGTH}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  placeholder={`Mínimo ${PASSWORD_MIN_LENGTH} caracteres`}
                   className="bg-background/60 pl-10"
                 />
               </div>
+              {password.length > 0 && (() => {
+                const { score, label } = passwordStrength(password);
+                const colors = ["bg-destructive", "bg-destructive", "bg-yellow-500", "bg-green-500", "bg-emerald-500"];
+                const err = validatePassword(password);
+                return (
+                  <div className="space-y-1">
+                    <div className="flex gap-1">
+                      {[0, 1, 2, 3].map((i) => (
+                        <div key={i} className={`h-1 flex-1 rounded-full ${i < score ? colors[score] : "bg-muted"}`} />
+                      ))}
+                    </div>
+                    <p className={`text-xs ${err ? "text-muted-foreground" : "text-green-500"}`}>
+                      {err ?? `Fortaleza: ${label}`}
+                    </p>
+                  </div>
+                );
+              })()}
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="confirm">Confirmar contraseña</Label>
@@ -95,7 +115,7 @@ const ResetPassword = () => {
                   id="confirm"
                   type="password"
                   required
-                  minLength={6}
+                  minLength={PASSWORD_MIN_LENGTH}
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   className="bg-background/60 pl-10"
