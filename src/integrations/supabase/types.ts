@@ -374,6 +374,24 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limits: {
+        Row: {
+          count: number
+          key: string
+          window_start: string
+        }
+        Insert: {
+          count?: number
+          key: string
+          window_start: string
+        }
+        Update: {
+          count?: number
+          key?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           author_id: string
@@ -623,6 +641,14 @@ export type Database = {
         Returns: undefined
       }
       award_weekly_top: { Args: never; Returns: undefined }
+      check_rate_limit: {
+        Args: { _key: string; _max_requests: number; _window_seconds: number }
+        Returns: {
+          allowed: boolean
+          current_count: number
+          retry_after_seconds: number
+        }[]
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
