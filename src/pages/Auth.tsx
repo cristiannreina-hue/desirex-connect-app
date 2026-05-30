@@ -17,6 +17,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { validatePassword, passwordStrength, PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
 
 type Mode = "login" | "signup" | "forgot";
 
