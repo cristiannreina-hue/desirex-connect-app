@@ -14,12 +14,11 @@ export const Header = () => {
   const { accountType } = useAccountType(user?.id);
 
   // Visitantes NO pueden auto-promoverse a creador desde el header.
-  // Si quieren ser creadores deben ir a /planes y contratar un plan.
   const creatorCtaHref = !user
     ? "/registro"
     : accountType === "creator"
       ? "/dashboard"
-      : "/planes";
+      : "/registro";
   const creatorCtaLabel = !user
     ? "Unirme a DeseoX"
     : accountType === "creator"
