@@ -37,22 +37,10 @@ export const AdminVerifications = () => {
 
   useEffect(() => {
     load();
-    // Suscripción Realtime: refresca al insertar/actualizar/borrar solicitudes
-    const channel = supabase
-      .channel("admin-verifications")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "verification_requests" },
-        (payload) => {
-          load();
-          if (payload.eventType === "INSERT") {
-            toast.info("📥 Nueva solicitud de verificación recibida");
-          }
-        }
-      )
-      .subscribe((status) => setLive(status === "SUBSCRIBED"));
-
-    return () => { supabase.removeChannel(channel); };
+    setLive(true);
+    // Polling cada 15s (realtime deshabilitado por seguridad)
+    const interval = setInterval(load, 15000);
+    return () => { clearInterval(interval); };
   }, []);
 
   const approve = async (id: string) => {
