@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Shield, LayoutDashboard, BadgeCheck, Users, Crown, CreditCard,
-  Trophy, Settings, UserCog, TrendingUp,
+  Trophy, Settings, UserCog, TrendingUp, MessageSquare, Mail, Inbox, Webhook,
 } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import {
@@ -22,10 +22,15 @@ import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AdminNotifications } from "@/components/admin/AdminNotifications";
 import { AdminRecentSignups } from "@/components/admin/AdminRecentSignups";
 import { AdminTraffic } from "@/components/admin/AdminTraffic";
+import { AdminReviews } from "@/components/admin/AdminReviews";
+import { AdminLeads } from "@/components/admin/AdminLeads";
+import { AdminEmails } from "@/components/admin/AdminEmails";
+import { AdminWompiEvents } from "@/components/admin/AdminWompiEvents";
 
 type Section =
   | "overview" | "traffic" | "verifications" | "profiles" | "users-clients"
-  | "users-creators" | "subscriptions" | "payments" | "rewards" | "settings";
+  | "users-creators" | "reviews" | "subscriptions" | "payments" | "wompi"
+  | "rewards" | "leads" | "emails" | "settings";
 
 const NAV: { group: string; items: { id: Section; label: string; icon: any }[] }[] = [
   {
@@ -42,6 +47,7 @@ const NAV: { group: string; items: { id: Section; label: string; icon: any }[] }
       { id: "profiles", label: "Perfiles", icon: UserCog },
       { id: "users-creators", label: "Creadores", icon: Crown },
       { id: "users-clients", label: "Clientes", icon: Users },
+      { id: "reviews", label: "Moderar reseñas", icon: MessageSquare },
     ],
   },
   {
@@ -49,7 +55,15 @@ const NAV: { group: string; items: { id: Section; label: string; icon: any }[] }
     items: [
       { id: "subscriptions", label: "Suscripciones", icon: Crown },
       { id: "payments", label: "Pagos", icon: CreditCard },
+      { id: "wompi", label: "Eventos de pago", icon: Webhook },
       { id: "rewards", label: "Top semanal", icon: Trophy },
+    ],
+  },
+  {
+    group: "Marketing",
+    items: [
+      { id: "leads", label: "Leads de lanzamiento", icon: Inbox },
+      { id: "emails", label: "Emails enviados", icon: Mail },
     ],
   },
   {
@@ -67,9 +81,13 @@ const TITLES: Record<Section, { title: string; subtitle: string }> = {
   profiles: { title: "Gestión de perfiles", subtitle: "Filtra, destaca, suspende o elimina perfiles" },
   "users-clients": { title: "Clientes", subtitle: "Usuarios registrados como exploradores" },
   "users-creators": { title: "Creadores", subtitle: "Usuarios que publican contenido" },
+  reviews: { title: "Moderar reseñas", subtitle: "Revisa y elimina reseñas inapropiadas" },
   subscriptions: { title: "Suscripciones", subtitle: "Estado de planes activos" },
   payments: { title: "Pagos", subtitle: "Historial de transacciones" },
+  wompi: { title: "Eventos de pago", subtitle: "Webhooks recibidos del proveedor (Wompi)" },
   rewards: { title: "Top semanal", subtitle: "Premios automáticos a perfiles destacados" },
+  leads: { title: "Leads de lanzamiento", subtitle: "Lista de espera capturada antes del lanzamiento" },
+  emails: { title: "Emails enviados", subtitle: "Registro de envíos transaccionales y direcciones suprimidas" },
   settings: { title: "Configuración global", subtitle: "Idiomas, SEO y mantenimiento" },
 };
 
@@ -173,9 +191,13 @@ const Admin = () => {
               {section === "profiles" && <AdminProfiles />}
               {section === "users-clients" && <AdminUsers filter="visitor" />}
               {section === "users-creators" && <AdminUsers filter="creator" />}
+              {section === "reviews" && <AdminReviews />}
               {section === "subscriptions" && <AdminSubscriptions />}
               {section === "payments" && <AdminPayments />}
+              {section === "wompi" && <AdminWompiEvents />}
               {section === "rewards" && <AdminRewards />}
+              {section === "leads" && <AdminLeads />}
+              {section === "emails" && <AdminEmails />}
               {section === "settings" && <AdminSettings />}
             </div>
           </main>
