@@ -17,6 +17,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { validatePassword, passwordStrength, PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
 
 type Mode = "login" | "signup" | "forgot";
@@ -35,6 +36,7 @@ const calculateAge = (dob: string): number => {
 const Auth = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { settings } = useSiteSettings();
   const [params] = useSearchParams();
   const location = useLocation();
   const intentParam = params.get("intent");
@@ -108,6 +110,19 @@ const Auth = () => {
     setLoading(true);
     try {
       if (mode === "signup") {
+        // Bloqueo en caliente desde la configuración global
+        try {
+          const { data: cfg } = await supabase
+            .from("site_settings")
+            .select("signups_open")
+            .eq("id", true)
+            .maybeSingle();
+          if (cfg && (cfg as any).signups_open === false) {
+            throw new Error("Los registros están temporalmente cerrados. Vuelve a intentarlo más tarde.");
+          }
+        } catch (e: any) {
+          if (/registros est/i.test(e?.message ?? "")) throw e;
+        }
         const pwError = validatePassword(password);
         if (pwError) throw new Error(pwError);
         if (password !== confirmPassword)
@@ -183,7 +198,7 @@ const Auth = () => {
   const submitDisabled =
     loading ||
     (mode === "signup" &&
-      (!ageValid || validatePassword(password) !== null || password !== confirmPassword || !acceptedTerms));
+      (!settings.signups_open || !ageValid || validatePassword(password) !== null || password !== confirmPassword || !acceptedTerms));
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -213,6 +228,15 @@ const Auth = () => {
                   ? `Cuenta de ${intent === "creator" ? "creadora" : "visitante"} · te enviaremos un correo de verificación para activar el acceso.`
                   : "Te enviaremos un enlace para restablecerla."}
             </p>
+
+            {mode === "signup" && !settings.signups_open && (
+              <div className="mt-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-3 flex items-start gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
+                <p className="text-xs text-amber-200">
+                  Los registros están temporalmente cerrados. Vuelve a intentarlo más tarde.
+                </p>
+              </div>
+            )}
 
             {mode === "signup" && (
               <div className="mt-4 rounded-2xl border border-border/60 bg-background/40 p-3">
