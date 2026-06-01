@@ -108,6 +108,19 @@ const Auth = () => {
     setLoading(true);
     try {
       if (mode === "signup") {
+        // Bloqueo en caliente desde la configuración global
+        try {
+          const { data: cfg } = await supabase
+            .from("site_settings")
+            .select("signups_open")
+            .eq("id", true)
+            .maybeSingle();
+          if (cfg && (cfg as any).signups_open === false) {
+            throw new Error("Los registros están temporalmente cerrados. Vuelve a intentarlo más tarde.");
+          }
+        } catch (e: any) {
+          if (/registros est/i.test(e?.message ?? "")) throw e;
+        }
         const pwError = validatePassword(password);
         if (pwError) throw new Error(pwError);
         if (password !== confirmPassword)
