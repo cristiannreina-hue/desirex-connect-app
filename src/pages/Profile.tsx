@@ -458,8 +458,8 @@ const Profile = () => {
 
       {/* FAB WhatsApp flotante para conversión inmediata */}
       <a
-        href={waWebUrl}
-        target={isEmbeddedPreview ? "_top" : "_blank"}
+        href={waUrl}
+        target={waTarget}
         rel="noopener noreferrer"
         aria-label={`Contactar a ${profile.name} por WhatsApp`}
         className="fab-whatsapp"
