@@ -5,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AgeGate } from "@/components/AgeGate";
+import { MaintenanceBanner } from "@/components/MaintenanceBanner";
 import { I18nProvider } from "@/lib/i18n";
 import { trackSiteVisit } from "@/lib/site-track";
 import Index from "./pages/Index.tsx";
@@ -40,6 +41,7 @@ const App = () => (
         <Sonner theme="dark" richColors position="top-center" />
         <BrowserRouter>
           <AgeGate />
+          <MaintenanceBanner />
           <VisitTracker />
           <Routes>
             <Route path="/" element={<Index />} />
