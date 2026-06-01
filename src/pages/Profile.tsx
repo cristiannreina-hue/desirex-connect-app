@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { type MouseEvent, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -151,8 +151,31 @@ const Profile = () => {
     return digits;
   };
   const waNumber = normalizeWa(profile.whatsapp);
-  const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
+  const waText = encodeURIComponent(waMessage);
+  const waWebUrl = `https://web.whatsapp.com/send?phone=${waNumber}&text=${waText}`;
   const tgUrl = `https://t.me/${profile.telegram}`;
+
+  const openWhatsApp = (e: MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (gate.intercept(e)) return;
+    if (!waNumber) return;
+
+    if (dbProfile?.id) trackContactClick(dbProfile.id, "whatsapp");
+
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const waAppUrl = `whatsapp://send?phone=${waNumber}&text=${waText}`;
+
+    if (isMobile) {
+      window.location.href = waAppUrl;
+
+      window.setTimeout(() => {
+        window.open(waWebUrl, "_blank", "noopener,noreferrer");
+      }, 700);
+      return;
+    }
+
+    window.open(waWebUrl, "_blank", "noopener,noreferrer");
+  };
 
   const rates = profile.rates ?? {};
   const hasAnyRate = !!(rates.short || rates.oneHour || rates.twoHours || rates.fullDay);
@@ -327,13 +350,10 @@ const Profile = () => {
             <div className="grid grid-cols-2 gap-3">
               <Button asChild variant="whatsapp" size="xl" className="w-full rounded-full">
                 <a
-                  href={waUrl}
+                  href={waWebUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => {
-                    if (gate.intercept(e)) return;
-                    if (dbProfile?.id) trackContactClick(dbProfile.id, "whatsapp");
-                  }}
+                  onClick={openWhatsApp}
                 >
                   <MessageCircle className="h-5 w-5" /> WhatsApp
                 </a>
@@ -446,12 +466,12 @@ const Profile = () => {
 
       {/* FAB WhatsApp flotante para conversión inmediata */}
       <a
-        href={waUrl}
+        href={waWebUrl}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Contactar a ${profile.name} por WhatsApp`}
         className="fab-whatsapp"
-        onClick={(e) => gate.intercept(e)}
+        onClick={openWhatsApp}
       >
         <MessageCircle className="h-7 w-7" />
       </a>
