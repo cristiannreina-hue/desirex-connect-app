@@ -137,6 +137,9 @@ export const AdminProfiles = () => {
             </button>
           ))}
         </div>
+        <Button onClick={activateAll} size="sm" variant="outline" className="gap-2">
+          <Rocket className="h-4 w-4" /> Activar todos
+        </Button>
         <span className="text-xs text-muted-foreground whitespace-nowrap">{filtered.length} perfiles</span>
       </div>
 
@@ -158,6 +161,7 @@ export const AdminProfiles = () => {
                     <span className="text-xs text-muted-foreground font-normal">#{r.user_number}</span>
                     {r.is_verified && <span className="text-xs text-success">✓</span>}
                     {r.is_featured && <Star className="h-3 w-3 fill-primary text-primary" />}
+                    {!r.is_public_visible && <span className="text-[10px] uppercase tracking-wider text-amber-400 font-bold">Oculto</span>}
                     {r.is_suspended && <span className="text-[10px] uppercase tracking-wider text-destructive font-bold">Suspendido</span>}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
@@ -165,6 +169,15 @@ export const AdminProfiles = () => {
                   </p>
                 </div>
                 <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`h-8 w-8 p-0 ${r.is_public_visible ? "text-success" : "text-amber-400"}`}
+                    title={r.is_public_visible ? "Ocultar perfil del público" : "Activar visibilidad pública"}
+                    onClick={() => toggleFlag(r.id, "is_public_visible", r.is_public_visible)}
+                  >
+                    {r.is_public_visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  </Button>
                   <Button
                     variant="ghost"
                     size="sm"
