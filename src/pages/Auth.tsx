@@ -17,6 +17,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { validatePassword, passwordStrength, PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
 
 type Mode = "login" | "signup" | "forgot";
@@ -35,6 +36,7 @@ const calculateAge = (dob: string): number => {
 const Auth = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { settings } = useSiteSettings();
   const [params] = useSearchParams();
   const location = useLocation();
   const intentParam = params.get("intent");
@@ -226,6 +228,15 @@ const Auth = () => {
                   ? `Cuenta de ${intent === "creator" ? "creadora" : "visitante"} · te enviaremos un correo de verificación para activar el acceso.`
                   : "Te enviaremos un enlace para restablecerla."}
             </p>
+
+            {mode === "signup" && !settings.signups_open && (
+              <div className="mt-4 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-3 flex items-start gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
+                <p className="text-xs text-amber-200">
+                  Los registros están temporalmente cerrados. Vuelve a intentarlo más tarde.
+                </p>
+              </div>
+            )}
 
             {mode === "signup" && (
               <div className="mt-4 rounded-2xl border border-border/60 bg-background/40 p-3">
