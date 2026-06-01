@@ -1,8 +1,10 @@
-// Configuración del pre-lanzamiento oficial
-// Fecha límite: 15 de junio de 2026, 00:00 (hora local Colombia, UTC-5)
+// Configuración del pre-lanzamiento oficial.
+// La fecha real se controla desde el panel admin (tabla site_settings.launch_date).
+// Este valor solo se usa como fallback si aún no se ha cargado la configuración.
 export const LAUNCH_DATE = new Date("2026-06-15T00:00:00-05:00");
 
-export const isPreLaunch = () => Date.now() < LAUNCH_DATE.getTime();
+export const isPreLaunchFor = (target: Date) => Date.now() < target.getTime();
+export const isPreLaunch = () => isPreLaunchFor(LAUNCH_DATE);
 
 export interface CountdownParts {
   days: number;

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getCountdown } from "@/lib/launch";
+import { getCountdown, LAUNCH_DATE } from "@/lib/launch";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const GOLD = "#D4AF37";
 
@@ -26,14 +27,19 @@ function Cell({ value, label }: { value: number; label: string }) {
 }
 
 export function CountdownHero() {
-  const [parts, setParts] = useState(getCountdown());
+  const { settings } = useSiteSettings();
+  const target = settings.launch_date ? new Date(settings.launch_date) : LAUNCH_DATE;
+  const [parts, setParts] = useState(getCountdown(target));
 
   useEffect(() => {
-    const id = setInterval(() => setParts(getCountdown()), 1000);
+    setParts(getCountdown(target));
+    const id = setInterval(() => setParts(getCountdown(target)), 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [target.getTime()]);
 
   if (parts.finished) return null;
+
+  const label = target.toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" });
 
   return (
     <div className="mx-auto mt-6 mb-2 inline-flex flex-col items-center rounded-3xl border border-white/10 bg-black/35 backdrop-blur-2xl px-5 py-4 sm:px-7 sm:py-5 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
@@ -41,7 +47,7 @@ export function CountdownHero() {
         className="text-[10px] sm:text-xs uppercase tracking-[0.32em] font-semibold"
         style={{ color: GOLD }}
       >
-        Pre-Lanzamiento Oficial · 15 Jun 2026
+        Pre-Lanzamiento Oficial · {label}
       </span>
       <div className="mt-3 flex items-end gap-2 sm:gap-3">
         <Cell value={parts.days} label="Días" />

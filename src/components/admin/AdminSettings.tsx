@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { refreshSiteSettings } from "@/hooks/useSiteSettings";
 
 interface SettingsRow {
   maintenance_mode: boolean;
@@ -58,7 +59,8 @@ export const AdminSettings = () => {
       .eq("id", true);
     setSaving(false);
     if (error) return toast.error(error.message);
-    toast.success("Configuración guardada");
+    await refreshSiteSettings();
+    toast.success("Configuración guardada y aplicada en el sitio");
   };
 
   if (loading) {
