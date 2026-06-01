@@ -152,31 +152,21 @@ const Profile = () => {
   };
   const waNumber = normalizeWa(profile.whatsapp);
   const waText = encodeURIComponent(waMessage);
-  const waWebUrl = `https://web.whatsapp.com/send?phone=${waNumber}&text=${waText}`;
+  // Dominio canónico de WhatsApp: redirige a la app en móvil y a web.whatsapp.com en desktop.
+  const waUrl = waNumber ? `https://wa.me/${waNumber}?text=${waText}` : "";
   const tgUrl = `https://t.me/${profile.telegram}`;
-  const isEmbeddedPreview = window.self !== window.top;
+  const isEmbeddedPreview = typeof window !== "undefined" && window.self !== window.top;
+  const waTarget = isEmbeddedPreview ? "_top" : "_blank";
 
   const openWhatsApp = (e: MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
     if (gate.intercept(e)) return;
-    if (!waNumber) return;
-
-    if (dbProfile?.id) trackContactClick(dbProfile.id, "whatsapp");
-
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const waAppUrl = `whatsapp://send?phone=${waNumber}&text=${waText}`;
-    const browserTarget = isEmbeddedPreview ? "_top" : "_blank";
-
-    if (isMobile) {
-      window.open(waAppUrl, browserTarget, "noopener,noreferrer");
-
-      window.setTimeout(() => {
-        window.open(waWebUrl, browserTarget, "noopener,noreferrer");
-      }, 700);
+    if (!waNumber) {
+      e.preventDefault();
       return;
     }
-
-    window.open(waWebUrl, browserTarget, "noopener,noreferrer");
+    if (dbProfile?.id) trackContactClick(dbProfile.id, "whatsapp");
+    // No preventDefault: dejamos que el <a target="_top"|"_blank"> navegue de forma nativa.
+    // Esto evita el bloqueo ERR_BLOCKED_BY_RESPONSE al intentar cargar WhatsApp dentro del iframe.
   };
 
   const rates = profile.rates ?? {};
@@ -352,8 +342,8 @@ const Profile = () => {
             <div className="grid grid-cols-2 gap-3">
               <Button asChild variant="whatsapp" size="xl" className="w-full rounded-full">
                 <a
-                  href={waWebUrl}
-                  target={isEmbeddedPreview ? "_top" : "_blank"}
+                  href={waUrl}
+                  target={waTarget}
                   rel="noopener noreferrer"
                   onClick={openWhatsApp}
                 >
@@ -468,8 +458,8 @@ const Profile = () => {
 
       {/* FAB WhatsApp flotante para conversión inmediata */}
       <a
-        href={waWebUrl}
-        target={isEmbeddedPreview ? "_top" : "_blank"}
+        href={waUrl}
+        target={waTarget}
         rel="noopener noreferrer"
         aria-label={`Contactar a ${profile.name} por WhatsApp`}
         className="fab-whatsapp"
