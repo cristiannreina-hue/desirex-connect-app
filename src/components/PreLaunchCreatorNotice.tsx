@@ -1,11 +1,17 @@
 import { Sparkles } from "lucide-react";
-import { isPreLaunch, LAUNCH_DATE } from "@/lib/launch";
+import { LAUNCH_DATE, isPreLaunchFor } from "@/lib/launch";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 const GOLD = "#D4AF37";
 
 export function PreLaunchCreatorNotice() {
-  if (!isPreLaunch()) return null;
-  const dateStr = LAUNCH_DATE.toLocaleDateString("es-CO", {
+  const { settings } = useSiteSettings();
+  const { isAdmin } = useIsAdmin();
+  const target = settings.launch_date ? new Date(settings.launch_date) : LAUNCH_DATE;
+  if (isAdmin) return null;
+  if (!isPreLaunchFor(target)) return null;
+  const dateStr = target.toLocaleDateString("es-CO", {
     day: "numeric", month: "long", year: "numeric",
   });
   return (

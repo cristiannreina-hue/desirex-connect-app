@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Trash2, Search, Eye, Star, Pause, Play } from "lucide-react";
+import { Trash2, Search, Eye, EyeOff, Star, Pause, Play, Rocket } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -15,6 +15,7 @@ interface Row {
   is_verified: boolean;
   is_featured: boolean;
   is_suspended: boolean;
+  is_public_visible: boolean;
   view_count: number;
   rating_avg: number;
   rating_count: number;
@@ -36,7 +37,7 @@ export const AdminProfiles = () => {
     setLoading(true);
     const { data } = await supabase
       .from("profiles")
-      .select("id,user_number,display_name,city,category,is_verified,is_featured,is_suspended,view_count,rating_avg,rating_count,created_at,photos")
+      .select("id,user_number,display_name,city,category,is_verified,is_featured,is_suspended,is_public_visible,view_count,rating_avg,rating_count,created_at,photos")
       .order("created_at", { ascending: false })
       .limit(300);
     setRows((data as any) ?? []);
@@ -59,11 +60,27 @@ export const AdminProfiles = () => {
     return true;
   });
 
-  const toggleFlag = async (id: string, field: "is_featured" | "is_suspended", current: boolean) => {
+  const toggleFlag = async (id: string, field: "is_featured" | "is_suspended" | "is_public_visible", current: boolean) => {
     const { error } = await supabase.from("profiles").update({ [field]: !current } as any).eq("id", id);
     if (error) return toast.error(error.message);
-    toast.success(field === "is_featured" ? (!current ? "Destacado en Home" : "Removido de Home") : (!current ? "Perfil suspendido" : "Perfil reactivado"));
+    const labels: Record<typeof field, [string, string]> = {
+      is_featured: ["Destacado en Home", "Removido de Home"],
+      is_suspended: ["Perfil suspendido", "Perfil reactivado"],
+      is_public_visible: ["Perfil activado (visible)", "Perfil ocultado"],
+    };
+    toast.success(!current ? labels[field][0] : labels[field][1]);
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, [field]: !current } : r)));
+  };
+
+  const activateAll = async () => {
+    const hidden = filtered.filter((r) => !r.is_public_visible);
+    if (hidden.length === 0) return toast.info("Todos los perfiles ya están visibles");
+    if (!confirm(`Activar visibilidad pública de ${hidden.length} perfil(es)?`)) return;
+    const ids = hidden.map((r) => r.id);
+    const { error } = await supabase.from("profiles").update({ is_public_visible: true } as any).in("id", ids);
+    if (error) return toast.error(error.message);
+    toast.success(`${ids.length} perfil(es) activados`);
+    setRows((rs) => rs.map((r) => (ids.includes(r.id) ? { ...r, is_public_visible: true } : r)));
   };
 
   const handleDelete = async (id: string, name: string) => {
@@ -120,6 +137,9 @@ export const AdminProfiles = () => {
             </button>
           ))}
         </div>
+        <Button onClick={activateAll} size="sm" variant="outline" className="gap-2">
+          <Rocket className="h-4 w-4" /> Activar todos
+        </Button>
         <span className="text-xs text-muted-foreground whitespace-nowrap">{filtered.length} perfiles</span>
       </div>
 
@@ -141,6 +161,7 @@ export const AdminProfiles = () => {
                     <span className="text-xs text-muted-foreground font-normal">#{r.user_number}</span>
                     {r.is_verified && <span className="text-xs text-success">✓</span>}
                     {r.is_featured && <Star className="h-3 w-3 fill-primary text-primary" />}
+                    {!r.is_public_visible && <span className="text-[10px] uppercase tracking-wider text-amber-400 font-bold">Oculto</span>}
                     {r.is_suspended && <span className="text-[10px] uppercase tracking-wider text-destructive font-bold">Suspendido</span>}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
@@ -148,6 +169,15 @@ export const AdminProfiles = () => {
                   </p>
                 </div>
                 <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`h-8 w-8 p-0 ${r.is_public_visible ? "text-success" : "text-amber-400"}`}
+                    title={r.is_public_visible ? "Ocultar perfil del público" : "Activar visibilidad pública"}
+                    onClick={() => toggleFlag(r.id, "is_public_visible", r.is_public_visible)}
+                  >
+                    {r.is_public_visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  </Button>
                   <Button
                     variant="ghost"
                     size="sm"
