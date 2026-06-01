@@ -142,7 +142,16 @@ const Profile = () => {
   const waMessage = isContentMode
     ? `Hola ${profile.name}, vi tu catálogo en DeseoX y me interesa tu contenido 🔥`
     : `Hola ${profile.name}, te contacto desde DeseoX 🔥`;
-  const waUrl = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(waMessage)}`;
+  // Normaliza el número a formato internacional (E.164 sin "+"). Por defecto Colombia (+57).
+  const normalizeWa = (raw?: string) => {
+    const digits = (raw ?? "").replace(/\D/g, "");
+    if (!digits) return "";
+    if (digits.startsWith("57")) return digits;
+    if (digits.length === 10 && digits.startsWith("3")) return `57${digits}`;
+    return digits;
+  };
+  const waNumber = normalizeWa(profile.whatsapp);
+  const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
   const tgUrl = `https://t.me/${profile.telegram}`;
 
   const rates = profile.rates ?? {};
