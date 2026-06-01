@@ -154,6 +154,7 @@ const Profile = () => {
   const waText = encodeURIComponent(waMessage);
   const waWebUrl = `https://web.whatsapp.com/send?phone=${waNumber}&text=${waText}`;
   const tgUrl = `https://t.me/${profile.telegram}`;
+  const isEmbeddedPreview = window.self !== window.top;
 
   const openWhatsApp = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -164,17 +165,18 @@ const Profile = () => {
 
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     const waAppUrl = `whatsapp://send?phone=${waNumber}&text=${waText}`;
+    const browserTarget = isEmbeddedPreview ? "_top" : "_blank";
 
     if (isMobile) {
-      window.location.href = waAppUrl;
+      window.open(waAppUrl, browserTarget, "noopener,noreferrer");
 
       window.setTimeout(() => {
-        window.open(waWebUrl, "_blank", "noopener,noreferrer");
+        window.open(waWebUrl, browserTarget, "noopener,noreferrer");
       }, 700);
       return;
     }
 
-    window.open(waWebUrl, "_blank", "noopener,noreferrer");
+    window.open(waWebUrl, browserTarget, "noopener,noreferrer");
   };
 
   const rates = profile.rates ?? {};
@@ -351,7 +353,7 @@ const Profile = () => {
               <Button asChild variant="whatsapp" size="xl" className="w-full rounded-full">
                 <a
                   href={waWebUrl}
-                  target="_blank"
+                  target={isEmbeddedPreview ? "_top" : "_blank"}
                   rel="noopener noreferrer"
                   onClick={openWhatsApp}
                 >
@@ -467,7 +469,7 @@ const Profile = () => {
       {/* FAB WhatsApp flotante para conversión inmediata */}
       <a
         href={waWebUrl}
-        target="_blank"
+        target={isEmbeddedPreview ? "_top" : "_blank"}
         rel="noopener noreferrer"
         aria-label={`Contactar a ${profile.name} por WhatsApp`}
         className="fab-whatsapp"
