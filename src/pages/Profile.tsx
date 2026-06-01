@@ -342,8 +342,8 @@ const Profile = () => {
             <div className="grid grid-cols-2 gap-3">
               <Button asChild variant="whatsapp" size="xl" className="w-full rounded-full">
                 <a
-                  href={waWebUrl}
-                  target={isEmbeddedPreview ? "_top" : "_blank"}
+                  href={waUrl}
+                  target={waTarget}
                   rel="noopener noreferrer"
                   onClick={openWhatsApp}
                 >
