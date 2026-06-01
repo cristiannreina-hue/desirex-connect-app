@@ -422,6 +422,36 @@ export type Database = {
         }
         Relationships: []
       }
+      site_settings: {
+        Row: {
+          id: boolean
+          launch_date: string | null
+          maintenance_message: string | null
+          maintenance_mode: boolean
+          signups_open: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id?: boolean
+          launch_date?: string | null
+          maintenance_message?: string | null
+          maintenance_mode?: boolean
+          signups_open?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          id?: boolean
+          launch_date?: string | null
+          maintenance_message?: string | null
+          maintenance_mode?: boolean
+          signups_open?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       site_visits: {
         Row: {
           created_at: string
