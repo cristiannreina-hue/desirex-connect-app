@@ -461,7 +461,7 @@ const Profile = () => {
       </main>
 
       {/* FAB WhatsApp flotante para conversión inmediata */}
-      {waNumber && (
+      {waNumber && !waHiddenGlobally && (
         <button
           type="button"
           aria-label={`Contactar a ${profile.name} por WhatsApp`}
