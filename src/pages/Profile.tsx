@@ -354,8 +354,7 @@ const Profile = () => {
                     href={tgUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => {
-                      if (gate.intercept(e)) return;
+                    onClick={() => {
                       if (dbProfile?.id) trackContactClick(dbProfile.id, "telegram");
                     }}
                   >
