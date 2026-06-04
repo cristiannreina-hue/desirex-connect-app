@@ -424,6 +424,7 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          hide_whatsapp_public: boolean
           id: boolean
           launch_date: string | null
           maintenance_message: string | null
@@ -433,6 +434,7 @@ export type Database = {
           updated_by: string | null
         }
         Insert: {
+          hide_whatsapp_public?: boolean
           id?: boolean
           launch_date?: string | null
           maintenance_message?: string | null
@@ -442,6 +444,7 @@ export type Database = {
           updated_by?: string | null
         }
         Update: {
+          hide_whatsapp_public?: boolean
           id?: boolean
           launch_date?: string | null
           maintenance_message?: string | null

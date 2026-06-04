@@ -1,0 +1,1 @@
+ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS hide_whatsapp_public boolean NOT NULL DEFAULT false;
