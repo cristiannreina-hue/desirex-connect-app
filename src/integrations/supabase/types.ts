@@ -238,6 +238,7 @@ export type Database = {
           gender: Database["public"]["Enums"]["gender_category"]
           hair_color: string | null
           height: number | null
+          hide_whatsapp: boolean
           id: string
           is_featured: boolean
           is_public_visible: boolean
@@ -288,6 +289,7 @@ export type Database = {
           gender?: Database["public"]["Enums"]["gender_category"]
           hair_color?: string | null
           height?: number | null
+          hide_whatsapp?: boolean
           id: string
           is_featured?: boolean
           is_public_visible?: boolean
@@ -338,6 +340,7 @@ export type Database = {
           gender?: Database["public"]["Enums"]["gender_category"]
           hair_color?: string | null
           height?: number | null
+          hide_whatsapp?: boolean
           id?: string
           is_featured?: boolean
           is_public_visible?: boolean
