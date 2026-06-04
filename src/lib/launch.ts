@@ -1,7 +1,7 @@
 // Configuración del pre-lanzamiento oficial.
 // La fecha real se controla desde el panel admin (tabla site_settings.launch_date).
 // Este valor solo se usa como fallback si aún no se ha cargado la configuración.
-export const LAUNCH_DATE = new Date("2026-06-15T00:00:00-05:00");
+export const LAUNCH_DATE = new Date("2020-01-01T00:00:00-05:00");
 
 export const isPreLaunchFor = (target: Date) => Date.now() < target.getTime();
 export const isPreLaunch = () => isPreLaunchFor(LAUNCH_DATE);
