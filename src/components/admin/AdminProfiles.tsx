@@ -206,6 +206,16 @@ export const AdminProfiles = () => {
                   <Button
                     variant="ghost"
                     size="sm"
+                    className={`h-8 w-8 p-0 ${r.hide_whatsapp ? "text-destructive" : "text-success"}`}
+                    title={r.hide_whatsapp ? "Mostrar WhatsApp en su perfil público" : "Ocultar WhatsApp en su perfil público"}
+                    onClick={() => toggleFlag(r.id, "hide_whatsapp", r.hide_whatsapp)}
+                  >
+                    {r.hide_whatsapp ? <MessageCircleOff className="h-4 w-4" /> : <MessageCircle className="h-4 w-4" />}
+                  </Button>
+                  <Button
+                    variant="ghost"
+
+                    size="sm"
                     className="h-8 w-8 p-0"
                     title={r.is_suspended ? "Reactivar" : "Suspender"}
                     onClick={() => toggleFlag(r.id, "is_suspended", r.is_suspended)}
