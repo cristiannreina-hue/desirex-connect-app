@@ -343,7 +343,7 @@ const Profile = () => {
 
             {/* Botones de contacto — protagonismo total, una sola fila */}
             <div className="grid grid-cols-2 gap-3">
-              {!waHiddenGlobally && (
+              {!waHidden && (
                 <Button
                   type="button"
                   variant="whatsapp"
@@ -462,7 +462,7 @@ const Profile = () => {
       </main>
 
       {/* FAB WhatsApp flotante para conversión inmediata */}
-      {waNumber && !waHiddenGlobally && (
+      {waNumber && !waHidden && (
         <button
           type="button"
           aria-label={`Contactar a ${profile.name} por WhatsApp`}
