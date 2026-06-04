@@ -21,6 +21,8 @@ interface Row {
   is_featured: boolean;
   is_suspended: boolean;
   is_public_visible: boolean;
+  hide_whatsapp: boolean;
+
   view_count: number;
   rating_avg: number;
   rating_count: number;
