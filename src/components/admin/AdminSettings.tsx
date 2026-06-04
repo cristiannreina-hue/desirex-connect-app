@@ -40,7 +40,8 @@ export const AdminSettings = () => {
     (async () => {
       const { data } = await supabase
         .from("site_settings")
-        .select("maintenance_mode,maintenance_message,launch_date,signups_open")
+        .select("maintenance_mode,maintenance_message,launch_date,signups_open,hide_whatsapp_public")
+
         .eq("id", true)
         .maybeSingle();
       if (data) setS(data as SettingsRow);
