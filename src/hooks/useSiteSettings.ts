@@ -6,6 +6,7 @@ export interface SiteSettings {
   maintenance_message: string | null;
   launch_date: string | null;
   signups_open: boolean;
+  hide_whatsapp_public: boolean;
 }
 
 const DEFAULTS: SiteSettings = {
@@ -13,6 +14,7 @@ const DEFAULTS: SiteSettings = {
   maintenance_message: null,
   launch_date: null,
   signups_open: true,
+  hide_whatsapp_public: false,
 };
 
 // Shared cache across all subscribers
@@ -29,10 +31,11 @@ const fetchOnce = () => {
   inflight = (async () => {
     const { data } = await supabase
       .from("site_settings")
-      .select("maintenance_mode,maintenance_message,launch_date,signups_open")
+      .select("maintenance_mode,maintenance_message,launch_date,signups_open,hide_whatsapp_public")
       .eq("id", true)
       .maybeSingle();
-    if (data) cache = data as SiteSettings;
+    if (data) cache = { ...DEFAULTS, ...(data as Partial<SiteSettings>) };
+
     loaded = true;
     inflight = null;
     notify();
