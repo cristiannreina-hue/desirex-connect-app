@@ -30,7 +30,9 @@ export const AdminSettings = () => {
     maintenance_message: "",
     launch_date: null,
     signups_open: true,
+    hide_whatsapp_public: false,
   });
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
