@@ -333,15 +333,15 @@ const Profile = () => {
 
             {/* Botones de contacto — protagonismo total, una sola fila */}
             <div className="grid grid-cols-2 gap-3">
-              <Button asChild variant="whatsapp" size="xl" className="w-full rounded-full">
-                <a
-                  href={waUrl}
-                  target={waTarget}
-                  rel="noopener noreferrer"
-                  onClick={openWhatsApp}
-                >
-                  <MessageCircle className="h-5 w-5" /> WhatsApp
-                </a>
+              <Button
+                type="button"
+                variant="whatsapp"
+                size="xl"
+                className="w-full rounded-full"
+                onClick={handleWhatsAppClick}
+                disabled={!waNumber}
+              >
+                <MessageCircle className="h-5 w-5" /> WhatsApp
               </Button>
               {profile.telegram && (
                 <Button asChild variant="telegram" size="xl" className="w-full rounded-full">
