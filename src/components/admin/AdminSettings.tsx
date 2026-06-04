@@ -127,7 +127,25 @@ export const AdminSettings = () => {
             />
           </div>
 
+          {/* Hide WhatsApp on public profiles */}
+          <div className="rounded-xl border border-border/60 p-4 flex items-start justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <MessageCircleOff className="h-4 w-4 text-destructive" />
+              <div>
+                <p className="text-sm font-semibold">Ocultar WhatsApp en perfiles públicos</p>
+                <p className="text-xs text-muted-foreground">
+                  Esconde el número de WhatsApp y los botones de contacto directo en todos los perfiles públicos de creadoras.
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={s.hide_whatsapp_public}
+              onCheckedChange={(v) => setS({ ...s, hide_whatsapp_public: v })}
+            />
+          </div>
+
           {/* Launch date */}
+
           <div className="rounded-xl border border-border/60 p-4 space-y-2">
             <div className="flex items-center gap-2">
               <CalendarClock className="h-4 w-4 text-primary" />
