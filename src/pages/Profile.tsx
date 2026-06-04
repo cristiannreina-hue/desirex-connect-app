@@ -48,8 +48,8 @@ const Profile = () => {
   const [showTranslated, setShowTranslated] = useState(false);
   const [lightbox, setLightbox] = useState<string | null>(null);
   const gate = usePreLaunchGate();
-  const { settings } = useSiteSettings();
   const { isAdmin } = useIsAdmin();
+
 
 
 
