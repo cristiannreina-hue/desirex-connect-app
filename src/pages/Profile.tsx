@@ -449,16 +449,16 @@ const Profile = () => {
       </main>
 
       {/* FAB WhatsApp flotante para conversión inmediata */}
-      <a
-        href={waUrl}
-        target={waTarget}
-        rel="noopener noreferrer"
-        aria-label={`Contactar a ${profile.name} por WhatsApp`}
-        className="fab-whatsapp"
-        onClick={openWhatsApp}
-      >
-        <MessageCircle className="h-7 w-7" />
-      </a>
+      {waNumber && (
+        <button
+          type="button"
+          aria-label={`Contactar a ${profile.name} por WhatsApp`}
+          className="fab-whatsapp"
+          onClick={handleWhatsAppClick}
+        >
+          <MessageCircle className="h-7 w-7" />
+        </button>
+      )}
 
       <PreLaunchModal open={gate.open} onOpenChange={gate.setOpen} source={`profile:${profile.id}`} />
 
