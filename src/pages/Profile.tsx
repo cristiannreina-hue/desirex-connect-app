@@ -29,6 +29,9 @@ import { trackProfileView, trackContactClick } from "@/lib/analytics-track";
 import { openWhatsApp } from "@/lib/openWhatsApp";
 import { usePreLaunchGate } from "@/hooks/usePreLaunchGate";
 import { PreLaunchModal } from "@/components/PreLaunchModal";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+
 
 const Profile = () => {
   const { id } = useParams();
