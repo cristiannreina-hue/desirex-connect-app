@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Trash2, Search, Eye, EyeOff, Star, Pause, Play, Rocket } from "lucide-react";
+import { Trash2, Search, Eye, EyeOff, Star, Pause, Play, Rocket, MessageCircle, MessageCircleOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import {
