@@ -13,8 +13,8 @@ interface SettingsRow {
   maintenance_message: string | null;
   launch_date: string | null;
   signups_open: boolean;
-  hide_whatsapp_public: boolean;
 }
+
 
 
 const toLocalInput = (iso: string | null) => {
