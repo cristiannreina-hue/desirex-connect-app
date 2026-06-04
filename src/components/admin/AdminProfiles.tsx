@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Trash2, Search, Eye, EyeOff, Star, Pause, Play, Rocket } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 
 interface Row {
   id: string;
