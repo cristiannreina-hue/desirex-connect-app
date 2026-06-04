@@ -55,6 +55,8 @@ export function dbToProfile(p: Row, sub?: Subscription): Profile {
     accountType: (anyP.account_type as any) ?? "visitor",
     serviceMode: (anyP.service_mode as any) ?? "presencial",
     verified: p.is_verified ?? false,
+    hideWhatsapp: anyP.hide_whatsapp ?? false,
+
     ratingAvg: p.rating_avg ?? 0,
     ratingCount: p.rating_count ?? 0,
     viewCount: p.view_count ?? 0,

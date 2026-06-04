@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Trash2, Search, Eye, EyeOff, Star, Pause, Play, Rocket } from "lucide-react";
+import { Trash2, Search, Eye, EyeOff, Star, Pause, Play, Rocket, MessageCircle, MessageCircleOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import {
@@ -21,6 +21,8 @@ interface Row {
   is_featured: boolean;
   is_suspended: boolean;
   is_public_visible: boolean;
+  hide_whatsapp: boolean;
+
   view_count: number;
   rating_avg: number;
   rating_count: number;
@@ -45,7 +47,7 @@ export const AdminProfiles = () => {
     setLoading(true);
     const { data } = await supabase
       .from("profiles")
-      .select("id,user_number,display_name,city,category,is_verified,is_featured,is_suspended,is_public_visible,view_count,rating_avg,rating_count,created_at,photos")
+      .select("id,user_number,display_name,city,category,is_verified,is_featured,is_suspended,is_public_visible,hide_whatsapp,view_count,rating_avg,rating_count,created_at,photos")
       .order("created_at", { ascending: false })
       .limit(300);
     setRows((data as any) ?? []);
@@ -68,14 +70,16 @@ export const AdminProfiles = () => {
     return true;
   });
 
-  const toggleFlag = async (id: string, field: "is_featured" | "is_suspended" | "is_public_visible", current: boolean) => {
+  const toggleFlag = async (id: string, field: "is_featured" | "is_suspended" | "is_public_visible" | "hide_whatsapp", current: boolean) => {
     const { error } = await supabase.from("profiles").update({ [field]: !current } as any).eq("id", id);
     if (error) return toast.error(error.message);
     const labels: Record<typeof field, [string, string]> = {
       is_featured: ["Destacado en Home", "Removido de Home"],
       is_suspended: ["Perfil suspendido", "Perfil reactivado"],
       is_public_visible: ["Perfil activado (visible)", "Perfil ocultado"],
+      hide_whatsapp: ["WhatsApp ocultado", "WhatsApp visible"],
     };
+
     toast.success(!current ? labels[field][0] : labels[field][1]);
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, [field]: !current } : r)));
   };
@@ -173,6 +177,8 @@ export const AdminProfiles = () => {
                     {r.is_featured && <Star className="h-3 w-3 fill-primary text-primary" />}
                     {!r.is_public_visible && <span className="text-[10px] uppercase tracking-wider text-amber-400 font-bold">Oculto</span>}
                     {r.is_suspended && <span className="text-[10px] uppercase tracking-wider text-destructive font-bold">Suspendido</span>}
+                    {r.hide_whatsapp && <span className="text-[10px] uppercase tracking-wider text-destructive font-bold">Sin WhatsApp</span>}
+
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
                     {r.category ?? "—"} · {r.city ?? "—"} · {r.view_count} vistas · ⭐ {Number(r.rating_avg).toFixed(1)} ({r.rating_count})
@@ -199,6 +205,16 @@ export const AdminProfiles = () => {
                   </Button>
                   <Button
                     variant="ghost"
+                    size="sm"
+                    className={`h-8 w-8 p-0 ${r.hide_whatsapp ? "text-destructive" : "text-success"}`}
+                    title={r.hide_whatsapp ? "Mostrar WhatsApp en su perfil público" : "Ocultar WhatsApp en su perfil público"}
+                    onClick={() => toggleFlag(r.id, "hide_whatsapp", r.hide_whatsapp)}
+                  >
+                    {r.hide_whatsapp ? <MessageCircleOff className="h-4 w-4" /> : <MessageCircle className="h-4 w-4" />}
+                  </Button>
+                  <Button
+                    variant="ghost"
+
                     size="sm"
                     className="h-8 w-8 p-0"
                     title={r.is_suspended ? "Reactivar" : "Suspender"}

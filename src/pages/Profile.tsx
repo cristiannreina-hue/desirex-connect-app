@@ -29,8 +29,8 @@ import { trackProfileView, trackContactClick } from "@/lib/analytics-track";
 import { openWhatsApp } from "@/lib/openWhatsApp";
 import { usePreLaunchGate } from "@/hooks/usePreLaunchGate";
 import { PreLaunchModal } from "@/components/PreLaunchModal";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+
 
 
 const Profile = () => {
@@ -48,8 +48,8 @@ const Profile = () => {
   const [showTranslated, setShowTranslated] = useState(false);
   const [lightbox, setLightbox] = useState<string | null>(null);
   const gate = usePreLaunchGate();
-  const { settings } = useSiteSettings();
   const { isAdmin } = useIsAdmin();
+
 
 
 
@@ -205,7 +205,8 @@ const Profile = () => {
   };
 
   const isOwner = user?.id === profile.id;
-  const waHiddenGlobally = settings.hide_whatsapp_public && !isAdmin && !isOwner;
+  const waHidden = !!profile.hideWhatsapp && !isAdmin && !isOwner;
+
 
   const tier = profile.subscription?.tier;
   const tierMeta = tier ? TIER_BADGE[tier] : null;
@@ -342,7 +343,7 @@ const Profile = () => {
 
             {/* Botones de contacto — protagonismo total, una sola fila */}
             <div className="grid grid-cols-2 gap-3">
-              {!waHiddenGlobally && (
+              {!waHidden && (
                 <Button
                   type="button"
                   variant="whatsapp"
@@ -461,7 +462,7 @@ const Profile = () => {
       </main>
 
       {/* FAB WhatsApp flotante para conversión inmediata */}
-      {waNumber && !waHiddenGlobally && (
+      {waNumber && !waHidden && (
         <button
           type="button"
           aria-label={`Contactar a ${profile.name} por WhatsApp`}
