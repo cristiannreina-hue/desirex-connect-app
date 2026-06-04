@@ -82,8 +82,10 @@ export const AdminProfiles = () => {
 
   const activateAll = async () => {
     const hidden = filtered.filter((r) => !r.is_public_visible);
-    if (hidden.length === 0) return toast.info("Todos los perfiles ya están visibles");
-    if (!confirm(`Activar visibilidad pública de ${hidden.length} perfil(es)?`)) return;
+    if (hidden.length === 0) {
+      toast.info("Todos los perfiles ya están visibles");
+      return;
+    }
     const ids = hidden.map((r) => r.id);
     const { error } = await supabase.from("profiles").update({ is_public_visible: true } as any).in("id", ids);
     if (error) return toast.error(error.message);
@@ -91,8 +93,7 @@ export const AdminProfiles = () => {
     setRows((rs) => rs.map((r) => (ids.includes(r.id) ? { ...r, is_public_visible: true } : r)));
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`¿Eliminar la cuenta de "${name}"? Se borrará el perfil y el usuario por completo. Esta acción no se puede deshacer.`)) return;
+  const doDelete = async (id: string, name: string) => {
     // Optimista: quitar de la lista
     setRows((r) => r.filter((x) => x.id !== id));
     const { data, error } = await supabase.functions.invoke("admin-delete-user", {
@@ -103,9 +104,10 @@ export const AdminProfiles = () => {
       await load();
       return;
     }
-    toast.success("Cuenta eliminada");
+    toast.success(`Cuenta de "${name}" eliminada`);
     await load();
   };
+
 
   return (
     <div className="space-y-4">
