@@ -215,7 +215,7 @@ export const AdminProfiles = () => {
                     variant="ghost"
                     size="sm"
                     className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                    onClick={() => handleDelete(r.id, r.display_name ?? "perfil")}
+                    onClick={() => setConfirmDelete({ id: r.id, name: r.display_name ?? "perfil" })}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
