@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Settings, Globe, Wrench, Languages, Save, UserPlus, CalendarClock } from "lucide-react";
+import { Settings, Globe, Wrench, Languages, Save, UserPlus, CalendarClock, MessageCircleOff } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
