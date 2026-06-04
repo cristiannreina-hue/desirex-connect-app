@@ -582,11 +582,45 @@ const Index = () => {
               <Input
                 type="search"
                 inputMode="search"
-                placeholder="Busca por nombre, ciudad o ID (ej: Camila, Bogotá o 1025)"
+                placeholder="Busca por nombre, ciudad, ID o pregunta en lenguaje natural"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="h-12 rounded-xl bg-background/60 pl-11 pr-11 text-base border-0"
+                onKeyDown={async (e) => {
+                  if (e.key !== "Enter" || !query.trim()) return;
+                  e.preventDefault();
+                  try {
+                    const { data } = await supabase.functions.invoke("ai-search", { body: { query } });
+                    const f = (data as any)?.filters ?? {};
+                    if (f.tab === "content") setTab("content");
+                    else if (f.gender && ["mujeres", "hombres", "trans"].includes(f.gender)) setTab(f.gender);
+                    if (f.city) setCityFilter(f.city);
+                    if (f.verified) setQuickFilter("verified");
+                    if (typeof f.keywords === "string") setQuery(f.keywords);
+                    else if (f.city || f.gender || f.tab) setQuery("");
+                  } catch { /* fallback: búsqueda literal */ }
+                }}
+                className="h-12 rounded-xl bg-background/60 pl-11 pr-24 text-base border-0"
               />
+              <button
+                type="button"
+                aria-label="Buscar con IA"
+                onClick={async () => {
+                  if (!query.trim()) return;
+                  try {
+                    const { data } = await supabase.functions.invoke("ai-search", { body: { query } });
+                    const f = (data as any)?.filters ?? {};
+                    if (f.tab === "content") setTab("content");
+                    else if (f.gender && ["mujeres", "hombres", "trans"].includes(f.gender)) setTab(f.gender);
+                    if (f.city) setCityFilter(f.city);
+                    if (f.verified) setQuickFilter("verified");
+                    if (typeof f.keywords === "string") setQuery(f.keywords);
+                    else if (f.city || f.gender || f.tab) setQuery("");
+                  } catch { /* noop */ }
+                }}
+                className="absolute right-12 top-1/2 -translate-y-1/2 inline-flex h-8 items-center gap-1 rounded-full bg-gradient-to-r from-accent to-primary text-primary-foreground px-2.5 text-[11px] font-bold hover:scale-105 transition"
+              >
+                <Sparkles className="h-3 w-3" /> IA
+              </button>
               {query && (
                 <button
                   type="button"
