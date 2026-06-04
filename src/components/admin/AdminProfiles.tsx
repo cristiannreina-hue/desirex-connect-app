@@ -147,7 +147,7 @@ export const AdminProfiles = () => {
             </button>
           ))}
         </div>
-        <Button onClick={activateAll} size="sm" variant="outline" className="gap-2">
+        <Button onClick={() => setConfirmActivateAll(true)} size="sm" variant="outline" className="gap-2">
           <Rocket className="h-4 w-4" /> Activar todos
         </Button>
         <span className="text-xs text-muted-foreground whitespace-nowrap">{filtered.length} perfiles</span>
