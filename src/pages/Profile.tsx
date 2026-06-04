@@ -159,14 +159,12 @@ const Profile = () => {
   const waTarget = isEmbeddedPreview ? "_top" : "_blank";
 
   const openWhatsApp = (e: MouseEvent<HTMLAnchorElement>) => {
-    if (gate.intercept(e)) return;
     if (!waNumber) {
       e.preventDefault();
       return;
     }
     if (dbProfile?.id) trackContactClick(dbProfile.id, "whatsapp");
     // No preventDefault: dejamos que el <a target="_top"|"_blank"> navegue de forma nativa.
-    // Esto evita el bloqueo ERR_BLOCKED_BY_RESPONSE al intentar cargar WhatsApp dentro del iframe.
   };
 
   const rates = profile.rates ?? {};
@@ -356,8 +354,7 @@ const Profile = () => {
                     href={tgUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => {
-                      if (gate.intercept(e)) return;
+                    onClick={() => {
                       if (dbProfile?.id) trackContactClick(dbProfile.id, "telegram");
                     }}
                   >
