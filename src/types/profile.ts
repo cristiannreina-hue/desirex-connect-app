@@ -74,6 +74,8 @@ export interface Profile {
   accountType?: AccountType;
   serviceMode?: ServiceMode;
   verified?: boolean;
+  hideWhatsapp?: boolean;
+
   ratingAvg?: number;
   ratingCount?: number;
   viewCount?: number;
