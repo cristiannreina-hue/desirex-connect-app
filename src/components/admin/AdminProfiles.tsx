@@ -177,6 +177,8 @@ export const AdminProfiles = () => {
                     {r.is_featured && <Star className="h-3 w-3 fill-primary text-primary" />}
                     {!r.is_public_visible && <span className="text-[10px] uppercase tracking-wider text-amber-400 font-bold">Oculto</span>}
                     {r.is_suspended && <span className="text-[10px] uppercase tracking-wider text-destructive font-bold">Suspendido</span>}
+                    {r.hide_whatsapp && <span className="text-[10px] uppercase tracking-wider text-destructive font-bold">Sin WhatsApp</span>}
+
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
                     {r.category ?? "—"} · {r.city ?? "—"} · {r.view_count} vistas · ⭐ {Number(r.rating_avg).toFixed(1)} ({r.rating_count})
