@@ -70,14 +70,16 @@ export const AdminProfiles = () => {
     return true;
   });
 
-  const toggleFlag = async (id: string, field: "is_featured" | "is_suspended" | "is_public_visible", current: boolean) => {
+  const toggleFlag = async (id: string, field: "is_featured" | "is_suspended" | "is_public_visible" | "hide_whatsapp", current: boolean) => {
     const { error } = await supabase.from("profiles").update({ [field]: !current } as any).eq("id", id);
     if (error) return toast.error(error.message);
     const labels: Record<typeof field, [string, string]> = {
       is_featured: ["Destacado en Home", "Removido de Home"],
       is_suspended: ["Perfil suspendido", "Perfil reactivado"],
       is_public_visible: ["Perfil activado (visible)", "Perfil ocultado"],
+      hide_whatsapp: ["WhatsApp ocultado", "WhatsApp visible"],
     };
+
     toast.success(!current ? labels[field][0] : labels[field][1]);
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, [field]: !current } : r)));
   };
