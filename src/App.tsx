@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AgeGate } from "@/components/AgeGate";
 import { MaintenanceBanner } from "@/components/MaintenanceBanner";
+import { FloatingAiChat } from "@/components/FloatingAiChat";
 import { I18nProvider } from "@/lib/i18n";
 import { trackSiteVisit } from "@/lib/site-track";
 import Index from "./pages/Index.tsx";
@@ -68,6 +69,7 @@ const App = () => (
             <Route path="/legal/disclaimer" element={<Disclaimer />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <FloatingAiChat />
         </BrowserRouter>
       </TooltipProvider>
     </I18nProvider>

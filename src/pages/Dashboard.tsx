@@ -537,6 +537,42 @@ const Dashboard = () => {
                     placeholder="Cuéntale al mundo cómo eres, qué te apasiona, qué te hace única..."
                     className="bg-white/[0.03] border-white/10 text-white placeholder:text-white/30 rounded-2xl backdrop-blur-md focus-visible:ring-accent/60 focus-visible:border-accent/40 resize-none"
                   />
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const { data: sess } = await supabase.auth.getSession();
+                      const token = sess.session?.access_token;
+                      if (!token) { toast.error("Inicia sesión"); return; }
+                      toast.loading("Generando biografía con IA…", { id: "bio-ai" });
+                      try {
+                        const { data: r, error } = await supabase.functions.invoke("generate-bio", {
+                          body: {
+                            name: data.display_name,
+                            nickname: data.nickname,
+                            age: data.age,
+                            city: data.city,
+                            department: data.department,
+                            category: data.category,
+                            service_mode: data.service_mode,
+                            hair_color: data.hair_color,
+                            keywords: data.description,
+                          },
+                        });
+                        if (error) throw error;
+                        if (r?.bio) {
+                          update("description", r.bio);
+                          toast.success("Biografía generada ✨", { id: "bio-ai" });
+                        } else {
+                          toast.error(r?.error || "No se pudo generar", { id: "bio-ai" });
+                        }
+                      } catch (e: any) {
+                        toast.error(e.message || "Error al generar", { id: "bio-ai" });
+                      }
+                    }}
+                    className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-accent to-primary text-primary-foreground px-3 py-1.5 text-xs font-bold hover:scale-105 transition"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" /> Generar con IA
+                  </button>
                 </GlassField>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <GlassField label="WhatsApp (sin +)">
