@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Trash2, Search, Eye, EyeOff, Star, Pause, Play, Rocket } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 
 interface Row {
   id: string;
@@ -32,6 +37,9 @@ export const AdminProfiles = () => {
   const [city, setCity] = useState("Todas");
   const [cat, setCat] = useState("Todas");
   const [loading, setLoading] = useState(true);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
+  const [confirmActivateAll, setConfirmActivateAll] = useState(false);
+
 
   const load = async () => {
     setLoading(true);
@@ -74,8 +82,10 @@ export const AdminProfiles = () => {
 
   const activateAll = async () => {
     const hidden = filtered.filter((r) => !r.is_public_visible);
-    if (hidden.length === 0) return toast.info("Todos los perfiles ya están visibles");
-    if (!confirm(`Activar visibilidad pública de ${hidden.length} perfil(es)?`)) return;
+    if (hidden.length === 0) {
+      toast.info("Todos los perfiles ya están visibles");
+      return;
+    }
     const ids = hidden.map((r) => r.id);
     const { error } = await supabase.from("profiles").update({ is_public_visible: true } as any).in("id", ids);
     if (error) return toast.error(error.message);
@@ -83,8 +93,7 @@ export const AdminProfiles = () => {
     setRows((rs) => rs.map((r) => (ids.includes(r.id) ? { ...r, is_public_visible: true } : r)));
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`¿Eliminar la cuenta de "${name}"? Se borrará el perfil y el usuario por completo. Esta acción no se puede deshacer.`)) return;
+  const doDelete = async (id: string, name: string) => {
     // Optimista: quitar de la lista
     setRows((r) => r.filter((x) => x.id !== id));
     const { data, error } = await supabase.functions.invoke("admin-delete-user", {
@@ -95,9 +104,10 @@ export const AdminProfiles = () => {
       await load();
       return;
     }
-    toast.success("Cuenta eliminada");
+    toast.success(`Cuenta de "${name}" eliminada`);
     await load();
   };
+
 
   return (
     <div className="space-y-4">
@@ -137,7 +147,7 @@ export const AdminProfiles = () => {
             </button>
           ))}
         </div>
-        <Button onClick={activateAll} size="sm" variant="outline" className="gap-2">
+        <Button onClick={() => setConfirmActivateAll(true)} size="sm" variant="outline" className="gap-2">
           <Rocket className="h-4 w-4" /> Activar todos
         </Button>
         <span className="text-xs text-muted-foreground whitespace-nowrap">{filtered.length} perfiles</span>
@@ -205,7 +215,7 @@ export const AdminProfiles = () => {
                     variant="ghost"
                     size="sm"
                     className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                    onClick={() => handleDelete(r.id, r.display_name ?? "perfil")}
+                    onClick={() => setConfirmDelete({ id: r.id, name: r.display_name ?? "perfil" })}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -215,6 +225,47 @@ export const AdminProfiles = () => {
           </ul>
         )}
       </div>
+
+      <AlertDialog open={!!confirmDelete} onOpenChange={(o) => !o && setConfirmDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar cuenta?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Se borrará el perfil de <strong>{confirmDelete?.name}</strong> y su usuario por completo. Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (confirmDelete) doDelete(confirmDelete.id, confirmDelete.name);
+                setConfirmDelete(null);
+              }}
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={confirmActivateAll} onOpenChange={setConfirmActivateAll}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Activar todos los perfiles ocultos?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Se hará visible al público todos los perfiles ocultos que coinciden con los filtros actuales.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => { activateAll(); setConfirmActivateAll(false); }}>
+              Activar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
+
