@@ -37,6 +37,9 @@ export const AdminProfiles = () => {
   const [city, setCity] = useState("Todas");
   const [cat, setCat] = useState("Todas");
   const [loading, setLoading] = useState(true);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
+  const [confirmActivateAll, setConfirmActivateAll] = useState(false);
+
 
   const load = async () => {
     setLoading(true);
