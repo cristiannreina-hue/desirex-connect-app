@@ -59,9 +59,11 @@ export const AdminSettings = () => {
         maintenance_message: s.maintenance_message?.trim() || null,
         launch_date: s.launch_date,
         signups_open: s.signups_open,
+        hide_whatsapp_public: s.hide_whatsapp_public,
         updated_by: user?.id ?? null,
       } as any)
       .eq("id", true);
+
     setSaving(false);
     if (error) return toast.error(error.message);
     await refreshSiteSettings();
