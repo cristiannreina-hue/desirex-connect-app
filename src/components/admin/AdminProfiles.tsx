@@ -47,7 +47,7 @@ export const AdminProfiles = () => {
     setLoading(true);
     const { data } = await supabase
       .from("profiles")
-      .select("id,user_number,display_name,city,category,is_verified,is_featured,is_suspended,is_public_visible,view_count,rating_avg,rating_count,created_at,photos")
+      .select("id,user_number,display_name,city,category,is_verified,is_featured,is_suspended,is_public_visible,hide_whatsapp,view_count,rating_avg,rating_count,created_at,photos")
       .order("created_at", { ascending: false })
       .limit(300);
     setRows((data as any) ?? []);
