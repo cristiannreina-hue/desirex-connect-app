@@ -30,7 +30,6 @@ export const AdminSettings = () => {
     maintenance_message: "",
     launch_date: null,
     signups_open: true,
-    hide_whatsapp_public: false,
   });
 
   const [loading, setLoading] = useState(true);
@@ -40,8 +39,7 @@ export const AdminSettings = () => {
     (async () => {
       const { data } = await supabase
         .from("site_settings")
-        .select("maintenance_mode,maintenance_message,launch_date,signups_open,hide_whatsapp_public")
-
+        .select("maintenance_mode,maintenance_message,launch_date,signups_open")
         .eq("id", true)
         .maybeSingle();
       if (data) setS(data as SettingsRow);
@@ -59,10 +57,10 @@ export const AdminSettings = () => {
         maintenance_message: s.maintenance_message?.trim() || null,
         launch_date: s.launch_date,
         signups_open: s.signups_open,
-        hide_whatsapp_public: s.hide_whatsapp_public,
         updated_by: user?.id ?? null,
       } as any)
       .eq("id", true);
+
 
     setSaving(false);
     if (error) return toast.error(error.message);
