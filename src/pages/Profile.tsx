@@ -26,6 +26,7 @@ import { useAccountType } from "@/hooks/useAccountType";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { trackProfileView, trackContactClick } from "@/lib/analytics-track";
+import { openWhatsApp } from "@/lib/openWhatsApp";
 import { usePreLaunchGate } from "@/hooks/usePreLaunchGate";
 import { PreLaunchModal } from "@/components/PreLaunchModal";
 
@@ -151,20 +152,14 @@ const Profile = () => {
     return digits;
   };
   const waNumber = normalizeWa(profile.whatsapp);
-  const waText = encodeURIComponent(waMessage);
-  // Dominio canónico de WhatsApp: redirige a la app en móvil y a web.whatsapp.com en desktop.
-  const waUrl = waNumber ? `https://wa.me/${waNumber}?text=${waText}` : "";
   const tgUrl = `https://t.me/${profile.telegram}`;
-  const isEmbeddedPreview = typeof window !== "undefined" && window.self !== window.top;
-  const waTarget = isEmbeddedPreview ? "_top" : "_blank";
 
-  const openWhatsApp = (e: MouseEvent<HTMLAnchorElement>) => {
-    if (!waNumber) {
-      e.preventDefault();
-      return;
-    }
+  const handleWhatsAppClick = (e: MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!waNumber) return;
     if (dbProfile?.id) trackContactClick(dbProfile.id, "whatsapp");
-    // No preventDefault: dejamos que el <a target="_top"|"_blank"> navegue de forma nativa.
+    openWhatsApp({ phone: waNumber, message: waMessage });
   };
 
   const rates = profile.rates ?? {};
@@ -338,15 +333,15 @@ const Profile = () => {
 
             {/* Botones de contacto — protagonismo total, una sola fila */}
             <div className="grid grid-cols-2 gap-3">
-              <Button asChild variant="whatsapp" size="xl" className="w-full rounded-full">
-                <a
-                  href={waUrl}
-                  target={waTarget}
-                  rel="noopener noreferrer"
-                  onClick={openWhatsApp}
-                >
-                  <MessageCircle className="h-5 w-5" /> WhatsApp
-                </a>
+              <Button
+                type="button"
+                variant="whatsapp"
+                size="xl"
+                className="w-full rounded-full"
+                onClick={handleWhatsAppClick}
+                disabled={!waNumber}
+              >
+                <MessageCircle className="h-5 w-5" /> WhatsApp
               </Button>
               {profile.telegram && (
                 <Button asChild variant="telegram" size="xl" className="w-full rounded-full">
@@ -454,16 +449,16 @@ const Profile = () => {
       </main>
 
       {/* FAB WhatsApp flotante para conversión inmediata */}
-      <a
-        href={waUrl}
-        target={waTarget}
-        rel="noopener noreferrer"
-        aria-label={`Contactar a ${profile.name} por WhatsApp`}
-        className="fab-whatsapp"
-        onClick={openWhatsApp}
-      >
-        <MessageCircle className="h-7 w-7" />
-      </a>
+      {waNumber && (
+        <button
+          type="button"
+          aria-label={`Contactar a ${profile.name} por WhatsApp`}
+          className="fab-whatsapp"
+          onClick={handleWhatsAppClick}
+        >
+          <MessageCircle className="h-7 w-7" />
+        </button>
+      )}
 
       <PreLaunchModal open={gate.open} onOpenChange={gate.setOpen} source={`profile:${profile.id}`} />
 
