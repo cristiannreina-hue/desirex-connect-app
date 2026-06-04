@@ -151,20 +151,14 @@ const Profile = () => {
     return digits;
   };
   const waNumber = normalizeWa(profile.whatsapp);
-  const waText = encodeURIComponent(waMessage);
-  // Dominio canónico de WhatsApp: redirige a la app en móvil y a web.whatsapp.com en desktop.
-  const waUrl = waNumber ? `https://wa.me/${waNumber}?text=${waText}` : "";
   const tgUrl = `https://t.me/${profile.telegram}`;
-  const isEmbeddedPreview = typeof window !== "undefined" && window.self !== window.top;
-  const waTarget = isEmbeddedPreview ? "_top" : "_blank";
 
-  const openWhatsApp = (e: MouseEvent<HTMLAnchorElement>) => {
-    if (!waNumber) {
-      e.preventDefault();
-      return;
-    }
+  const handleWhatsAppClick = (e: MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!waNumber) return;
     if (dbProfile?.id) trackContactClick(dbProfile.id, "whatsapp");
-    // No preventDefault: dejamos que el <a target="_top"|"_blank"> navegue de forma nativa.
+    openWhatsApp({ phone: waNumber, message: waMessage });
   };
 
   const rates = profile.rates ?? {};
