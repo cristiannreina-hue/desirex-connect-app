@@ -50,8 +50,7 @@ const Profile = () => {
   const gate = usePreLaunchGate();
   const { settings } = useSiteSettings();
   const { isAdmin } = useIsAdmin();
-  const isOwner = !!user && !!dbProfile && user.id === dbProfile.id;
-  const waHiddenGlobally = settings.hide_whatsapp_public && !isAdmin && !isOwner;
+
 
 
   useEffect(() => {
