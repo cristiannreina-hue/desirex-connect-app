@@ -205,7 +205,8 @@ const Profile = () => {
   };
 
   const isOwner = user?.id === profile.id;
-  const waHiddenGlobally = settings.hide_whatsapp_public && !isAdmin && !isOwner;
+  const waHidden = !!profile.hideWhatsapp && !isAdmin && !isOwner;
+
 
   const tier = profile.subscription?.tier;
   const tierMeta = tier ? TIER_BADGE[tier] : null;
