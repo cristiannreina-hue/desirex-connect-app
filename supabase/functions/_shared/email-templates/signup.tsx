@@ -33,7 +33,9 @@ export const SignupEmail = ({
     <Preview>Activa tu cuenta en {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Bienvenido a {siteName}</Heading>
+        <Heading style={h1}>✨ Bienvenido a {siteName}</Heading>
+
+        <Text style={text}>Gracias por registrarte.</Text>
 
         <Text style={text}>
           Para proteger tu cuenta y garantizar una experiencia segura,
@@ -46,11 +48,11 @@ export const SignupEmail = ({
           para ofrecer.
         </Text>
 
-        <Text style={text}>
+        <Text style={{ ...text, marginBottom: '24px' }}>
           Si no creaste esta cuenta, puedes ignorar este mensaje.
         </Text>
 
-        <Section style={{ paddingTop: '12px', paddingBottom: '12px' }}>
+        <Section>
           <Button style={button} href={confirmationUrl}>
             Activar mi Cuenta
           </Button>
@@ -64,20 +66,12 @@ export const SignupEmail = ({
           </Link>
         </Text>
 
+        <hr style={hr} />
+
         <Text style={footer}>© 2026 {siteName}.</Text>
         <Text style={footer}>
           Todos los derechos reservados. Si tienes dudas, ponte en contacto con
           nuestro equipo de soporte.
-        </Text>
-        <Text style={footer}>
-          Enviado a{' '}
-          <Link href={`mailto:${recipient}`} style={link}>
-            {recipient}
-          </Link>
-          {' · '}
-          <Link href={siteUrl} style={link}>
-            {siteName}
-          </Link>
         </Text>
       </Container>
     </Body>
@@ -88,42 +82,48 @@ export default SignupEmail
 
 const main = {
   backgroundColor: '#ffffff',
-  fontFamily:
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+  fontFamily: 'Arial, Helvetica, sans-serif',
+  color: '#000000',
 }
-const container = { padding: '24px 28px', maxWidth: '560px' }
+const container = { padding: '0', maxWidth: '600px', margin: '0 auto' }
 const h1 = {
-  fontSize: '22px',
+  fontSize: '28px',
   fontWeight: 'bold' as const,
-  color: '#111111',
-  margin: '0 0 20px',
+  color: '#000000',
+  margin: '24px 0 16px 0',
 }
 const text = {
-  fontSize: '16px',
-  color: '#333333',
+  fontSize: '15px',
+  color: '#000000',
   lineHeight: '1.5',
-  margin: '8px 0',
+  margin: '0 0 16px 0',
 }
 const muted = {
   fontSize: '13px',
-  color: '#666666',
+  color: '#555555',
   lineHeight: '1.5',
-  margin: '16px 0',
+  margin: '24px 0 0 0',
   wordBreak: 'break-all' as const,
 }
-const link = { color: '#f03705', textDecoration: 'underline' }
+const link = { color: '#e8590c', textDecoration: 'underline' }
 const button = {
-  backgroundColor: '#f03705',
+  backgroundColor: '#e8590c',
   color: '#ffffff',
-  fontSize: '14px',
-  fontWeight: 500,
-  borderRadius: '4px',
-  padding: '12px 20px',
+  fontSize: '15px',
+  fontWeight: 'bold' as const,
+  borderRadius: '6px',
+  padding: '12px 24px',
   textDecoration: 'none',
   display: 'inline-block',
 }
+const hr = {
+  border: 'none',
+  borderTop: '1px solid #e0e0e0',
+  margin: '32px 0',
+}
 const footer = {
-  fontSize: '12px',
-  color: '#999999',
-  margin: '6px 0',
+  fontSize: '13px',
+  color: '#555555',
+  lineHeight: '1.5',
+  margin: '0 0 8px 0',
 }
