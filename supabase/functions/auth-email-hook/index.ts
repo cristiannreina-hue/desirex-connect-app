@@ -260,10 +260,8 @@ async function handleWebhook(req: Request): Promise<Response> {
     status: 'pending',
   })
 
-  // NOTE: Until a domain is verified in Resend, we use the shared test sender
-  // `onboarding@resend.dev`. Once the user verifies a domain in the Resend
-  // dashboard (e.g. mail.deseo-x.com), change FROM_ADDRESS below.
-  const FROM_ADDRESS = `${SITE_NAME} <onboarding@resend.dev>`
+  // Sender domain verified in Resend: deseo-x.com
+  const FROM_ADDRESS = `Deseo-X <noreply@deseo-x.com>`
 
   const resendRes = await fetch('https://connector-gateway.lovable.dev/resend/emails', {
     method: 'POST',
