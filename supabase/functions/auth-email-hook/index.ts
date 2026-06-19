@@ -17,12 +17,12 @@ const corsHeaders = {
 }
 
 const EMAIL_SUBJECTS: Record<string, string> = {
-  signup: 'Confirm your email',
-  invite: "You've been invited",
-  magiclink: 'Your login link',
-  recovery: 'Reset your password',
-  email_change: 'Confirm your new email',
-  reauthentication: 'Your verification code',
+  signup: '✨ Activa tu cuenta en DeseoX',
+  invite: 'Te han invitado a DeseoX',
+  magiclink: 'Tu enlace de acceso a DeseoX',
+  recovery: 'Restablece tu contraseña de DeseoX',
+  email_change: 'Confirma tu nuevo correo en DeseoX',
+  reauthentication: 'Tu código de verificación DeseoX',
 }
 
 // Template mapping
