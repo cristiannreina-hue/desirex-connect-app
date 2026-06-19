@@ -11,6 +11,7 @@ import {
   Html,
   Link,
   Preview,
+  Section,
   Text,
 } from 'npm:@react-email/components@0.0.22'
 
@@ -27,31 +28,56 @@ export const SignupEmail = ({
   recipient,
   confirmationUrl,
 }: SignupEmailProps) => (
-  <Html lang="en" dir="ltr">
+  <Html lang="es" dir="ltr">
     <Head />
-    <Preview>Confirm your email for {siteName}</Preview>
+    <Preview>Activa tu cuenta en {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Confirm your email</Heading>
+        <Heading style={h1}>Bienvenido a {siteName}</Heading>
+
         <Text style={text}>
-          Thanks for signing up for{' '}
-          <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
-          </Link>
-          !
+          Para proteger tu cuenta y garantizar una experiencia segura,
+          necesitamos verificar tu dirección de correo electrónico.
         </Text>
+
         <Text style={text}>
-          Please confirm your email address (
+          Haz clic en el botón de verificación que encontrarás más abajo para
+          activar tu cuenta y comenzar a descubrir todo lo que {siteName} tiene
+          para ofrecer.
+        </Text>
+
+        <Text style={text}>
+          Si no creaste esta cuenta, puedes ignorar este mensaje.
+        </Text>
+
+        <Section style={{ paddingTop: '12px', paddingBottom: '12px' }}>
+          <Button style={button} href={confirmationUrl}>
+            Activar mi Cuenta
+          </Button>
+        </Section>
+
+        <Text style={muted}>
+          Si el botón no funciona, copia y pega este enlace en tu navegador:
+          <br />
+          <Link href={confirmationUrl} style={link}>
+            {confirmationUrl}
+          </Link>
+        </Text>
+
+        <Text style={footer}>© 2026 {siteName}.</Text>
+        <Text style={footer}>
+          Todos los derechos reservados. Si tienes dudas, ponte en contacto con
+          nuestro equipo de soporte.
+        </Text>
+        <Text style={footer}>
+          Enviado a{' '}
           <Link href={`mailto:${recipient}`} style={link}>
             {recipient}
           </Link>
-          ) by clicking the button below:
-        </Text>
-        <Button style={button} href={confirmationUrl}>
-          Verify Email
-        </Button>
-        <Text style={footer}>
-          If you didn't create an account, you can safely ignore this email.
+          {' · '}
+          <Link href={siteUrl} style={link}>
+            {siteName}
+          </Link>
         </Text>
       </Container>
     </Body>
@@ -60,27 +86,44 @@ export const SignupEmail = ({
 
 export default SignupEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
+const main = {
+  backgroundColor: '#ffffff',
+  fontFamily:
+    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif',
+}
+const container = { padding: '24px 28px', maxWidth: '560px' }
 const h1 = {
   fontSize: '22px',
   fontWeight: 'bold' as const,
-  color: '#000000',
+  color: '#111111',
   margin: '0 0 20px',
 }
 const text = {
-  fontSize: '14px',
-  color: '#55575d',
+  fontSize: '16px',
+  color: '#333333',
   lineHeight: '1.5',
-  margin: '0 0 25px',
+  margin: '8px 0',
 }
-const link = { color: 'inherit', textDecoration: 'underline' }
+const muted = {
+  fontSize: '13px',
+  color: '#666666',
+  lineHeight: '1.5',
+  margin: '16px 0',
+  wordBreak: 'break-all' as const,
+}
+const link = { color: '#f03705', textDecoration: 'underline' }
 const button = {
-  backgroundColor: '#000000',
+  backgroundColor: '#f03705',
   color: '#ffffff',
   fontSize: '14px',
-  borderRadius: '8px',
+  fontWeight: 500,
+  borderRadius: '4px',
   padding: '12px 20px',
   textDecoration: 'none',
+  display: 'inline-block',
 }
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+const footer = {
+  fontSize: '12px',
+  color: '#999999',
+  margin: '6px 0',
+}
