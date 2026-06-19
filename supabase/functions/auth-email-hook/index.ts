@@ -236,7 +236,16 @@ async function handleWebhook(req: Request): Promise<Response> {
     plainText: true,
   })
 
-  // Enqueue email for async processing by the dispatcher (process-email-queue).
+  // Send email through Resend via the Lovable connector gateway.
+  const resendKey = Deno.env.get('RESEND_API_KEY')
+  if (!resendKey) {
+    console.error('RESEND_API_KEY not configured')
+    return new Response(JSON.stringify({ error: 'Resend not configured' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -244,7 +253,6 @@ async function handleWebhook(req: Request): Promise<Response> {
 
   const messageId = crypto.randomUUID()
 
-  // Log pending BEFORE enqueue so we have a record even if enqueue crashes
   await supabase.from('email_send_log').insert({
     message_id: messageId,
     template_name: emailType,
@@ -252,45 +260,58 @@ async function handleWebhook(req: Request): Promise<Response> {
     status: 'pending',
   })
 
-  const { error: enqueueError } = await supabase.rpc('enqueue_email', {
-    queue_name: 'auth_emails',
-    payload: {
-      run_id,
-      message_id: messageId,
-      to: payload.data.email,
-      from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
-      sender_domain: SENDER_DOMAIN,
+  // NOTE: Until a domain is verified in Resend, we use the shared test sender
+  // `onboarding@resend.dev`. Once the user verifies a domain in the Resend
+  // dashboard (e.g. mail.deseo-x.com), change FROM_ADDRESS below.
+  const FROM_ADDRESS = `${SITE_NAME} <onboarding@resend.dev>`
+
+  const resendRes = await fetch('https://connector-gateway.lovable.dev/resend/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+      'X-Connection-Api-Key': resendKey,
+    },
+    body: JSON.stringify({
+      from: FROM_ADDRESS,
+      to: [payload.data.email],
       subject: EMAIL_SUBJECTS[emailType] || 'Notification',
       html,
       text,
-      purpose: 'transactional',
-      label: emailType,
-      queued_at: new Date().toISOString(),
-    },
+    }),
   })
 
-  if (enqueueError) {
-    console.error('Failed to enqueue auth email', { error: enqueueError, run_id, emailType })
+  if (!resendRes.ok) {
+    const errBody = await resendRes.text()
+    console.error('Resend send failed', { status: resendRes.status, body: errBody, run_id, emailType })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
       template_name: emailType,
       recipient_email: payload.data.email,
       status: 'failed',
-      error_message: 'Failed to enqueue email',
+      error_message: `Resend ${resendRes.status}: ${errBody.slice(0, 500)}`,
     })
-    return new Response(JSON.stringify({ error: 'Failed to enqueue email' }), {
-      status: 500,
+    return new Response(JSON.stringify({ error: 'Failed to send email via Resend' }), {
+      status: 502,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
 
-  console.log('Auth email enqueued', { emailType, email: payload.data.email, run_id })
+  await supabase.from('email_send_log').insert({
+    message_id: messageId,
+    template_name: emailType,
+    recipient_email: payload.data.email,
+    status: 'sent',
+  })
+
+  console.log('Auth email sent via Resend', { emailType, email: payload.data.email, run_id })
 
   return new Response(
-    JSON.stringify({ success: true, queued: true }),
+    JSON.stringify({ success: true, provider: 'resend' }),
     { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
   )
 }
+
 
 Deno.serve(async (req) => {
   const url = new URL(req.url)
