@@ -19,6 +19,7 @@ import {
   MessageCircle, Send, Zap, Globe, Clock, Eye, Star, Share2, Heart, DollarSign, Sparkles,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { PROFILE_PUBLIC_COLUMNS } from "@/lib/profile-columns";
 import { dbToProfile } from "@/lib/db-mappers";
 import { isProfileComplete } from "@/lib/profile-completion";
 import { useAuth } from "@/hooks/useAuth";
@@ -60,7 +61,7 @@ const Profile = () => {
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 
     // Solo perfiles de creadoras son visibles públicamente.
-    const query = supabase.from("profiles").select("*").eq("account_type", "creator");
+    const query = supabase.from("profiles").select(PROFILE_PUBLIC_COLUMNS as "*").eq("account_type", "creator");
     const filtered = isUuid
       ? query.eq("id", id)
       : isNumeric ? query.eq("user_number" as never, Number(id) as never) : query.eq("id", id);

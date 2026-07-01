@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { PROFILE_PUBLIC_COLUMNS } from "@/lib/profile-columns";
 import { SeoNoIndex } from "@/components/SeoNoIndex";
 import { useI18n } from "@/lib/i18n";
 import { watermarkFile } from "@/lib/watermark";
@@ -106,7 +107,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (!user) return;
     Promise.all([
-      supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+      supabase.from("profiles").select(PROFILE_PUBLIC_COLUMNS as "*").eq("id", user.id).maybeSingle(),
       supabase.from("subscriptions").select("tier, status, expires_at")
         .eq("user_id", user.id)
         .order("expires_at", { ascending: false }).limit(1).maybeSingle(),
