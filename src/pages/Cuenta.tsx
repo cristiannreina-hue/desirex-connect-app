@@ -5,7 +5,6 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { PROFILE_PUBLIC_COLUMNS } from "@/lib/profile-columns";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import {
   ShieldCheck, LogOut, Sparkles, ArrowRight, Clock, Crown, Receipt, BadgeCheck, User as UserIcon, Eye, Trash2, KeyRound,
@@ -90,7 +89,7 @@ const Cuenta = () => {
       return;
     }
     Promise.all([
-      supabase.from("profiles").select(PROFILE_PUBLIC_COLUMNS as "*").eq("id", user.id).maybeSingle(),
+      supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
       supabase.from("subscriptions").select("tier,status,started_at,expires_at")
         .eq("user_id", user.id).order("expires_at", { ascending: false }),
       supabase.from("payments").select("amount_cents,currency,status,tier,paid_at,created_at")

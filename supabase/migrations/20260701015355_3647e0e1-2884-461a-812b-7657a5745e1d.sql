@@ -1,3 +1,0 @@
-REVOKE SELECT (verification_id_url, verification_selfie_url, verification_selfie_face_url, verification_selfie_id_url) ON public.profiles FROM anon;
-REVOKE SELECT (verification_id_url, verification_selfie_url, verification_selfie_face_url, verification_selfie_id_url) ON public.profiles FROM authenticated;
-GRANT SELECT (verification_id_url, verification_selfie_url, verification_selfie_face_url, verification_selfie_id_url) ON public.profiles TO service_role;

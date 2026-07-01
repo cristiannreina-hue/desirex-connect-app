@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
-import { PROFILE_PUBLIC_COLUMNS } from "@/lib/profile-columns";
 import { dbToProfile } from "@/lib/db-mappers";
 import type { Profile, Gender, Subscription } from "@/types/profile";
 import { GENDER_LABELS, TIER_RANK, categoryToGender } from "@/types/profile";
@@ -96,7 +95,7 @@ const Index = () => {
 
     const fetchAll = async () => {
       const [{ data: profileRows }, { data: subRows }] = await Promise.all([
-        supabase.from("profiles").select(PROFILE_PUBLIC_COLUMNS as "*").eq("account_type", "creator").eq("is_public_visible" as never, true as never).order("updated_at", { ascending: false }).limit(200),
+        supabase.from("profiles").select("*").eq("account_type", "creator").eq("is_public_visible" as never, true as never).order("updated_at", { ascending: false }).limit(200),
         supabase.from("subscriptions").select("user_id, tier, status, expires_at"),
       ]);
 
