@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { PROFILE_PUBLIC_COLUMNS } from "@/lib/profile-columns";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import {
   ShieldCheck, LogOut, Sparkles, ArrowRight, Clock, Crown, Receipt, BadgeCheck, User as UserIcon, Eye, Trash2, KeyRound,
