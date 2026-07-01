@@ -107,7 +107,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (!user) return;
     Promise.all([
-      supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+      supabase.from("profiles").select(PROFILE_PUBLIC_COLUMNS as "*").eq("id", user.id).maybeSingle(),
       supabase.from("subscriptions").select("tier, status, expires_at")
         .eq("user_id", user.id)
         .order("expires_at", { ascending: false }).limit(1).maybeSingle(),
