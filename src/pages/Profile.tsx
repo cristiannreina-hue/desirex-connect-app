@@ -19,6 +19,7 @@ import {
   MessageCircle, Send, Zap, Globe, Clock, Eye, Star, Share2, Heart, DollarSign, Sparkles,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { PROFILE_PUBLIC_COLUMNS } from "@/lib/profile-columns";
 import { dbToProfile } from "@/lib/db-mappers";
 import { isProfileComplete } from "@/lib/profile-completion";
 import { useAuth } from "@/hooks/useAuth";
