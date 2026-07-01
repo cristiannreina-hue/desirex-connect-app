@@ -90,7 +90,7 @@ const Cuenta = () => {
       return;
     }
     Promise.all([
-      supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+      supabase.from("profiles").select(PROFILE_PUBLIC_COLUMNS as "*").eq("id", user.id).maybeSingle(),
       supabase.from("subscriptions").select("tier,status,started_at,expires_at")
         .eq("user_id", user.id).order("expires_at", { ascending: false }),
       supabase.from("payments").select("amount_cents,currency,status,tier,paid_at,created_at")
